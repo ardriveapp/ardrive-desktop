@@ -1,0 +1,23 @@
+{
+  "name": "ardrive",
+  "version": "0.0.1",
+  "description": "Proof of concept Ardrive",
+  "main": "index.js",
+  "dependencies": {
+    "arweave": "^1.7.1",
+    "bluebird": "^3.7.2",
+    "crypto": "^1.0.1",
+    "md5-file": "^5.0.0",
+    "node-fetch": "^2.6.0",
+    "prompt-sync": "^4.2.0",
+    "sqlite": "^4.0.11",
+    "sqlite3": "^5.0.0",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
