@@ -1,5 +1,5 @@
 # ArDrive
-ArDrive, a simple app that synchronizes your data with the Permaweb, currently written in Node.js
+ArDrive, a simple app that synchronizes your data with the Permaweb, currently written in Node.js with a SQLite database.
 
 To use ArDrive, please set the configuration options in the index.js for your wallet, password and sync folder.
 
