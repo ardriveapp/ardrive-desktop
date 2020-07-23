@@ -4,13 +4,15 @@ class ArDriveDB {
     constructor(dao) {
       this.dao = dao
     }
-    createConfigTable() {
-      const sql = `CREATE TABLE IF NOT EXISTS Config (
+    createProfileTable() {
+      const sql = `CREATE TABLE IF NOT EXISTS Profile (
         id integer NOT NULL PRIMARY KEY,
-        login text NOT NULL UNIQUE,
-        password text NOT NULL,
-        email text NOT NULL UNIQUE,
-        wallet_path text,
+        owner text NOT NULL UNIQUE,
+        email text,
+        password text,
+        wallet_private_key text,
+        wallet_public_key text,
+        sync_schedule text,
         sync_folder_path text
      );`
       return this.dao.run(sql)
@@ -63,10 +65,10 @@ class ArDriveDB {
       }  
 
     queueFile(file) {
-        const {owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, ardrive_path} = file
+        const {owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, isPublic, ardrive_path} = file
         return this.dao.run(
-          'REPLACE INTO Queue (owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, ardrive_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, ardrive_path]
+          'REPLACE INTO Queue (owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, isPublic, ardrive_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, isPublic, ardrive_path]
         )
     }
       
@@ -77,6 +79,14 @@ class ArDriveDB {
           [owner, file_name, file_extension, file_modified_date, ardrive_id, ardrive_path, permaweb_link, tx_id, prev_tx_id, isLocal, isPublic]
         )
     }
+
+    createArDriveProfile(profile) {
+      const {owner, email, password, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path} = profile
+      return this.dao.run(
+        'REPLACE INTO Profile (owner, email, password, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [owner, email, password, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path]
+      )
+  }
 
     getByArDriveId_fromCompleted(ardrive_id) {
       return this.dao.get(
@@ -101,7 +111,7 @@ class ArDriveDB {
     }
 
     getAll_fromCompleted() {
-      return this.dao.all('SELECT * FROM COMPLETED')
+      return this.dao.all('SELECT * FROM COMPLETED WHERE ignore = 0')
     }
 
     remove_fromQueue(ardrive_id) {

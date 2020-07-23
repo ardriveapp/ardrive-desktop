@@ -2,16 +2,20 @@
 const Promise = require('bluebird')
 const AppDAO = require('./dao')
 const ArDriveDB = require('./ardrive_db')
+const SmartWeave = require('smartweave')
 const ArDriveCrypto = require('./crypto')
 const { promisify } = require('util');
 const { resolve } = require('path');
 const path = require('path');
 const fs = require('fs');
-const prompt = require('prompt-sync')();
+const prompt = require('prompt-sync')({sigint: true});
 const fetch = require("node-fetch");
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
 const crypto = require('crypto');
+const mime = require('mime-types')
+
+const { selectWeightedPstHolder } = require('smartweave')
 
 // SQLite Database Setup
 const arDriveDBFile = "C:\\ArDrive\\ardrive.db"
@@ -19,34 +23,185 @@ const dao = new AppDAO(arDriveDBFile)
 const arDriveFiles = new ArDriveDB(dao)
 
 // ArDrive Version Tag
-const VERSION = '0.0.6';
+const VERSION = '0.0.7';
 
 ////////UPDATE THESE VARIABLES TO YOUR OWN SETTINGS///////
 const arDrivePassword = "ChangeThis1234"                //
-const arDriveOwner = "xxxxxxx"                          //
+const arDriveOwner = "blah"                             //
 const walletFile = 'C:\\Source\\ardrive_test_key.json'  //
 //////////////////////////////////////////////////////////
+
+// Get private key
 const jwk = JSON.parse(fs.readFileSync(walletFile).toString());
 
 // Initialize Arweave connectivity and wallet variables
 const directoryPath = "D:\\ArDriveSync"
+const publicDirectoryPath = directoryPath.concat("\\Public\\")
 const gatewayURL = "https://perma.online/"
 const gatewayURLBackup = "https://arweave.net/"
 
-// Establish areave node connectivity.
+// Establish Arweave node connectivity.
 const Arweave = require('arweave/node');
 const arweave = Arweave.init({
-    host: 'perma.online',
+    host: 'perma.online', // ARCA Community Gateway
+    //host: 'arweave.net', // Arweave Gateway
     port: 443,
     protocol: 'https',
-    timeout: 25000
+    timeout: 600000
 });
 
+// Load ArDrive PST Smart Contract
+const contractId = '4JDU_Ha3bMeFtDMy1HgKSB3UsmPbW_VCCLIp7Vi0rLE'
+
+// Pauses application
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 } 
+
+// TO DO
+// Write to the ArDrive logfile.  csv?  xml??
+function writeToLog(message) {
+
+}
+
+function extToMime (type) {
+    return mime.lookup(type)
+}
+
+// TO DO
+// First Time Setup
+async function arDriveSetup() {
+
+    console.log ("Welcome to ArDrive!  To store your files permanently, you must first setup your ArDrive account.")
+
+    // Setup ArDrive Password
+    console.log ("To use ArDrive, you must have an Arweave Wallet.")
+    const existingWallet = prompt('Do you have an existing Arweave Wallet (.json file) Y/N ');
+    if (existingWallet == "Y") {
+        console.log ("Please enter the path of your existing Arweave Wallet JSON file eg. D:\\Source\\My_Wallet.json")
+        const existingWalletPath = prompt ("Wallet Path: ")
+        var wallet_private_key = JSON.parse(fs.readFileSync(existingWalletPath).toString());
+    }
+    else if (existingWallet == "N")
+    {
+        // Create Wallet
+        var wallet_private_key = await createArDriveWallet()
+    }
+    const wallet_public_key = await arweave.wallets.jwkToAddress(wallet_private_key)
+
+    console.log ("What is the nickname you would like to give to this wallet?")
+    const owner = prompt ('Please enter your nickname: ')
+    console.log ('Your ArDrive password will be used to open your ArDrive and protect your data on the Permaweb.');
+    const password = prompt('Please enter a strong password: ');
+
+    // Set sync schedule
+    const sync_schedule = "1 minute"
+    // 5 minutes, 15 mintues, 30 minutes, 60 minutes
+
+    // Setup ArDrive folder location
+    const syncFolderPath = await setupArDriveSyncFolder()
+
+    // Save to Database
+    var profileToAdd = {
+        owner: owner,
+        sync_schedule: sync_schedule,
+        password: password,
+        wallet_private_key: wallet_private_key,
+        wallet_public_key: wallet_public_key,
+        sync_schedule: sync_schedule,
+        sync_folder_path: syncFolderPath
+    }
+    await arDriveFiles.createArDriveProfile(profileToAdd)
+}
+
+async function setupArDriveSyncFolder () {
+    return new Promise(async (resolve, reject) => {
+        try {
+            console.log ("Please enter the path of your local ArDrive folder e.g D:\\ArDriveSync.  A new folder will be created if it does not exist")
+            var syncFolderPath = prompt ("ArDrive Sync Folder Path: ")
+            var stats = fs.statSync(syncFolderPath)
+            if (stats.isDirectory())
+            {
+                if (!fs.existsSync(syncFolderPath.concat("\\Public"))){
+                    fs.mkdirSync(syncFolderPath.concat("\\Public"));
+                }
+                console.log ("Using %s as the local ArDrive folder.", syncFolderPath)
+                resolve (syncFolderPath)
+            }
+            else {
+                console.log ("The path you have entered is not a directory, please enter a correct path for ArDrive.")
+                resolve (setupArDriveSyncFolder())
+            }
+        }
+        catch {
+            try {
+                console.log ("Directory not found.  Creating.")
+                fs.mkdirSync(syncFolderPath);
+                fs.mkdirSync(syncFolderPath.concat("\\Public"));
+                resolve (syncFolderPath)
+            }
+            catch (err) {
+                //console.log (err)
+                console.log ("The path you have entered is not a directory, please enter a correct path for ArDrive.")
+                resolve (setupArDriveSyncFolder())
+            }
+        }
+    })
+}
+// TO DO
+// Create a wallet and save to DB
+async function createArDriveWallet() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const myNewKey = await arweave.wallets.generate()
+            const myNewWalletAddress = await arweave.wallets.jwkToAddress(myNewKey)
+            console.log ("SUCCESS! Your new wallet public address is %s", myNewWalletAddress.toString())
+            resolve (myNewKey)
+        }
+        catch {
+            reject ("Cannot create a new Wallet")
+        }
+    })
+}
+
+// TO DO
+// Create an ArDrive password and save to DB
+async function setArDrivePassword() {
+
+}
+
+// Sends a fee (15% of transaction price) to ArDrive PST holders
+async function sendArDriveFee(arweaveCost) {
+    return new Promise(async (resolve, reject) => {
+        // Fee for all data submitted to ArDrive is 15%
+        const fee = +arweaveCost * .15
+
+        // Probabilistically select the PST token holder
+        const holder = await SmartWeave.readContract(arweave, contractId).then(contractState => {
+            return SmartWeave.selectWeightedPstHolder(contractState.balances)
+        })
+
+        // send a fee. You should inform the user about this fee and amount.
+        const transaction = await arweave.createTransaction({ target: holder, quantity: arweave.ar.arToWinston(fee) }, jwk)
+    
+        // Sign file
+        await arweave.transactions.sign(transaction, jwk);
+
+        // Submit the transaction
+        const response = await arweave.transactions.post(transaction);
+        
+        if (response.status == "200" || response.status == "202")  {
+            console.log("SUCCESS ArDrive fee of %s was submitted with TX %s", fee.toFixed(9), transaction.id)
+            resolve (transaction.id)
+        }
+        else {
+            console.log("ERROR submitting ArDrive fee with TX %s", transaction.id)
+            reject (transaction.id)
+        }
+    })
+}
 
 // Gets the price of AR based on amount of data
 const getWinston = async (bytes, target) => {
@@ -68,6 +223,7 @@ const getWinston = async (bytes, target) => {
 
 };
 
+// gets hash of a file using SHA512, used for ArDriveID
 function checksumFile(path) {
     return new Promise((resolve, reject) => {
       const hash = crypto.createHash('sha512');
@@ -112,6 +268,13 @@ async function queueNewFiles(directoryPath) {
         else {
             const localFileHash = await checksumFile(fullpath)
             const ardrive_id = localFileHash.concat("//", file)
+            var ardrive_public = "0"
+
+            if (fullpath.indexOf(publicDirectoryPath) != -1)
+            {
+                // Public by choice, do not encrypt
+                ardrive_public = "1"
+            }
             
             var matchingArDriveID = await arDriveFiles.getByArDriveId_fromCompleted(ardrive_id)
             var matchingFileName = await arDriveFiles.getByFileName_fromCompleted(file)
@@ -141,6 +304,7 @@ async function queueNewFiles(directoryPath) {
                     file_extension: extension,
                     file_size: stats.size,
                     ardrive_id: ardrive_id,
+                    isPublic: ardrive_public,
                     file_modified_date: stats.mtime,
                     tx_id: "0",
                     ardrive_path: "home"
@@ -176,7 +340,7 @@ async function processQueue() {
                 tx_id: unsyncedFile.tx_id,
                 prev_tx_id: unsyncedFile.tx_id,
                 isLocal: "1",
-                public: unsyncedFile.isPublic
+                isPublic: unsyncedFile.isPublic
             }
             await arDriveFiles.completeFile(fileToComplete)
             await arDriveFiles.remove_fromQueue(unsyncedFile.ardrive_id)
@@ -205,7 +369,7 @@ async function processQueue() {
                     }
                     else {
                         // Ready to upload
-                        transaction = uploadArDriveFile(unsyncedFile.file_path, unsyncedFile.ardrive_path, unsyncedFile.ardrive_id, unsyncedFile.file_modified_date)
+                        transaction = await uploadArDriveFile(unsyncedFile.file_path, unsyncedFile.ardrive_path, unsyncedFile.ardrive_id, unsyncedFile.file_modified_date)
                     }
                 })
             }
@@ -216,91 +380,120 @@ async function processQueue() {
 
  // Tags and Uploads a single file to your ArDrive
 async function uploadArDriveFile(file_path, ardrive_path, extension, modifiedDate) {
-    // Private by default
-    var ardrive_public = "0"
+    return new Promise(async (resolve, reject) => {
+        // Private by default
+        var ardrive_public = "0"
 
-    // Check if file should be public
-    console.log ("Should %s be publicly accessible?", file_path)
-    const isPublic = prompt('Continue? Y/N ');
-    if (isPublic == 'Y'){
-        // Public by choice, do not encrypt
-        ardrive_public = "1"
-    }
-    else {
-        // private by default, encrypt file
-        var encrypted = await ArDriveCrypto.encrypt(file_path, arDrivePassword)
-        file_path = file_path.concat(".enc")
-        await sleep('250')
-    }
-
-    var file_to_upload = fs.readFileSync(file_path);
-    let transaction = await arweave.createTransaction({data: arweave.utils.concatBuffers([file_to_upload])}, jwk);
-
-    const tx_size = transaction.get('data_size');
-
-    arPrice = await getWinston(tx_size).then(data => {
-        if (!data) {
-            return false;
+        if (file_path.indexOf(publicDirectoryPath) != -1)
+        {
+            // Public by choice, do not encrypt
+            ardrive_public = "1"
         }
-        const arPrice = (data * 0.000000000001);
-        return arPrice
-    })
+        else
+        {
+            // private by default, encrypt file
+            var encrypted = await ArDriveCrypto.encrypt(file_path, arDrivePassword)
+            file_path = file_path.concat(".enc")
+            await sleep('250')
+        }
 
-    const my_wallet_address = await arweave.wallets.jwkToAddress(jwk)
-    var balance = await arweave.wallets.getBalance(my_wallet_address);
-    balance = arweave.ar.winstonToAr(balance);
-    var file_name = path.basename(file_path.replace(".enc",""))
+        var file_to_upload = fs.readFileSync(file_path);
+        let transaction = await arweave.createTransaction({data: arweave.utils.concatBuffers([file_to_upload])}, jwk);
 
-    console.log('Uploading %s (%d bytes) to the Permaweb', file_path, tx_size)
-    console.log('This will cost %s Arweave (AR) paid by %s with %s AR', arPrice.toFixed(12), my_wallet_address, balance)
+        const tx_size = transaction.get('data_size');
 
-    const readyToUpload = prompt('Continue? Y/N ');
-    if (readyToUpload == 'Y') {
+        arPrice = await getWinston(tx_size).then(data => {
+            if (!data) {
+                return false;
+            }
+            const arPrice = (data * 0.000000000001);
+            return arPrice
+        })
 
-        // Ideally, all tags would also be encrypted if the file is encrypted
-        const unencryptedFile_path = file_path.replace(".enc","")
-        const localFileHash = await checksumFile(unencryptedFile_path)
-        const ardrive_id = localFileHash.concat("//", file_name)
+        const my_wallet_address = await arweave.wallets.jwkToAddress(jwk)
+        var balance = await arweave.wallets.getBalance(my_wallet_address);
+        balance = arweave.ar.winstonToAr(balance);
+        var file_name = path.basename(file_path.replace(".enc",""))
 
-        // Tag file
-        transaction.addTag('Content-Type', 'text/plain');
-        transaction.addTag('User-Agent', `ArDrive/${VERSION}`);
-        transaction.addTag('ArDrive-FileName', file_name)
-        transaction.addTag('ArDrive-Path', ardrive_path);
-        transaction.addTag('ArDrive-Extension', extension);
-        transaction.addTag('ArDrive-ModifiedDate', modifiedDate);
-        transaction.addTag('ArDrive-Owner', arDriveOwner);
-        transaction.addTag('ArDrive-Id', ardrive_id)
-        transaction.addTag('ArDrive-Public', ardrive_public);
+        const arDriveFee = +arPrice.toFixed(9) * .15
+        const totalPrice = +arPrice.toFixed(9) + +arDriveFee
+        console.log('Uploading %s (%d bytes) to the Permaweb', file_path, tx_size)
+        console.log('This will cost %s AR (%s base plus %s ArDrive fee) paid by %s (balance of %s AR)', totalPrice, arPrice, arDriveFee.toFixed(9), my_wallet_address, balance)
 
-        // Sign file
-        await arweave.transactions.sign(transaction, jwk);
+        const readyToUpload = prompt('Continue? Y/N ');
+        if (readyToUpload == 'Y') {
 
-        // Submit the transaction
-        const response = await arweave.transactions.post(transaction);
+            // Ideally, all tags would also be encrypted if the file is encrypted
+            const unencryptedFile_path = file_path.replace(".enc","")
+            const localFileHash = await checksumFile(unencryptedFile_path)
+            const ardrive_id = localFileHash.concat("//", file_name)
 
-        if (response.status == "200" || response.status == "202")  {
-            console.log("SUCCESS %s was submitted with TX %s", file_path, transaction.id)
+            // Get Content-Type of file
+            const contentType = extToMime(extension)
+            console.log ("mime type is %s", contentType)
+
+            // Tag file
+            transaction.addTag('Content-Type', contentType);
+            transaction.addTag('User-Agent', `ArDrive/${VERSION}`);
+            transaction.addTag('ArDrive-FileName', file_name)
+            transaction.addTag('ArDrive-Path', ardrive_path);
+            //transaction.addTag('ArDrive-Extension', extension);
+            transaction.addTag('ArDrive-ModifiedDate', modifiedDate);
+            transaction.addTag('ArDrive-Owner', arDriveOwner);
+            transaction.addTag('ArDrive-Id', ardrive_id)
+            transaction.addTag('ArDrive-Public', ardrive_public);
+
+            // Sign file
+            await arweave.transactions.sign(transaction, jwk);
+
+            /* Submit the transaction (OLD)
+            // const response = await arweave.transactions.post(transaction);
+
+            if (response.status == "200" || response.status == "202")  {
+                console.log("SUCCESS %s was submitted with TX %s", file_path, transaction.id)
+                const fileToUpdate = {
+                    file_path: file_path.replace(".enc",""),
+                    tx_id: transaction.id,
+                    ardrive_id: ardrive_id,
+                    isPublic: ardrive_public
+                } */
+
+            let uploader = await arweave.transactions.getUploader(transaction);
+
             const fileToUpdate = {
                 file_path: file_path.replace(".enc",""),
                 tx_id: transaction.id,
                 ardrive_id: ardrive_id,
                 isPublic: ardrive_public
             }
+
+            // Update the queue since the file is now being uploaded
             await arDriveFiles.updateQueueStatus(fileToUpdate)
+
+            while (!uploader.isComplete) {
+                await uploader.uploadChunk();
+                //console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
+                console.log(`${uploader.pctComplete}%`);
+            }
+
+            console.log("SUCCESS %s was submitted with TX %s", file_path, transaction.id)
+
             // console.log ("Removing old encrypted file %s", file_path)
             if (file_path.includes(".enc")) {
                 fs.unlinkSync(file_path)
             }
+
+            // Send the ArDrive fee to ARDRIVE PST smart contract
+            await sendArDriveFee(arPrice.toFixed(6))
+            resolve("Uploaded")
         }
         else {
-            console.log("Issues submitting %s with TX %s", file_path, transaction.id)
+            if (file_path.includes(".enc")) {
+                fs.unlinkSync(file_path)
+            }
+            reject("Not Uploaded")
         }
-    }
-    else {
-        return;
-    }
-
+    })
 }
 
 // Gets all of the files from your ArDrive (via ARQL) and loads them into the database
@@ -380,7 +573,7 @@ async function getMyArDriveFiles(jwk)
                 var fileToAdd = {
                     owner: ardrive_owner,
                     file_name: ardrive_filename,
-                    file_extension: ardrive_extension,
+                    //file_extension: ardrive_extension,
                     file_modified_date: ardrive_modifieddate,
                     ardrive_path: ardrive_path,
                     ardrive_id: ardrive_id,
@@ -481,8 +674,8 @@ async function downloadArDriveFile_byTx(tx, file_name, isPublic) {
     //console.log ("Downloading %s : %s", file_name, tx)
     try {
         const transaction = await arweave.transactions.getData(tx, {decode: true}).then(data=> {
-            var full_path = directoryPath.concat("\\", file_name)
             if (isPublic == '1') {
+                var full_path = directoryPath.concat("\\Public\\", file_name)
                 fs.writeFile(full_path, data, async (err) => {
                     if (err) throw err;
                     await sleep('250')
@@ -490,6 +683,7 @@ async function downloadArDriveFile_byTx(tx, file_name, isPublic) {
                 });
             }
             else {            
+                var full_path = directoryPath.concat("\\", file_name)
                 // Method with decryption
                 fs.writeFile(full_path, data, async (err) => {
                     if (err) throw err;
@@ -512,7 +706,13 @@ async function downloadMyArDriveFiles(directoryPath) {
 
     const incompleteFiles = await arDriveFiles.getAll_fromCompleted()
     incompleteFiles.forEach(async function (incompleteFile) {
-        var full_path = directoryPath.concat("\\", incompleteFile.file_name)
+        if (incompleteFile.isPublic == 1) {
+            var full_path = directoryPath.concat("\\Public\\", incompleteFile.file_name)
+        }
+        else {
+            var full_path = directoryPath.concat("\\", incompleteFile.file_name)
+        }
+
         //console.log("Downloading %s", full_path)
         fs.access(full_path, fs.F_OK, async (err) => {
             if (err) {
@@ -579,7 +779,7 @@ async function checkIfQueued(arDrive_id) {
 
 // Creates the SQLite database
 async function createDB() {
-    await arDriveFiles.createConfigTable()
+    await arDriveFiles.createProfileTable()
     await arDriveFiles.createQueueTable()
     await arDriveFiles.createCompletedTable()
     //await sleep(5000)
@@ -624,3 +824,6 @@ async function main() {
 }
   
 main()
+//createDB()
+//sleep(500)
+//arDriveSetup()

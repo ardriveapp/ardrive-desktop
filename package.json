@@ -4,12 +4,14 @@
   "description": "Proof of concept Ardrive",
   "main": "index.js",
   "dependencies": {
-    "arweave": "^1.7.1",
+    "arweave": "^1.8.0",
     "bluebird": "^3.7.2",
     "crypto": "^1.0.1",
     "md5-file": "^5.0.0",
+    "mime-types": "^2.1.27",
     "node-fetch": "^2.6.0",
     "prompt-sync": "^4.2.0",
+    "smartweave": "https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs",
     "sqlite": "^4.0.11",
     "sqlite3": "^5.0.0",
     "zlib": "^1.0.5"
