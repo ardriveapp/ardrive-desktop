@@ -9,11 +9,42 @@ class ArDriveDB {
         id integer NOT NULL PRIMARY KEY,
         owner text NOT NULL UNIQUE,
         email text,
-        password text,
+        data_protection_key text,
         wallet_private_key text,
         wallet_public_key text,
         sync_schedule text,
         sync_folder_path text
+     );`
+      return this.dao.run(sql)
+    }
+
+    createSyncTable() {
+      const sql = `CREATE TABLE IF NOT EXISTS Sync (
+        id integer NOT NULL PRIMARY KEY,
+        tx_id text UNIQUE,
+        permaweb_link text,
+        owner text,
+        file_path text,
+        file_name text,
+        file_extension text,
+        file_size text,
+        sync_status text,
+        content_type text,
+        file_hash text,
+        ignore INTEGER DEFAULT 0,
+        queuedDate text,
+        submittedDate text,
+        advancedEncryption text,
+        isLocal text, 
+        isApproved text,
+        isPublic text DEFAULT 0,
+        file_modified_date text,
+        ardrive_id text UNIQUE,
+        ardrive_path text,
+        keywords text,
+        prev_tx_id text,
+        block_hash text,
+        file_version INTEGER DEFAULT 0
      );`
       return this.dao.run(sql)
     }
@@ -81,12 +112,12 @@ class ArDriveDB {
     }
 
     createArDriveProfile(profile) {
-      const {owner, email, password, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path} = profile
+      const {owner, email, data_protection_key, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path} = profile
       return this.dao.run(
-        'REPLACE INTO Profile (owner, email, password, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [owner, email, password, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path]
+        'REPLACE INTO Profile (owner, email, data_protection_key, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [owner, email, data_protection_key, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path]
       )
-  }
+    }
 
     getByArDriveId_fromCompleted(ardrive_id) {
       return this.dao.get(
@@ -110,8 +141,10 @@ class ArDriveDB {
       return this.dao.all('SELECT * FROM COMPLETED WHERE isLocal = 0 AND ignore = 0')
     }
 
-    getAll_fromCompleted() {
-      return this.dao.all('SELECT * FROM COMPLETED WHERE ignore = 0')
+    getAll_fromProfile(wallet_public_key) {
+      return this.dao.get(
+        `SELECT * FROM Profile WHERE wallet_public_key = ?`,
+        [wallet_public_key])
     }
 
     remove_fromQueue(ardrive_id) {
@@ -168,9 +201,22 @@ class ArDriveDB {
           [file_path])
     }
 
-    getAll_fromQueue() {
-        return this.dao.all('SELECT * FROM Queue')
+    getAllUploaded_fromQueue() {
+        return this.dao.all('SELECT * FROM Queue WHERE tx_id != 0')
     }
+
+    getAll_fromProfile() {
+        return this.dao.all('SELECT * FROM Profile')
+    }
+
+    getAll_fromCompleted() {
+      return this.dao.all('SELECT * FROM COMPLETED WHERE ignore = 0')
+    }
+
+    getFilesToUpload_fromQueue() {
+      return this.dao.all('SELECT * FROM Queue WHERE tx_id = 0 ')
+    }
+
   }
   
   module.exports = ArDriveDB;

@@ -4,7 +4,7 @@
   "description": "Proof of concept Ardrive",
   "main": "index.js",
   "dependencies": {
-    "arweave": "^1.8.0",
+    "arweave": "^1.9.0",
     "bluebird": "^3.7.2",
     "crypto": "^1.0.1",
     "md5-file": "^5.0.0",
