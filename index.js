@@ -9,12 +9,12 @@ const { resolve } = require('path');
 const path = require('path');
 const fs = require('fs');
 const prompt = require('prompt-sync')({sigint: true});
+const passwordPrompt = require("prompts")
 const fetch = require("node-fetch");
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
 const crypto = require('crypto');
 const mime = require('mime-types')
-
 const { selectWeightedPstHolder } = require('smartweave')
 
 // SQLite Database Setup
@@ -92,19 +92,31 @@ async function arDriveSetup() {
     return new Promise(async (resolve, reject) => {
         try {
             // Welcome message and info
-            console.log ("Welcome to ArDrive!  To store your files permanently, you must first setup your ArDrive account.")
+            console.log ("We have not detected a profile.  To store your files permanently, you must first setup your ArDrive account.")
 
             // Get the ArDrive owner nickname
             console.log ("What is the nickname you would like to give to this wallet?")
             const owner = prompt ('Please enter your nickname: ')
 
-            // Setup ArDrive Password
+            // Setup ArDrive Login Password
             console.log ('Your ArDrive Login password will be used to unlock your ArDrive and start syncing.');
-            const password = prompt('Please enter a strong ArDrive Login password: ');
+            //const password = prompt('Please enter a strong ArDrive Login password: ');
+            const loginPasswordResponse = await passwordPrompt({
+                type: 'text',
+                name: 'password',
+                style: 'password',
+                message: 'Please enter a strong ArDrive Login password: '
+            });
 
-            // Setup ArDrive Password
-            console.log ('Your ArDrive Encryption password will be used to protect your data on the Permaweb.  Do NOT lose this!!!');
-            const dataProtectionKey = prompt('Please enter a strong ArDrive Encryption password: ');
+            // Setup ArDrive Data Protection Password
+            console.log ('Your ArDrive Data Protection password will be used to encrypt your data on the Permaweb.  Do NOT lose this!!!');
+            var dataProtectionKeyResponse = await passwordPrompt({
+                type: 'text',
+                name: 'password',
+                style: 'password',
+                message: 'Please enter a strong ArDrive Encryption password: '
+            });
+            //const dataProtectionKey = prompt('Please enter a strong ArDrive Encryption password: ');
 
             // Create new or import Arweave wallet
             console.log ("To use ArDrive, you must have an Arweave Wallet.")
@@ -121,8 +133,8 @@ async function arDriveSetup() {
             }
 
             const wallet_public_key = await arweave.wallets.jwkToAddress(wallet_private_key)
-            const encrypted_wallet_private_key = await ArDriveCrypto.encryptText(JSON.stringify(wallet_private_key), password)
-            const encrypted_dataProtectionKey = await ArDriveCrypto.encryptText(dataProtectionKey, password)
+            const encrypted_wallet_private_key = await ArDriveCrypto.encryptText(JSON.stringify(wallet_private_key), loginPasswordResponse.password)
+            const encrypted_dataProtectionKey = await ArDriveCrypto.encryptText(dataProtectionKeyResponse.password, loginPasswordResponse.password)
 
             // Set sync schedule
             const sync_schedule = "1 minute"
@@ -142,7 +154,7 @@ async function arDriveSetup() {
                 sync_folder_path: syncFolderPath
             }
             await arDriveFiles.createArDriveProfile(profileToAdd)
-            resolve ({password: dataProtectionKey, jwk: JSON.stringify(wallet_private_key), wallet_public_key: wallet_public_key, owner: owner, sync_folder_path: syncFolderPath})
+            resolve ({password: dataProtectionKeyResponse.password, jwk: JSON.stringify(wallet_private_key), wallet_public_key: wallet_public_key, owner: owner, sync_folder_path: syncFolderPath})
         }
         catch (err)
         {
@@ -157,10 +169,16 @@ async function unlockArDriveProfile (wallet_public_key, owner) {
     return new Promise(async (resolve, reject) => {
         try {
             console.log ("An ArDrive Wallet is present for: %s", owner)
-            const password = prompt("Please enter your ArDrive password for this wallet: ")
+            const response = await passwordPrompt({
+                type: 'text',
+                name: 'password',
+                style: 'password',
+                message: 'Please enter your ArDrive password for this wallet: '
+            });
+    
             const profile = await arDriveFiles.getAll_fromProfile(wallet_public_key)
-            const jwk = await ArDriveCrypto.decryptText(JSON.parse(profile[0].wallet_private_key), password)
-            const dataProtectionKey = await ArDriveCrypto.decryptText(JSON.parse(profile[0].data_protection_key), password)
+            const jwk = await ArDriveCrypto.decryptText(JSON.parse(profile[0].wallet_private_key), response.password)
+            const dataProtectionKey = await ArDriveCrypto.decryptText(JSON.parse(profile[0].data_protection_key), response.password)
             console.log ("")
             console.log ("ArDrive unlocked!!")
             console.log ("")
@@ -271,22 +289,18 @@ async function sendArDriveFee(user, arweaveCost) {
 
 // Gets the price of AR based on amount of data
 const getWinston = async (bytes, target) => {
-    bytes = bytes || 0;
-    target = target || '';
-    try {
-        const response = await fetch(`https://perma.online/price/${bytes}/${target}`);
-        return response.ok ? response.text() : null;
-    }
-    catch (err) {}
-    try {
-        const response = await fetch(`https://arweave.net/price/${bytes}/${target}`);
-        return response.ok ? response.text() : null;
-    }
-    catch (err) {
-        console.log (err)
-        return false
-    }
-
+    return new Promise(async (resolve, reject) => {
+        bytes = bytes || 0;
+        target = target || '';
+        try {
+            const response = await fetch(`https://us-east.perma.online/price/${bytes}/${target}`);
+            resolve (response.ok ? response.text() : null)
+        }
+        catch (err) {
+            console.log (err)
+            resolve (false)
+        }
+    })
 };
 
 // gets hash of a file using SHA512, used for ArDriveID
@@ -418,7 +432,7 @@ async function uploadArDriveFiles(user) {
                     winston = await getWinston(fileToUpload.file_size)
                     totalWinston = totalWinston + +winston
                 })
-    
+                console.log ("total winston %s", totalWinston)
                 const totalArweavePrice = totalWinston * 0.000000000001
                 var arDriveFee = +totalArweavePrice.toFixed(9) * .15
                 if (arDriveFee < .00001) {
@@ -550,7 +564,6 @@ async function uploadArDriveFile(user, file_path, ardrive_path, extension, modif
             let transaction = await arweave.createTransaction({data: arweave.utils.concatBuffers([file_to_upload])}, JSON.parse(user.jwk));
             const tx_size = transaction.get('data_size');
 
-            console.log ("TX SIZE IS %s", tx_size)
             arPrice = await getWinston(tx_size).then(async data => {
                 if (!data) {
                     return false;
@@ -871,7 +884,14 @@ async function createDB() {
 
 async function main() {
     try {
-        console.log("---Initializing ArDrive---")
+
+        console.log("       ___   _____    _____   _____    _   _     _   _____  ")
+        console.log("      /   | |  _  \\  |  _  \\ |  _  \\  | | | |   / / | ____| ")
+        console.log("     / /| | | |_| |  | | | | | |_| |  | | | |  / /  | |__   ")
+        console.log("    / /_| | |  _  /  | | | | |  _  /  | | | | / /   |  __|  ")
+        console.log("   / /  | | | | \\ \\  | |_| | | | \\ \\  | | | |/ /    | |___  ")
+        console.log("  /_/   |_| |_|  \\_\\ |_____/ |_|  \\_\\ |_| |___/     |_____| ")
+        console.log("")
 
         // Setup database if it doesnt exist
         await createDB()
