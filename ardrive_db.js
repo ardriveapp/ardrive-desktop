@@ -1,5 +1,4 @@
 // ardrive_db.js
-
 class ArDriveDB {
     constructor(dao) {
       this.dao = dao

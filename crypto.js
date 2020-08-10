@@ -4,12 +4,6 @@ const crypto = require('crypto');
 const fs = require('fs');
 const AppendInitVect = require('./appendInitVect');
 
-function sleep(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  } 
-
 function getFileCipherKey (password, jwk) {
     try {
         const hash = crypto.createHash('sha256');
@@ -33,6 +27,25 @@ function getTextCipherKey (password) {
     catch (err) {
         console.log (err)
     }
+}
+
+// gets hash of a file using SHA512, used for ArDriveID
+exports.checksumFile = function (path) {
+    return new Promise(async (resolve, reject) => {
+      const hash = crypto.createHash('sha512');
+
+      // Method using streams
+      /* const stream = fs.createReadStream(path, {encoding: 'base64'});
+      stream.on('error', err => reject(err));
+      stream.on('data', chunk => hash.update(chunk));
+      stream.on('end', () => resolve(hash.digest('hex'))); */
+
+      // method using file
+      const file = fs.readFileSync(path, {encoding: 'base64'});
+      hash.update(file)
+      const file_hash = hash.digest('hex')
+      resolve(file_hash)
+    });
 }
 
 exports.encryptFile = async function (file_path, password, jwk) {
