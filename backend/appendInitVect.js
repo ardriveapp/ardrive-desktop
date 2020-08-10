@@ -7,7 +7,7 @@ class AppendInitVect extends Transform {
     this.appended = false;
   }
 
-  _transform(chunk, encoding, cb) {
+  transform(chunk, encoding, cb) {
     if (!this.appended) {
       this.push(this.initVect);
       this.appended = true;
