@@ -2,7 +2,6 @@
 const Promise = require('bluebird');
 const mime = require('mime-types');
 const fetch = require('node-fetch');
-const request = require('request');
 const fs = require('fs');
 const arweave = require('./arweave');
 
