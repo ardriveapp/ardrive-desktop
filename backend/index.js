@@ -1,26 +1,18 @@
 /* eslint-disable no-await-in-loop */
 // index.js
-const Arweave = require('arweave/node');
+
 const AppDAO = require('./db/dao');
 const ArDriveDB = require('./db/db');
 const ArDriveCommon = require('./common');
-const ArDriveProfile = require('./profile');
 const ArDriveUpload = require('./upload');
 const ArDriveDownload = require('./download');
+const arweave = require('./arweave');
 const cli = require('./cli');
 
 // SQLite Database Setup
-const arDriveDBFile = 'C:\\ArDrive\\ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
+const arDriveDBFile = './ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
 const dao = new AppDAO(arDriveDBFile);
 const db = new ArDriveDB(dao);
-
-const arweave = Arweave.init({
-  // host: 'perma.online', // ARCA Community Gateway
-  host: 'arweave.net', // Arweave Gateway
-  port: 443,
-  protocol: 'https',
-  timeout: 600000,
-});
 
 async function main() {
   try {
@@ -43,24 +35,21 @@ async function main() {
     await ArDriveCommon.sleep(500);
 
     // Check if user exists, if not, create a new one
-    const profile = await db.getAll_fromProfileWithWalletPublicKey();
+    const profile = await db.getAll_fromProfile();
     let user;
     if (profile === undefined || profile.length === 0) {
       user = await cli.setupAndGetUser();
       await ArDriveCommon.sleep(500);
     } else {
-      // unlock ardrive for user
-      user = await ArDriveProfile.unlockArDriveProfile(
+      // Allow the user to login
+      user = await cli.userLogin(
         profile[0].wallet_public_key,
         profile[0].owner
       );
     }
 
     // Run this in a loop
-    while (true) {
-      let balance = await arweave.wallets.getBalance(user.wallet_public_key);
-      balance = await arweave.ar.winstonToAr(balance);
-
+    while (true && user !== 0) {
       await ArDriveDownload.getMyArDriveFiles(user);
       await ArDriveUpload.queueNewFiles(user, user.sync_folder_path);
       await ArDriveUpload.checkUploadStatus(user);
@@ -73,6 +62,7 @@ async function main() {
       }-${today.getDate()}`;
       const time = `${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
       const dateTime = `${date} ${time}`;
+      const balance = await arweave.getWalletBalance(user.wallet_public_key);
       console.log(
         '%s Syncronization completed.  Current AR Balance: %s',
         dateTime,

@@ -2,6 +2,7 @@
 const Promise = require('bluebird');
 const mime = require('mime-types');
 const fetch = require('node-fetch');
+const request = require('request');
 const fs = require('fs');
 const arweave = require('./arweave');
 
@@ -64,14 +65,16 @@ exports.formatBytes = (bytes) => {
 };
 
 // Gets the price of AR based on amount of data
-exports.getWinston = async (bytes = 0, target = '') => {
-  return fetch(`https://arweave.net/price/${bytes}/${target}`);
+exports.getWinston = async (bytes) => {
+  const response = await fetch(`https://arweave.net/price/${bytes}`);
+  const winston = await response.json();
+  return winston;
 };
 
 exports.getLocalWallet = async (existingWalletPath) => {
   const walletPrivateKey = JSON.parse(
     fs.readFileSync(existingWalletPath).toString()
   );
-  const walletPublicKey = arweave.getAddressForWallet(walletPrivateKey);
+  const walletPublicKey = await arweave.getAddressForWallet(walletPrivateKey);
   return { walletPrivateKey, walletPublicKey };
 };
