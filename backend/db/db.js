@@ -5,7 +5,7 @@ class ArDriveDB {
     this.dao = dao;
   }
 
-  createProfileTable() {
+  async createProfileTable() {
     const sql = `CREATE TABLE IF NOT EXISTS Profile (
         id integer NOT NULL PRIMARY KEY,
         owner text NOT NULL UNIQUE,
@@ -273,6 +273,14 @@ class ArDriveDB {
 
   getFilesToUpload_fromQueue() {
     return this.dao.all('SELECT * FROM Queue WHERE tx_id = 0 ');
+  }
+
+  // Creates the SQLite database
+  async createDB() {
+    await this.createProfileTable();
+    await this.createQueueTable();
+    await this.createCompletedTable();
+    // console.log("Database created")
   }
 }
 

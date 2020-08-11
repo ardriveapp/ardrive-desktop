@@ -1,17 +1,18 @@
 /* eslint-disable no-await-in-loop */
 // index.js
 const Arweave = require('arweave/node');
-const AppDAO = require('./dao');
-const ArDriveDB = require('./db/ardrive_db');
+const AppDAO = require('./db/dao');
+const ArDriveDB = require('./db/db');
 const ArDriveCommon = require('./common');
 const ArDriveProfile = require('./profile');
 const ArDriveUpload = require('./upload');
 const ArDriveDownload = require('./download');
+const cli = require('./cli');
 
 // SQLite Database Setup
 const arDriveDBFile = 'C:\\ArDrive\\ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
 const dao = new AppDAO(arDriveDBFile);
-const ArDriveFiles = new ArDriveDB(dao);
+const db = new ArDriveDB(dao);
 
 const arweave = Arweave.init({
   // host: 'perma.online', // ARCA Community Gateway
@@ -38,14 +39,14 @@ async function main() {
     console.log('');
 
     // Setup database if it doesnt exist
-    await ArDriveCommon.createDB();
+    await db.createDB();
     await ArDriveCommon.sleep(500);
 
     // Check if user exists, if not, create a new one
-    const profile = await ArDriveFiles.getAll_fromProfile();
-    let user = null;
-    if (profile === '') {
-      user = await ArDriveProfile.arDriveProfileSetup();
+    const profile = await db.getAll_fromProfileWithWalletPublicKey();
+    let user;
+    if (profile === undefined || profile.length === 0) {
+      user = await cli.setupAndGetUser();
       await ArDriveCommon.sleep(500);
     } else {
       // unlock ardrive for user

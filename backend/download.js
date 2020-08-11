@@ -5,8 +5,8 @@ const Promise = require('bluebird');
 const fs = require('fs');
 const prompt = require('prompt-sync')({ sigint: true });
 const Arweave = require('arweave/node');
-const AppDAO = require('./dao');
-const ArDriveDB = require('./db/ardrive_db');
+const AppDAO = require('./db/dao');
+const ArDriveDB = require('./db/db');
 const ArDriveCrypto = require('./crypto');
 const ArDriveCommon = require('./common');
 

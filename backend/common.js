@@ -2,13 +2,8 @@
 const Promise = require('bluebird');
 const mime = require('mime-types');
 const fetch = require('node-fetch');
-const AppDAO = require('./dao');
-const ArDriveDB = require('./db/ardrive_db');
-
-// SQLite Database Setup
-const arDriveDBFile = 'C:\\ArDrive\\ardrive.db';
-const dao = new AppDAO(arDriveDBFile);
-const arDriveFiles = new ArDriveDB(dao);
+const fs = require('fs');
+const arweave = require('./arweave');
 
 // Pauses application
 exports.sleep = async (ms) => {
@@ -68,15 +63,15 @@ exports.formatBytes = (bytes) => {
   return `${(bytes / gigaBytes).toFixed(decimal)} GB`;
 };
 
-// Creates the SQLite database
-exports.createDB = async () => {
-  await arDriveFiles.createProfileTable();
-  await arDriveFiles.createQueueTable();
-  await arDriveFiles.createCompletedTable();
-  // console.log("Database created")
-};
-
 // Gets the price of AR based on amount of data
 exports.getWinston = async (bytes = 0, target = '') => {
   return fetch(`https://arweave.net/price/${bytes}/${target}`);
+};
+
+exports.getLocalWallet = async (existingWalletPath) => {
+  const walletPrivateKey = JSON.parse(
+    fs.readFileSync(existingWalletPath).toString()
+  );
+  const walletPublicKey = arweave.getAddressForWallet(walletPrivateKey);
+  return { walletPrivateKey, walletPublicKey };
 };
