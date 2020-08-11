@@ -19,7 +19,7 @@ exports.getAddressForWallet = async (wallet) => {
   return arweave.wallets.jwkToAddress(wallet);
 };
 
-exports.generateWallet = async () => {
+const generateWallet = async () => {
   const walletPrivateKey = await arweave.wallets.generate();
   const walletPublicKey = await this.getAddressForWallet(walletPrivateKey);
   return { walletPrivateKey, walletPublicKey };
@@ -104,10 +104,7 @@ exports.getWalletBalance = async (walletPublicKey) => {
 // Create a wallet and return the key and address
 exports.createArDriveWallet = async () => {
   try {
-    const {
-      walletPrivateKey,
-      walletPublicKey,
-    } = await arweave.generateWallet();
+    const { walletPrivateKey, walletPublicKey } = await generateWallet();
     // TODO: logging is useless we need to store this somewhere.  It is stored in the database - Phil
     console.log(
       'SUCCESS! Your new wallet public address is %s',
