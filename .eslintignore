@@ -56,4 +56,4 @@ package.json
 *.scss.d.ts
 
 # PHILS FILES - remove this ASAP
-backend/
+# backend/
