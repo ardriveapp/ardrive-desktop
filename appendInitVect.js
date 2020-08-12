@@ -7,6 +7,7 @@ class AppendInitVect extends Transform {
     this.appended = false;
   }
 
+  // eslint-disable-next-line no-underscore-dangle
   _transform(chunk, encoding, cb) {
     if (!this.appended) {
       this.push(this.initVect);
