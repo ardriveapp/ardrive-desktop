@@ -114,6 +114,7 @@ exports.setupAndGetUser = async () => {
     const syncFolderPath = await promptForSyncFolderPath();
     const newLoginPasswordResponse = await promptForNewLoginPassword();
     const dataProtectionKeyResponse = await promptForDataProtectionKey();
+
     const existingWallet = await promptForWallet();
     if (existingWallet === 'N') {
       wallet = await arweave.createArDriveWallet();
