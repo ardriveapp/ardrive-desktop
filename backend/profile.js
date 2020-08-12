@@ -11,6 +11,9 @@ const db = new ArDriveDB(dao);
 // Establish Arweave node connectivity.
 const ArDriveCrypto = require('./crypto');
 
+// For Tests
+exports.testDb = db;
+
 exports.setupArDriveSyncFolder = async (syncFolderPath) => {
   try {
     const stats = fs.statSync(syncFolderPath);
@@ -66,13 +69,15 @@ exports.setUser = async (
     wallet_public_key: walletPublicKey,
     sync_folder_path: syncFolderPath,
   };
+
   await db.createArDriveProfile(profileToAdd);
+
   console.log('New ArDrive user added!');
   return {
+    owner,
     password: dataProtectionKey,
     jwk: JSON.stringify(walletPrivateKey),
     wallet_public_key: walletPublicKey,
-    owner,
     sync_folder_path: syncFolderPath,
   };
 };

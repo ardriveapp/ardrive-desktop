@@ -99,13 +99,13 @@ exports.setupAndGetUser = async () => {
     const syncFolderPath = await promptForSyncFolderPath();
     const newLoginPasswordResponse = await promptForNewLoginPassword();
     const dataProtectionKeyResponse = await promptForDataProtectionKey();
-    const wallet = await promptForWallet();
+    const { walletPrivateKey, walletPublicKey } = await promptForWallet();
 
     const user = await profile.setUser(
       owner,
       syncFolderPath,
-      wallet.walletPrivateKey,
-      wallet.walletPublicKey,
+      walletPrivateKey,
+      walletPublicKey,
       newLoginPasswordResponse.password,
       dataProtectionKeyResponse.password
     );
