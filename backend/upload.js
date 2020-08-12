@@ -13,9 +13,6 @@ const arDriveDBFile = './ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
 const dao = new AppDAO(arDriveDBFile);
 const db = new ArDriveDB(dao);
 
-// ArDrive Version Tag
-const VERSION = '0.1.1';
-
 // Establish Arweave node connectivity.
 const gatewayURL = 'https://arweave.net/';
 
@@ -32,104 +29,41 @@ function readDirR(dir) {
 async function uploadArDriveFile(
   user,
   filePath,
-  ardrivePath,
+  arDrivePath,
   extension,
   modifiedDate
 ) {
   try {
-    let ardrivePublic;
+    let arDrivePublic;
     let newFilePath = '';
     if (filePath.indexOf(user.sync_folder_path.concat('\\Public\\')) !== -1) {
       // Public by choice, do not encrypt
-      ardrivePublic = '1';
+      arDrivePublic = '1';
       newFilePath = filePath;
     } else {
       // private by default, encrypt file
-      ardrivePublic = '0';
+      arDrivePublic = '0';
       await arDriveCrypto.encryptFile(filePath, user.password, user.jwk);
       await arDriveCommon.sleep('250');
       newFilePath = filePath.concat('.enc');
     }
 
-    const fileToUpload = fs.readFileSync(newFilePath);
-    const fileName = path.basename(newFilePath.replace('.enc', ''));
-    const transaction = await arweave.createTransaction(
-      { data: arweave.utils.concatBuffers([fileToUpload]) },
-      JSON.parse(user.jwk)
+    const arPrice = await arweave.createArDriveTransaction(
+      user,
+      newFilePath,
+      arDrivePath,
+      extension,
+      modifiedDate,
+      arDrivePublic
     );
-    const txSize = transaction.get('data_size');
 
-    const winstonPrice = await arDriveCommon.getWinston(txSize);
-    const arPrice = winstonPrice * 0.000000000001;
-
-    console.log('Uploading %s (%d bytes) to the Permaweb', newFilePath, txSize);
-    // console.log('This will cost %s AR (%s base plus %s ArDrive fee)', totalPrice, arPrice, arDriveFee.toFixed(9))
-    // const readyToUpload = prompt('Continue? Y/N ');
-
-    const readyToUpload = 'Y';
-    if (readyToUpload === 'Y') {
-      // Ideally, all tags would also be encrypted if the file is encrypted
-      const unencryptedFilePath = newFilePath.replace('.enc', '');
-      const localFileHash = await arDriveCrypto.checksumFile(
-        unencryptedFilePath
-      );
-      const ardriveId = localFileHash.concat('//', fileName);
-
-      // Get Content-Type of file
-      const contentType = arDriveCommon.extToMime(extension);
-
-      // Tag file
-      transaction.addTag('Content-Type', contentType);
-      transaction.addTag('User-Agent', `ArDrive/${VERSION}`);
-      transaction.addTag('ArDrive-FileName', fileName);
-      transaction.addTag('ArDrive-Path', ardrivePath);
-      transaction.addTag('ArDrive-ModifiedDate', modifiedDate);
-      transaction.addTag('ArDrive-Owner', user.owner);
-      transaction.addTag('ArDrive-Id', ardriveId);
-      transaction.addTag('ArDrive-Public', ardrivePublic);
-
-      // Sign file
-      await arweave.transactions.sign(transaction, JSON.parse(user.jwk));
-
-      const uploader = await arweave.transactions.getUploader(transaction);
-
-      const fileToUpdate = {
-        file_path: filePath.replace('.enc', ''),
-        tx_id: transaction.id,
-        ardrive_id: ardriveId,
-        isPublic: ardrivePublic,
-      };
-
-      // Update the queue since the file is now being uploaded
-      await db.updateQueueStatus(fileToUpdate);
-
-      while (!uploader.isComplete) {
-        // eslint-disable-next-line no-await-in-loop
-        await uploader.uploadChunk();
-        // console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
-        console.log(`${uploader.pctComplete}%`);
-      }
-
-      console.log(
-        'SUCCESS %s was submitted with TX %s',
-        filePath,
-        transaction.id
-      );
-
-      // console.log ("Removing old encrypted file %s", file_path)
-      if (filePath.includes('.enc')) {
-        fs.unlinkSync(filePath);
-      }
-
-      // Send the ArDrive fee to ARDRIVE Profit Sharing Comunity smart contract
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const completedFee = await arweave.sendArDriveFee(
-        user,
-        arPrice.toFixed(6)
-      );
-    } else if (filePath.includes('.enc')) {
-      fs.unlinkSync(filePath);
+    // console.log ("Removing old encrypted file %s", file_path)
+    if (newFilePath.includes('.enc')) {
+      fs.unlinkSync(newFilePath);
     }
+
+    // Send the ArDrive fee to ARDRIVE Profit Sharing Comunity smart contract
+    await arweave.sendArDriveFee(user, arPrice.toFixed(6));
     return 'Uploaded';
   } catch (err) {
     console.log(err);

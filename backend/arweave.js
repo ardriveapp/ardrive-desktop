@@ -1,5 +1,16 @@
+const fs = require('fs');
+const path = require('path');
 const Arweave = require('arweave/node');
 const SmartWeave = require('smartweave');
+const arDriveCommon = require('./common');
+const arDriveCrypto = require('./crypto');
+const AppDAO = require('./db/dao');
+const ArDriveDB = require('./db/db');
+
+// SQLite Database Setup
+const arDriveDBFile = './ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
+const dao = new AppDAO(arDriveDBFile);
+const db = new ArDriveDB(dao);
 
 // ArDrive Profit Sharing Community Smart Contract
 const contractId = '4JDU_Ha3bMeFtDMy1HgKSB3UsmPbW_VCCLIp7Vi0rLE';
@@ -15,14 +26,14 @@ const arweave = Arweave.init({
   timeout: 600000,
 });
 
-exports.getAddressForWallet = async (wallet) => {
-  return arweave.wallets.jwkToAddress(wallet);
-};
-
 const generateWallet = async () => {
   const walletPrivateKey = await arweave.wallets.generate();
   const walletPublicKey = await this.getAddressForWallet(walletPrivateKey);
   return { walletPrivateKey, walletPublicKey };
+};
+
+exports.getAddressForWallet = async (wallet) => {
+  return arweave.wallets.jwkToAddress(wallet);
 };
 
 // Gets all of the transactions from a user's wallet, filtered by owner and ardrive version.
@@ -62,7 +73,7 @@ exports.getTransaction = async (txid) => {
     const tx = await arweave.transactions.get(txid);
     return tx;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return 0;
   }
 };
@@ -101,6 +112,68 @@ exports.getWalletBalance = async (walletPublicKey) => {
   }
 };
 
+exports.createArDriveTransaction = async (
+  user,
+  filePath,
+  arDrivePath,
+  extension,
+  modifiedDate,
+  arDrivePublic
+) => {
+  try {
+    const fileToUpload = fs.readFileSync(filePath);
+    const fileName = path.basename(filePath.replace('.enc', ''));
+    const transaction = await arweave.createTransaction(
+      { data: arweave.utils.concatBuffers([fileToUpload]) },
+      JSON.parse(user.jwk)
+    );
+    const txSize = transaction.get('data_size');
+    const winston = await arDriveCommon.getWinston(fileToUpload.file_size);
+    const arPrice = winston * 0.000000000001;
+    console.log('Uploading %s (%d bytes) to the Permaweb', filePath, txSize);
+    // Ideally, all tags would also be encrypted if the file is encrypted
+    const unencryptedFilePath = filePath.replace('.enc', '');
+    const localFileHash = await arDriveCrypto.checksumFile(unencryptedFilePath);
+    const arDriveId = localFileHash.concat('//', fileName);
+    // Get Content-Type of file
+    const contentType = arDriveCommon.extToMime(extension);
+    // Tag file
+    transaction.addTag('Content-Type', contentType);
+    transaction.addTag('User-Agent', `ArDrive/${VERSION}`);
+    transaction.addTag('ArDrive-FileName', fileName);
+    transaction.addTag('ArDrive-Path', arDrivePath);
+    transaction.addTag('ArDrive-ModifiedDate', modifiedDate);
+    transaction.addTag('ArDrive-Owner', user.owner);
+    transaction.addTag('ArDrive-Id', arDriveId);
+    transaction.addTag('ArDrive-Public', arDrivePublic);
+    // Sign file
+    await arweave.transactions.sign(transaction, JSON.parse(user.jwk));
+    const uploader = await arweave.transactions.getUploader(transaction);
+    const fileToUpdate = {
+      file_path: filePath.replace('.enc', ''),
+      tx_id: transaction.id,
+      ardrive_id: arDriveId,
+      isPublic: arDrivePublic,
+    };
+    // Update the queue since the file is now being uploaded
+    await db.updateQueueStatus(fileToUpdate);
+    while (!uploader.isComplete) {
+      // eslint-disable-next-line no-await-in-loop
+      await uploader.uploadChunk();
+      // console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`);
+      console.log(`${uploader.pctComplete}%`);
+    }
+    console.log(
+      'SUCCESS %s was submitted with TX %s',
+      filePath,
+      transaction.id
+    );
+    return arPrice;
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+};
 // Create a wallet and return the key and address
 exports.createArDriveWallet = async () => {
   try {

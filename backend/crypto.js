@@ -41,28 +41,22 @@ exports.checksumFile = async (path) => {
 exports.encryptFile = async (file_path, password, jwk) => {
   try {
     let writeStream;
-    console.log('got here');
     // Generate a secure, pseudo random initialization vector.
     const initVect = crypto.randomBytes(16);
-    console.log('got here');
     // Generate a cipher key from the password.
     const CIPHER_KEY = getFileCipherKey(password, jwk);
-    console.log('got here');
     const readStream = fs.createReadStream(file_path);
     const cipher = crypto.createCipheriv('aes256', CIPHER_KEY, initVect);
     const appendInitVect = new AppendInitVect(initVect);
-    console.log('got here');
     // Create a write stream with a different file extension.
     if (file_path.includes('.enc')) {
       writeStream = fs.createWriteStream(file_path);
     } else {
       writeStream = fs.createWriteStream(file_path.concat('.enc'));
     }
-    console.log('about to readstream');
     readStream.pipe(cipher).pipe(appendInitVect).pipe(writeStream); // THIS SHIT IS CAUSING THE PROBLEM
-    console.log('got here');
     writeStream.on('finish', () => {
-      console.log('success!');
+      // Do nothing
     });
     return 'Success!';
   } catch (err) {
