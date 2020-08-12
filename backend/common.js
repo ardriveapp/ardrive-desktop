@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const mime = require('mime-types');
 const fetch = require('node-fetch');
 const fs = require('fs');
+const path = require('path');
 const arweave = require('./arweave');
 
 // Pauses application
@@ -99,7 +100,8 @@ exports.checkOrCreateFolder = async (path) => {
 exports.backupWallet = async (backupWalletPath, wallet, owner) => {
   try {
     const backupWalletFile = backupWalletPath.concat(
-      '\\ArDrive_Backup_',
+      path.sep,
+      'ArDrive_Backup_',
       owner,
       '.json'
     );
