@@ -57,14 +57,14 @@ export default class MenuBuilder {
       label: 'ArDrive',
       submenu: [
         {
-          label: 'About ElectronReact',
+          label: 'About ArDrive',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide ElectronReact',
+          label: 'Hide ArDrive',
           accelerator: 'Command+H',
           selector: 'hide:',
         },
@@ -157,27 +157,15 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://electronjs.org');
-          },
-        },
-        {
-          label: 'Documentation',
-          click() {
             shell.openExternal(
-              'https://github.com/electron/electron/tree/master/docs#readme'
+              'https://github.com/ardriveapp/ardrive-desktop/'
             );
           },
         },
         {
-          label: 'Community Discussions',
+          label: 'Twitter',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
-          },
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal('https://twitter.com/ardriveapp');
           },
         },
       ],

@@ -77,3 +77,37 @@ exports.getLocalWallet = async (existingWalletPath) => {
   const walletPublicKey = await arweave.getAddressForWallet(walletPrivateKey);
   return { walletPrivateKey, walletPublicKey };
 };
+
+// Checks path if it exists, and creates if not
+exports.checkOrCreateFolder = async (path) => {
+  try {
+    const stats = fs.statSync(path);
+    if (stats.isDirectory()) {
+      return path;
+    }
+    console.log(
+      'The path you have entered is not a directory, please enter a correct path for your ArDrive wallet backup.'
+    );
+    return '0';
+  } catch (err) {
+    console.log('Folder not found.  Creating new directory at %s', path);
+    fs.mkdirSync(path);
+    return path;
+  }
+};
+
+exports.backupWallet = async (backupWalletPath, wallet, owner) => {
+  try {
+    const backupWalletFile = backupWalletPath.concat(
+      '\\ArDrive_Backup_',
+      owner,
+      '.json'
+    );
+    console.log('Writing your ArDrive Wallet backup to %s', backupWalletFile);
+    fs.writeFileSync(backupWalletFile, JSON.stringify(wallet.walletPrivateKey));
+    return 'Success!';
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+};
