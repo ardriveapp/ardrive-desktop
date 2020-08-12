@@ -20,6 +20,24 @@ const promptForNickname = async () => {
   return owner;
 };
 
+// Get the location to backup the new wallet
+const promptForBackupWalletPath = async () => {
+  console.log(
+    'Please enter the path to backup your new ArDrive Wallet e.g C:\\My_Safe_Location'
+  );
+  console.log('Your ArDrive Wallet is the key to open all your ArDrive data.');
+  console.log('        Do NOT share it!');
+  console.log('        Do NOT lose it!');
+  console.log('        Do NOT save it on cloud storage.');
+  console.log('        Do NOT save it on your ArDrive');
+  const backupFolderPath = prompt('ArDrive Wallet Backup Folder Path: ');
+  const validPath = await arCommon.checkOrCreateFolder(backupFolderPath);
+  if (validPath === '0') {
+    return promptForBackupWalletPath();
+  }
+  return backupFolderPath;
+};
+
 // Get the ArDrive Sync Folder path
 const promptForSyncFolderPath = async () => {
   // Setup ArDrive Sync Folder
@@ -27,7 +45,7 @@ const promptForSyncFolderPath = async () => {
     'Please enter the path of your local ArDrive folder e.g D:\\ArDriveSync.  A new folder will be created if it does not exist'
   );
   const syncFolderPath = prompt('ArDrive Sync Folder Path: ');
-  const validPath = await profile.setupArDriveSyncFolder(syncFolderPath);
+  const validPath = await arCommon.checkOrCreateFolder(syncFolderPath);
   if (validPath === '0') {
     return promptForSyncFolderPath();
   }
@@ -71,11 +89,7 @@ const promptForWallet = async () => {
   const existingWallet = prompt(
     'Do you have an existing Arweave Wallet (.json file) Y/N '
   );
-  const { walletPrivateKey, walletPublicKey } =
-    existingWallet === 'N'
-      ? await arweave.createArDriveWallet()
-      : await promptForLocalWallet();
-  return { walletPrivateKey, walletPublicKey };
+  return existingWallet;
 };
 
 const promptForLoginPassword = async () => {
@@ -95,12 +109,19 @@ exports.setupAndGetUser = async () => {
       'We have not detected a profile.  To store your files permanently, you must first setup your ArDrive account.'
     );
 
+    let wallet;
     const owner = await promptForNickname();
     const syncFolderPath = await promptForSyncFolderPath();
     const newLoginPasswordResponse = await promptForNewLoginPassword();
     const dataProtectionKeyResponse = await promptForDataProtectionKey();
-    const wallet = await promptForWallet();
-
+    const existingWallet = await promptForWallet();
+    if (existingWallet === 'N') {
+      wallet = await arweave.createArDriveWallet();
+      const backupWalletPath = await promptForBackupWalletPath();
+      await arCommon.backupWallet(backupWalletPath, wallet, owner);
+    } else {
+      wallet = await promptForLocalWallet();
+    }
     const user = await profile.setUser(
       owner,
       syncFolderPath,
