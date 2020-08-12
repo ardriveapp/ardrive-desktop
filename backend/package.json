@@ -4,8 +4,9 @@
   "description": "simple cli wrapper for ardrive api",
   "main": "index.js",
   "dependencies": {
-    "arweave": "^1.9.0",
+    "arweave": "^1.9.1",
     "bluebird": "^3.7.2",
+    "community-js": "^1.0.3",
     "md5-file": "^5.0.0",
     "mime-types": "^2.1.27",
     "node-fetch": "^2.6.0",

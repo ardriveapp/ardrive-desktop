@@ -233,7 +233,7 @@ exports.checkUploadStatus = async () => {
     await arDriveCommon.asyncForEach(unsyncedFiles, async (unsyncedFile) => {
       // Is the file uploaded on the web?
       const status = await arweave.getTransactionStatus(unsyncedFile.tx_id);
-      if (status === '200') {
+      if (status === 200) {
         console.log(
           'SUCCESS! %s was uploaded with TX of %s',
           unsyncedFile.file_path,

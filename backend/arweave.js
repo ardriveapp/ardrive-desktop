@@ -1,7 +1,8 @@
+// arweave.js
 const fs = require('fs');
 const path = require('path');
 const Arweave = require('arweave/node');
-const SmartWeave = require('smartweave');
+const Community = require('community-js');
 const arDriveCommon = require('./common');
 const arDriveCrypto = require('./crypto');
 const AppDAO = require('./db/dao');
@@ -11,9 +12,6 @@ const ArDriveDB = require('./db/db');
 const arDriveDBFile = './ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
 const dao = new AppDAO(arDriveDBFile);
 const db = new ArDriveDB(dao);
-
-// ArDrive Profit Sharing Community Smart Contract
-const contractId = '4JDU_Ha3bMeFtDMy1HgKSB3UsmPbW_VCCLIp7Vi0rLE';
 
 // ArDrive Version Tag
 const VERSION = '0.1.1';
@@ -25,6 +23,11 @@ const arweave = Arweave.init({
   protocol: 'https',
   timeout: 600000,
 });
+
+// ArDrive Profit Sharing Community Smart Contract
+const communityTxId = 'Zxsxx2ON_dojHD_WlLBbOAo3N_KBQUmJ4JxYl-P19pQ';
+// eslint-disable-next-line new-cap
+const community = new Community.default(arweave);
 
 const generateWallet = async () => {
   const walletPrivateKey = await arweave.wallets.generate();
@@ -128,9 +131,14 @@ exports.createArDriveTransaction = async (
       JSON.parse(user.jwk)
     );
     const txSize = transaction.get('data_size');
-    const winston = await arDriveCommon.getWinston(fileToUpload.file_size);
-    const arPrice = winston * 0.000000000001;
-    console.log('Uploading %s (%d bytes) to the Permaweb', filePath, txSize);
+    const winston = await arDriveCommon.getWinston(txSize);
+    const arPrice = +winston * 0.000000000001;
+    console.log(
+      'Uploading %s (%d bytes) at %s to the Permaweb',
+      filePath,
+      txSize,
+      arPrice
+    );
     // Ideally, all tags would also be encrypted if the file is encrypted
     const unencryptedFilePath = filePath.replace('.enc', '');
     const localFileHash = await arDriveCrypto.checksumFile(unencryptedFilePath);
@@ -192,6 +200,7 @@ exports.createArDriveWallet = async () => {
 // Sends a fee (15% of transaction price) to ArDrive Profit Sharing Community holders
 exports.sendArDriveFee = async (user, arweaveCost) => {
   try {
+    await community.setCommunityTx(communityTxId);
     // Fee for all data submitted to ArDrive is 15%
     let fee = +arweaveCost * 0.15;
 
@@ -200,11 +209,7 @@ exports.sendArDriveFee = async (user, arweaveCost) => {
     }
 
     // Probabilistically select the PST token holder
-    const holder = await SmartWeave.readContract(arweave, contractId).then(
-      (contractState) => {
-        return SmartWeave.selectWeightedPstHolder(contractState.balances);
-      }
-    );
+    const holder = await community.selectWeightedHolder();
 
     // send a fee. You should inform the user about this fee and amount.
     const transaction = await arweave.createTransaction(
@@ -217,7 +222,7 @@ exports.sendArDriveFee = async (user, arweaveCost) => {
 
     // Submit the transaction
     const response = await arweave.transactions.post(transaction);
-    if (response.status === '200' || response.status === '202') {
+    if (response.status === 200 || response.status === 202) {
       console.log(
         'SUCCESS ArDrive fee of %s was submitted with TX %s',
         fee.toFixed(9),
