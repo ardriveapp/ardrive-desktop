@@ -5,6 +5,7 @@
 .tags*
 .vs/
 .vscode/
+*.db
 *.log
 *.pyc
 *.sln
