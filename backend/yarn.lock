@@ -556,6 +556,18 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.0.2.tgz#5bb52ee68d0f8efa9cc0099920e56be6cc4e37f3"
   integrity sha512-IkVfat549ggtkZUthUzEX49562eGikhSYeVGX97SkMFn+sTZrgRewXjQ4tPKFPCykZHkX1Zfd9OoELGqKU2jJA==
 
+"@types/prompt-sync@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@types/prompt-sync/-/prompt-sync-4.1.0.tgz#bad3329eff5b4115e34ef4698237244d411d4470"
+  integrity sha1-utMynv9bQRXjTvRpgjckTUEdRHA=
+
+"@types/prompts@^2.0.8":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@types/prompts/-/prompts-2.0.8.tgz#350fc8341426b2b68a56f874ea3bae399f771800"
+  integrity sha512-lXXAa8c8ASoA61Tj9H5E5V2mRUTvNZ/dpJ5KxghI+O5geWMHt73NLZ9kEBBDK7zUUfMsMY3ZH4Sqeqh3SjSyfg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"

@@ -1,8 +1,11 @@
-const prompt = require('prompt-sync')({ sigint: true });
-const passwordPrompt = require('prompts');
-const profile = require('./profile');
-const arCommon = require('./common');
-const arweave = require('./arweave');
+import promptSync from 'prompt-sync';
+import passwordPrompt from 'prompts';
+import { sep } from 'path';
+import { getLocalWallet, createArDriveWallet } from '../../backend/arweave';
+import { checkOrCreateFolder, backupWallet } from '../../backend/common';
+import { setUser, getUser } from '../../backend/profile';
+
+const prompt = promptSync({ sigint: true });
 
 // Get path to local wallet and return that wallet public and private key
 const promptForLocalWallet = async () => {
@@ -10,7 +13,7 @@ const promptForLocalWallet = async () => {
     'Please enter the path of your existing Arweave Wallet JSON file eg. C:\\Source\\ardrive_test_key.json'
   );
   const existingWalletPath = prompt('Wallet Path: ');
-  return arCommon.getLocalWallet(existingWalletPath);
+  return getLocalWallet(existingWalletPath);
 };
 
 // Get the ArDrive owner nickname
@@ -21,7 +24,7 @@ const promptForNickname = async () => {
 };
 
 // Get the location to backup the new wallet
-const promptForBackupWalletPath = async () => {
+const promptForBackupWalletPath = (): string => {
   console.log(
     'Please enter the path to backup your new ArDrive Wallet e.g C:\\My_Safe_Location'
   );
@@ -30,8 +33,11 @@ const promptForBackupWalletPath = async () => {
   console.log('        Do NOT lose it!');
   console.log('        Do NOT save it on cloud storage.');
   console.log('        Do NOT save it on your ArDrive');
-  const backupFolderPath = prompt('ArDrive Wallet Backup Folder Path: ');
-  const validPath = await arCommon.checkOrCreateFolder(backupFolderPath);
+  const backupFolderPath = prompt(
+    'ArDrive Wallet Backup Folder Path: ',
+    process.cwd().concat(sep, 'Backup', sep)
+  );
+  const validPath = checkOrCreateFolder(backupFolderPath);
   if (validPath === '0') {
     return promptForBackupWalletPath();
   }
@@ -39,13 +45,17 @@ const promptForBackupWalletPath = async () => {
 };
 
 // Get the ArDrive Sync Folder path
-const promptForSyncFolderPath = async () => {
+const promptForSyncFolderPath = (): string => {
   // Setup ArDrive Sync Folder
   console.log(
     'Please enter the path of your local ArDrive folder e.g D:\\ArDriveSync.  A new folder will be created if it does not exist'
   );
-  const syncFolderPath = prompt('ArDrive Sync Folder Path: ');
-  const validPath = await arCommon.checkOrCreateFolder(syncFolderPath);
+  const syncFolderPath = prompt(
+    'ArDrive Sync Folder Path: ',
+    process.cwd().concat(sep, 'Sync', sep)
+  );
+
+  const validPath = checkOrCreateFolder(syncFolderPath);
   if (validPath === '0') {
     return promptForSyncFolderPath();
   }
@@ -102,7 +112,7 @@ const promptForLoginPassword = async () => {
   return loginPasswordResponse.password;
 };
 
-exports.setupAndGetUser = async () => {
+const setupAndGetUser = async () => {
   try {
     // Welcome message and info
     console.log(
@@ -117,13 +127,13 @@ exports.setupAndGetUser = async () => {
 
     const existingWallet = await promptForWallet();
     if (existingWallet === 'N') {
-      wallet = await arweave.createArDriveWallet();
+      wallet = await createArDriveWallet();
       const backupWalletPath = await promptForBackupWalletPath();
-      await arCommon.backupWallet(backupWalletPath, wallet, owner);
+      await backupWallet(backupWalletPath, wallet, owner);
     } else {
       wallet = await promptForLocalWallet();
     }
-    const user = await profile.setUser(
+    const user = await setUser(
       owner,
       syncFolderPath,
       wallet.walletPrivateKey,
@@ -139,14 +149,14 @@ exports.setupAndGetUser = async () => {
   }
 };
 
-exports.userLogin = async (walletPublicKey, owner) => {
+const userLogin = async (walletPublicKey, owner) => {
   console.log('An ArDrive Wallet is present for: %s', owner);
   const loginPassword = await promptForLoginPassword();
-  const user = await profile.getUser(walletPublicKey, loginPassword);
+  const user = await getUser(walletPublicKey, loginPassword);
   return user;
 };
 
-exports.promptForArDriveUpload = async (price, size, amountOfFiles) => {
+const promptForArDriveUpload = async (price, size, amountOfFiles) => {
   console.log(
     'Uploading %s files (%s) to the Permaweb, totaling %s AR',
     amountOfFiles,
@@ -156,3 +166,5 @@ exports.promptForArDriveUpload = async (price, size, amountOfFiles) => {
   const readyToUpload = prompt('Upload all unsynced files? Y/N ');
   return readyToUpload;
 };
+
+export default { setupAndGetUser, userLogin, promptForArDriveUpload };

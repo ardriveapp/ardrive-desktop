@@ -1,8 +1,61 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import sqlite3 from 'sqlite3';
+
 // ardrive_db.js
-class ArDriveDB {
-  constructor(dao) {
-    this.dao = dao;
+export default class ArDriveDB {
+  db: sqlite3.Database;
+
+  constructor(dbFilePath = './ardrive.db') {
+    this.db = new sqlite3.Database(dbFilePath, (err) => {
+      if (err) {
+        console.log('Could not connect to database', err);
+      } else {
+        console.log('Connected to database');
+      }
+    });
+  }
+
+  run(sql: any, params: any[] = []) {
+    return new Promise((resolve, reject) => {
+      this.db.run(sql, params, (err: string) => {
+        if (err) {
+          console.log(`Error running sql ${sql}`);
+          console.log(err);
+          reject(err);
+        } else {
+          // resolve({ id: this.lastID });
+          resolve();
+        }
+      });
+    });
+  }
+
+  get(sql: any, params: any[] = []): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.db.get(sql, params, (err: any, result: any) => {
+        if (err) {
+          console.log(`Error running sql: ${sql}`);
+          console.log(err);
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  all(sql: any, params: any[] = []): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.db.all(sql, params, (err: any, rows: any[]) => {
+        if (err) {
+          console.log(`Error running sql: ${sql}`);
+          console.log(err);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
   }
 
   async createProfileTable() {
@@ -16,7 +69,7 @@ class ArDriveDB {
         sync_schedule text,
         sync_folder_path text
      );`;
-    return this.dao.run(sql);
+    return this.run(sql);
   }
 
   createSyncTable() {
@@ -47,7 +100,7 @@ class ArDriveDB {
         block_hash text,
         file_version INTEGER DEFAULT 0
      );`;
-    return this.dao.run(sql);
+    return this.run(sql);
   }
 
   createQueueTable() {
@@ -72,7 +125,7 @@ class ArDriveDB {
           block_hash text,
           file_version INTEGER DEFAULT 0
        );`;
-    return this.dao.run(sql);
+    return this.run(sql);
   }
 
   createCompletedTable() {
@@ -93,10 +146,21 @@ class ArDriveDB {
           prev_tx_id text,
           block_hash text
        );`;
-    return this.dao.run(sql);
+    return this.run(sql);
   }
 
-  queueFile(file) {
+  queueFile(file: {
+    owner: any;
+    file_path: any;
+    file_name: any;
+    file_extension: any;
+    file_size: any;
+    file_modified_date: any;
+    tx_id: any;
+    ardrive_id: any;
+    isPublic: any;
+    ardrive_path: any;
+  }) {
     const {
       owner,
       file_path,
@@ -109,7 +173,7 @@ class ArDriveDB {
       isPublic,
       ardrive_path,
     } = file;
-    return this.dao.run(
+    return this.run(
       'REPLACE INTO Queue (owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, isPublic, ardrive_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         owner,
@@ -126,7 +190,19 @@ class ArDriveDB {
     );
   }
 
-  completeFile(file) {
+  completeFile(file: {
+    owner: any;
+    file_name: any;
+    file_extension: any;
+    file_modified_date: any;
+    ardrive_id: any;
+    ardrive_path: any;
+    permaweb_link: any;
+    tx_id: any;
+    prev_tx_id: any;
+    isLocal: any;
+    isPublic: any;
+  }) {
     const {
       owner,
       file_name,
@@ -140,7 +216,7 @@ class ArDriveDB {
       isLocal,
       isPublic,
     } = file;
-    return this.dao.run(
+    return this.run(
       'REPLACE INTO Completed (owner, file_name, file_extension, file_modified_date, ardrive_id, ardrive_path, permaweb_link, tx_id, prev_tx_id, isLocal, isPublic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         owner,
@@ -158,7 +234,15 @@ class ArDriveDB {
     );
   }
 
-  createArDriveProfile(profile) {
+  createArDriveProfile(profile: {
+    owner: any;
+    email: any | null;
+    data_protection_key: any;
+    wallet_private_key: any;
+    wallet_public_key: any;
+    sync_schedule: any;
+    sync_folder_path: any;
+  }) {
     const {
       owner,
       email,
@@ -168,7 +252,7 @@ class ArDriveDB {
       sync_schedule,
       sync_folder_path,
     } = profile;
-    return this.dao.run(
+    return this.run(
       'REPLACE INTO Profile (owner, email, data_protection_key, wallet_private_key, wallet_public_key, sync_schedule, sync_folder_path) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [
         owner,
@@ -182,97 +266,93 @@ class ArDriveDB {
     );
   }
 
-  getByArDriveId_fromCompleted(ardrive_id) {
-    return this.dao.get(`SELECT * FROM Completed WHERE ardrive_id = ?`, [
+  getByArDriveId_fromCompleted(ardrive_id: string) {
+    return this.get(`SELECT * FROM Completed WHERE ardrive_id = ?`, [
       ardrive_id,
     ]);
   }
 
-  getByFileName_fromCompleted(file_name) {
-    return this.dao.get(`SELECT * FROM Completed WHERE file_name= ?`, [
-      file_name,
-    ]);
+  getByFileName_fromCompleted(file_name: string) {
+    return this.get(`SELECT * FROM Completed WHERE file_name= ?`, [file_name]);
   }
 
-  getByTx_fromCompleted(tx_id) {
-    return this.dao.get(`SELECT ardrive_id FROM Completed WHERE tx_id = ?`, [
+  getByTx_fromCompleted(tx_id: string) {
+    return this.get(`SELECT ardrive_id FROM Completed WHERE tx_id = ?`, [
       tx_id,
     ]);
   }
 
   getAllIncomplete_fromCompleted() {
-    return this.dao.all(
-      'SELECT * FROM COMPLETED WHERE isLocal = 0 AND ignore = 0'
-    );
+    return this.all('SELECT * FROM COMPLETED WHERE isLocal = 0 AND ignore = 0');
   }
 
-  getAll_fromProfileWithWalletPublicKey(wallet_public_key) {
-    return this.dao.get(`SELECT * FROM Profile WHERE wallet_public_key = ?`, [
+  getAll_fromProfileWithWalletPublicKey(wallet_public_key: string) {
+    return this.get(`SELECT * FROM Profile WHERE wallet_public_key = ?`, [
       wallet_public_key,
     ]);
   }
 
-  remove_fromQueue(ardrive_id) {
-    return this.dao.get(`DELETE FROM Queue WHERE ardrive_id = ?`, [ardrive_id]);
+  remove_fromQueue(ardrive_id: string) {
+    return this.get(`DELETE FROM Queue WHERE ardrive_id = ?`, [ardrive_id]);
   }
 
-  updateQueueStatus(file) {
+  updateQueueStatus(file: {
+    tx_id: any;
+    ardrive_id: any;
+    isPublic: any;
+    file_path: any;
+  }) {
     const { tx_id, ardrive_id, isPublic, file_path } = file;
-    return this.dao.run(
+    return this.run(
       `UPDATE Queue SET tx_id = ?, ardrive_id = ?, isPublic = ? WHERE file_path = ?`,
       [tx_id, ardrive_id, isPublic, file_path]
     );
   }
 
-  setIncompleteFileToIgnore(tx_id) {
-    return this.dao.get(`UPDATE Completed SET ignore = 1 WHERE tx_id = ?`, [
+  setIncompleteFileToIgnore(tx_id: string) {
+    return this.get(`UPDATE Completed SET ignore = 1 WHERE tx_id = ?`, [tx_id]);
+  }
+
+  updateCompletedStatus(tx_id: string) {
+    return this.get(`UPDATE Completed SET isLocal = 1 WHERE tx_id = ?`, [
       tx_id,
     ]);
   }
 
-  updateCompletedStatus(tx_id) {
-    return this.dao.get(`UPDATE Completed SET isLocal = 1 WHERE tx_id = ?`, [
-      tx_id,
+  setCompletedFileToDownload(file_name: string) {
+    return this.get(`UPDATE Completed SET isLocal = 0 WHERE file_name = ?`, [
+      file_name,
     ]);
   }
 
-  setCompletedFileToDownload(file_name) {
-    return this.dao.get(
-      `UPDATE Completed SET isLocal = 0 WHERE file_name = ?`,
-      [file_name]
-    );
-  }
-
-  setQueuedFileToPublic(file_path) {
-    return this.dao.get(`UPDATE Queue SET isPublic = 1 WHERE file_path = ?`, [
+  setQueuedFileToPublic(file_path: string) {
+    return this.get(`UPDATE Queue SET isPublic = 1 WHERE file_path = ?`, [
       file_path,
     ]);
   }
 
-  getByArDriveId_fromQueue(ardrive_id) {
-    return this.dao.get(`SELECT * FROM Queue WHERE ardrive_id = ?`, [
-      ardrive_id,
-    ]);
+  getByArDriveId_fromQueue(ardrive_id: string) {
+    return this.get(`SELECT * FROM Queue WHERE ardrive_id = ?`, [ardrive_id]);
   }
 
-  getByFilePath_fromQueue(file_path) {
-    return this.dao.get(`SELECT * FROM Queue WHERE file_path = ?`, [file_path]);
+  getByFilePath_fromQueue(file_path: string) {
+    return this.get(`SELECT * FROM Queue WHERE file_path = ?`, [file_path]);
   }
 
   getAllUploaded_fromQueue() {
-    return this.dao.all('SELECT * FROM Queue WHERE tx_id != 0');
+    return this.all('SELECT * FROM Queue WHERE tx_id != 0');
   }
 
-  getAll_fromProfile() {
-    return this.dao.all('SELECT * FROM Profile');
+  getAll_fromProfile(): Promise<any[]> {
+    return this.all('SELECT * FROM Profile');
   }
 
   getAll_fromCompleted() {
-    return this.dao.all('SELECT * FROM COMPLETED WHERE ignore = 0');
+    return this.all('SELECT * FROM COMPLETED WHERE ignore = 0');
   }
 
   getFilesToUpload_fromQueue() {
-    return this.dao.all('SELECT * FROM Queue WHERE tx_id = 0 ');
+    return this.all('SELECT * FROM Queue WHERE tx_id = 0 ');
   }
 
   // Creates the SQLite database
@@ -283,5 +363,3 @@ class ArDriveDB {
     // console.log("Database created")
   }
 }
-
-module.exports = ArDriveDB;

@@ -1,17 +1,16 @@
+/* eslint-disable import/prefer-default-export */
 // arweave.js
-const fs = require('fs');
-const path = require('path');
-const Arweave = require('arweave/node');
-const Community = require('community-js');
-const arDriveCommon = require('./common');
-const arDriveCrypto = require('./crypto');
-const AppDAO = require('./db/dao');
-const ArDriveDB = require('./db/db');
+import fs from 'fs';
+import path from 'path';
+import Arweave from 'arweave/node';
+import Community from 'community-js';
+import { JWKInterface } from 'arweave/node/lib/wallet';
+import ArDriveDB from './db/db';
+import { getWinston, extToMime } from './common';
+import { checksumFile } from './crypto';
+import { Wallet } from './types';
 
-// SQLite Database Setup
-const arDriveDBFile = './ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
-const dao = new AppDAO(arDriveDBFile);
-const db = new ArDriveDB(dao);
+const db = new ArDriveDB();
 
 // ArDrive Version Tag
 const VERSION = '0.1.1';
@@ -27,20 +26,31 @@ const arweave = Arweave.init({
 // ArDrive Profit Sharing Community Smart Contract
 const communityTxId = 'Zxsxx2ON_dojHD_WlLBbOAo3N_KBQUmJ4JxYl-P19pQ';
 // eslint-disable-next-line new-cap
-const community = new Community.default(arweave);
+const community = new Community(arweave);
 
-const generateWallet = async () => {
+export const getAddressForWallet = async (walletPrivateKey: JWKInterface) => {
+  return arweave.wallets.jwkToAddress(walletPrivateKey);
+};
+
+export const generateWallet = async (): Promise<Wallet> => {
   const walletPrivateKey = await arweave.wallets.generate();
-  const walletPublicKey = await this.getAddressForWallet(walletPrivateKey);
+  const walletPublicKey = await getAddressForWallet(walletPrivateKey);
   return { walletPrivateKey, walletPublicKey };
 };
 
-exports.getAddressForWallet = async (wallet) => {
-  return arweave.wallets.jwkToAddress(wallet);
+export const getLocalWallet = async (existingWalletPath: string) => {
+  const walletPrivateKey = JSON.parse(
+    fs.readFileSync(existingWalletPath).toString()
+  );
+  const walletPublicKey = await getAddressForWallet(walletPrivateKey);
+  return { walletPrivateKey, walletPublicKey };
 };
 
 // Gets all of the transactions from a user's wallet, filtered by owner and ardrive version.
-exports.getAllMyTxIds = async (user) => {
+export const getAllMyTxIds = async (user: {
+  wallet_public_key: any;
+  owner: any;
+}): Promise<string[]> => {
   try {
     const txids = await arweave.arql({
       op: 'and',
@@ -66,34 +76,34 @@ exports.getAllMyTxIds = async (user) => {
     return txids;
   } catch (err) {
     console.log(err);
-    return 0;
+    return Promise.reject(err);
   }
 };
 
 // Gets only the transaction information, with no data
-exports.getTransaction = async (txid) => {
+export const getTransaction = async (txid: string): Promise<any> => {
   try {
     const tx = await arweave.transactions.get(txid);
     return tx;
   } catch (err) {
-    // console.log(err);
-    return 0;
+    console.error(err);
+    return Promise.reject(err);
   }
 };
 
 // Gets only the data of a given transaction
-exports.getTransactionData = async (txid) => {
+export const getTransactionData = async (txid: string) => {
   try {
     const data = await arweave.transactions.getData(txid, { decode: true });
     return data;
   } catch (err) {
     console.log(err);
-    return 0;
+    return Promise.reject(err);
   }
 };
 
 // Get the latest status of a transaction
-exports.getTransactionStatus = async (txid) => {
+export const getTransactionStatus = async (txid: string) => {
   try {
     const response = await arweave.transactions.getStatus(txid);
     return response.status;
@@ -104,7 +114,7 @@ exports.getTransactionStatus = async (txid) => {
 };
 
 // Get the balance of an Arweave wallet
-exports.getWalletBalance = async (walletPublicKey) => {
+export const getWalletBalance = async (walletPublicKey: string) => {
   try {
     let balance = await arweave.wallets.getBalance(walletPublicKey);
     balance = await arweave.ar.winstonToAr(balance);
@@ -115,13 +125,13 @@ exports.getWalletBalance = async (walletPublicKey) => {
   }
 };
 
-exports.createArDriveTransaction = async (
-  user,
-  filePath,
-  arDrivePath,
-  extension,
-  modifiedDate,
-  arDrivePublic
+export const createArDriveTransaction = async (
+  user: { jwk: string; owner: string },
+  filePath: string,
+  arDrivePath: string,
+  extension: string,
+  modifiedDate: string,
+  arDrivePublic: string
 ) => {
   try {
     const fileToUpload = fs.readFileSync(filePath);
@@ -131,7 +141,7 @@ exports.createArDriveTransaction = async (
       JSON.parse(user.jwk)
     );
     const txSize = transaction.get('data_size');
-    const winston = await arDriveCommon.getWinston(txSize);
+    const winston = await getWinston(txSize);
     const arPrice = +winston * 0.000000000001;
     console.log(
       'Uploading %s (%d bytes) at %s to the Permaweb',
@@ -141,10 +151,10 @@ exports.createArDriveTransaction = async (
     );
     // Ideally, all tags would also be encrypted if the file is encrypted
     const unencryptedFilePath = filePath.replace('.enc', '');
-    const localFileHash = await arDriveCrypto.checksumFile(unencryptedFilePath);
+    const localFileHash = await checksumFile(unencryptedFilePath);
     const arDriveId = localFileHash.concat('//', fileName);
     // Get Content-Type of file
-    const contentType = arDriveCommon.extToMime(extension);
+    const contentType = extToMime(extension);
     // Tag file
     transaction.addTag('Content-Type', contentType);
     transaction.addTag('User-Agent', `ArDrive/${VERSION}`);
@@ -183,22 +193,27 @@ exports.createArDriveTransaction = async (
   }
 };
 // Create a wallet and return the key and address
-exports.createArDriveWallet = async () => {
+export const createArDriveWallet = async (): Promise<Wallet> => {
   try {
-    const { walletPrivateKey, walletPublicKey } = await generateWallet();
+    const wallet = await generateWallet();
     // TODO: logging is useless we need to store this somewhere.  It is stored in the database - Phil
     console.log(
       'SUCCESS! Your new wallet public address is %s',
-      walletPublicKey.toString()
+      wallet.walletPublicKey
     );
-    return { walletPrivateKey, walletPublicKey };
-  } catch {
-    return 'Cannot create a new Wallet';
+    return wallet;
+  } catch (err) {
+    console.error('Cannot create Wallet');
+    console.error(err);
+    return Promise.reject(err);
   }
 };
 
 // Sends a fee (15% of transaction price) to ArDrive Profit Sharing Community holders
-exports.sendArDriveFee = async (user, arweaveCost) => {
+export const sendArDriveFee = async (
+  user: { jwk: string },
+  arweaveCost: string
+) => {
   try {
     await community.setCommunityTx(communityTxId);
     // Fee for all data submitted to ArDrive is 15%
@@ -213,7 +228,7 @@ exports.sendArDriveFee = async (user, arweaveCost) => {
 
     // send a fee. You should inform the user about this fee and amount.
     const transaction = await arweave.createTransaction(
-      { target: holder, quantity: arweave.ar.arToWinston(fee) },
+      { target: holder, quantity: arweave.ar.arToWinston(fee.toString()) },
       JSON.parse(user.jwk)
     );
 

@@ -1,25 +1,17 @@
 // index.js
-const fs = require('fs');
-const AppDAO = require('./db/dao');
-const ArDriveDB = require('./db/db');
+import fs from 'fs';
+import { sep } from 'path';
+import ArDriveDB from './db/db';
+import { encryptText, decryptText } from './crypto';
 
-// SQLite Database Setup
-const arDriveDBFile = './ardrive.db';
-const dao = new AppDAO(arDriveDBFile);
-const db = new ArDriveDB(dao);
+const db = new ArDriveDB();
 
-// Establish Arweave node connectivity.
-const ArDriveCrypto = require('./crypto');
-
-// For Tests
-exports.testDb = db;
-
-exports.setupArDriveSyncFolder = async (syncFolderPath) => {
+export const setupArDriveSyncFolder = async (syncFolderPath: string) => {
   try {
     const stats = fs.statSync(syncFolderPath);
     if (stats.isDirectory()) {
-      if (!fs.existsSync(syncFolderPath.concat('\\Public'))) {
-        fs.mkdirSync(syncFolderPath.concat('\\Public'));
+      if (!fs.existsSync(syncFolderPath.concat(sep, 'Public'))) {
+        fs.mkdirSync(syncFolderPath.concat(sep, 'Public'));
       }
       console.log('Using %s as the local ArDrive folder.', syncFolderPath);
       return syncFolderPath;
@@ -34,25 +26,25 @@ exports.setupArDriveSyncFolder = async (syncFolderPath) => {
       syncFolderPath
     );
     fs.mkdirSync(syncFolderPath);
-    fs.mkdirSync(syncFolderPath.concat('\\Public'));
+    fs.mkdirSync(syncFolderPath.concat(sep, 'Public'));
     return syncFolderPath;
   }
 };
 
 // First Time Setup
-exports.setUser = async (
-  owner,
-  syncFolderPath,
-  walletPrivateKey,
-  walletPublicKey,
-  loginPassword,
-  dataProtectionKey
+export const setUser = async (
+  owner: any,
+  syncFolderPath: any,
+  walletPrivateKey: any,
+  walletPublicKey: any,
+  loginPassword: any,
+  dataProtectionKey: any
 ) => {
-  const encryptedWalletPrivateKey = await ArDriveCrypto.encryptText(
+  const encryptedWalletPrivateKey = await encryptText(
     JSON.stringify(walletPrivateKey),
     loginPassword
   );
-  const encryptedDataProtectionKey = await ArDriveCrypto.encryptText(
+  const encryptedDataProtectionKey = await encryptText(
     dataProtectionKey,
     loginPassword
   );
@@ -68,6 +60,7 @@ exports.setUser = async (
     wallet_private_key: JSON.stringify(encryptedWalletPrivateKey),
     wallet_public_key: walletPublicKey,
     sync_folder_path: syncFolderPath,
+    email: null,
   };
 
   await db.createArDriveProfile(profileToAdd);
@@ -83,16 +76,19 @@ exports.setUser = async (
 };
 
 // Decrypts user's private key information and unlocks their ArDrive
-exports.getUser = async (wallet_public_key, loginPassword) => {
+export const getUser = async (
+  wallet_public_key: string,
+  loginPassword: any
+) => {
   try {
     const profile = await db.getAll_fromProfileWithWalletPublicKey(
       wallet_public_key
     );
-    const jwk = await ArDriveCrypto.decryptText(
+    const jwk = await decryptText(
       JSON.parse(profile.wallet_private_key),
       loginPassword
     );
-    const dataProtectionKey = await ArDriveCrypto.decryptText(
+    const dataProtectionKey = await decryptText(
       JSON.parse(profile.data_protection_key),
       loginPassword
     );
@@ -115,4 +111,4 @@ exports.getUser = async (wallet_public_key, loginPassword) => {
 
 // TO DO
 // Create an ArDrive password and save to DB
-// exports.resetArDrivePassword = async function () {};
+// export const resetArDrivePassword = async function () {};
