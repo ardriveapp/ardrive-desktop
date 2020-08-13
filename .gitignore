@@ -44,6 +44,11 @@ dll
 main.js
 main.js.map
 
+# defaults for CLI app
+Backup
+Public
+Sync
+
 .idea
 npm-debug.log.*
 *.css.d.ts
