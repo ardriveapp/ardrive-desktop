@@ -8,9 +8,9 @@ export default class ArDriveDB {
   constructor(dbFilePath = './ardrive.db') {
     this.db = new sqlite3.Database(dbFilePath, (err) => {
       if (err) {
-        console.log('Could not connect to database', err);
+        console.error('Could not connect to database: '.concat(err.message));
       } else {
-        console.log('Connected to database');
+        // console.log('Connected to database');
       }
     });
   }
