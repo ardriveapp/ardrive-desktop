@@ -112,7 +112,7 @@ const promptForLoginPassword = async () => {
   return loginPasswordResponse.password;
 };
 
-const setupAndGetUser = async () => {
+export const setupAndGetUser = async () => {
   try {
     // Welcome message and info
     console.log(
@@ -149,14 +149,14 @@ const setupAndGetUser = async () => {
   }
 };
 
-const userLogin = async (walletPublicKey, owner) => {
+export const userLogin = async (walletPublicKey, owner) => {
   console.log('An ArDrive Wallet is present for: %s', owner);
   const loginPassword = await promptForLoginPassword();
   const user = await getUser(walletPublicKey, loginPassword);
   return user;
 };
 
-const promptForArDriveUpload = async (price, size, amountOfFiles) => {
+export const promptForArDriveUpload = async (price, size, amountOfFiles) => {
   console.log(
     'Uploading %s files (%s) to the Permaweb, totaling %s AR',
     amountOfFiles,
@@ -167,4 +167,14 @@ const promptForArDriveUpload = async (price, size, amountOfFiles) => {
   return readyToUpload;
 };
 
-export default { setupAndGetUser, userLogin, promptForArDriveUpload };
+// Prompt the user if they want to rename, overwrite or ignore file conflict
+export const promptForFileOverwrite = async (fullPath) => {
+  console.log(
+    'A file has been found on the Permaweb with a different hash but the same file name %s',
+    fullPath
+  );
+  const conflict = prompt(
+    'Would you like to Overwrite (O) Rename (R) or Ignore (I): '
+  );
+  return conflict;
+};

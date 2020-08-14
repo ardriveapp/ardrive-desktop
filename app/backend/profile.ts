@@ -1,10 +1,11 @@
 // index.js
 import fs from 'fs';
 import { sep } from 'path';
-import ArDriveDB from './db/db';
 import { encryptText, decryptText } from './crypto';
-
-const db = new ArDriveDB();
+import {
+  createArDriveProfile,
+  getAll_fromProfileWithWalletPublicKey,
+} from './db';
 
 export const setupArDriveSyncFolder = async (syncFolderPath: string) => {
   try {
@@ -63,7 +64,7 @@ export const setUser = async (
     email: null,
   };
 
-  await db.createArDriveProfile(profileToAdd);
+  await createArDriveProfile(profileToAdd);
 
   console.log('New ArDrive user added!');
   return {
@@ -81,7 +82,7 @@ export const getUser = async (
   loginPassword: any
 ) => {
   try {
-    const profile = await db.getAll_fromProfileWithWalletPublicKey(
+    const profile = await getAll_fromProfileWithWalletPublicKey(
       wallet_public_key
     );
     const jwk = await decryptText(

@@ -1,8 +1,6 @@
 // upload.js
 import { sep, join, extname, basename } from 'path';
 import fs from 'fs';
-import cli from '../../cli/src/prompts';
-import ArDriveDB from './db/db';
 import {
   createArDriveTransaction,
   sendArDriveFee,
@@ -10,8 +8,18 @@ import {
 } from './arweave';
 import { asyncForEach, getWinston, formatBytes } from './common';
 import { encryptFile, checksumFile } from './crypto';
-
-const db = new ArDriveDB();
+import { promptForArDriveUpload } from '../../cli/src/prompts';
+import {
+  getByArDriveId_fromCompleted,
+  getByFileName_fromCompleted,
+  getByFilePath_fromQueue,
+  setCompletedFileToDownload,
+  getFilesToUpload_fromQueue,
+  remove_fromQueue,
+  getAllUploaded_fromQueue,
+  completeFile,
+  queueFile,
+} from './db';
 
 // Establish Arweave node connectivity.
 const gatewayURL = 'https://arweave.net/';
@@ -117,11 +125,9 @@ export const queueNewFiles = async (
           ardrivePublic = '1';
         }
 
-        const matchingArDriveID = await db.getByArDriveId_fromCompleted(
-          ardriveId
-        );
-        const matchingFileName = await db.getByFileName_fromCompleted(fileName);
-        const isQueued = await db.getByFilePath_fromQueue(fullpath);
+        const matchingArDriveID = await getByArDriveId_fromCompleted(ardriveId);
+        const matchingFileName = await getByFileName_fromCompleted(fileName);
+        const isQueued = await getByFilePath_fromQueue(fullpath);
         let ardrivePath = fullpath.replace(user.sync_folder_path, '');
         ardrivePath = ardrivePath.replace(fileName, '');
 
@@ -129,10 +135,10 @@ export const queueNewFiles = async (
           // console.log("%s is already completed with a matching ardrive_id", fullpath)
         } else if (matchingFileName) {
           // A file exists on the permaweb with a different hash.  Changing that file's local status to 0 to force user to resolve conflict.
-          db.setCompletedFileToDownload(fileName);
+          setCompletedFileToDownload(fileName);
           // console.log ("Forcing user to resolve conflict %s", file)
         } else if (isQueued) {
-          await db.getByFileName_fromCompleted(fileName);
+          await getByFileName_fromCompleted(fileName);
           // console.log ("%s found in the queue", fullpath)
         } else {
           // console.log("%s queueing file", fullpath)
@@ -148,7 +154,7 @@ export const queueNewFiles = async (
             tx_id: '0',
             ardrive_path: ardrivePath,
           };
-          db.queueFile(fileToQueue);
+          queueFile(fileToQueue);
         }
       }
     });
@@ -168,7 +174,7 @@ export const uploadArDriveFiles = async (user: any) => {
     let winston = 0;
 
     console.log('---Uploading All Queued Files---');
-    const filesToUpload = await db.getFilesToUpload_fromQueue();
+    const filesToUpload = await getFilesToUpload_fromQueue();
 
     if (Object.keys(filesToUpload).length > 0) {
       await asyncForEach(
@@ -185,7 +191,7 @@ export const uploadArDriveFiles = async (user: any) => {
         arDriveFee = 0.00001;
       }
       const totalArDrivePrice = +totalArweavePrice.toFixed(9) + arDriveFee;
-      const readyToUpload = await cli.promptForArDriveUpload(
+      const readyToUpload = await promptForArDriveUpload(
         totalArDrivePrice,
         formatBytes(totalSize),
         Object.keys(filesToUpload).length
@@ -208,16 +214,16 @@ export const uploadArDriveFiles = async (user: any) => {
                 '%s has a file size of 0 and cannot be uploaded to the Permaweb',
                 fileToUpload.file_path
               );
-              await db.remove_fromQueue(fileToUpload.ardrive_id);
+              await remove_fromQueue(fileToUpload.ardrive_id);
             } else if (
-              await db.getByFileName_fromCompleted(fileToUpload.file_name)
+              await getByFileName_fromCompleted(fileToUpload.file_name)
             ) {
               // File name must be changed to something more unique like ardrive_id
               console.log(
                 '%s was queued, but has been previously uploaded to the Permaweb',
                 fileToUpload.file_path
               );
-              await db.remove_fromQueue(fileToUpload.ardrive_id);
+              await remove_fromQueue(fileToUpload.ardrive_id);
             } else {
               await uploadArDriveFile(
                 user,
@@ -247,7 +253,7 @@ export const uploadArDriveFiles = async (user: any) => {
 export const checkUploadStatus = async () => {
   try {
     console.log('---Checking Upload Status---');
-    const unsyncedFiles = await db.getAllUploaded_fromQueue();
+    const unsyncedFiles = await getAllUploaded_fromQueue();
 
     await asyncForEach(
       unsyncedFiles,
@@ -288,8 +294,8 @@ export const checkUploadStatus = async () => {
             isLocal: '1',
             isPublic: unsyncedFile.isPublic,
           };
-          await db.completeFile(fileToComplete);
-          await db.remove_fromQueue(unsyncedFile.ardrive_id);
+          await completeFile(fileToComplete);
+          await remove_fromQueue(unsyncedFile.ardrive_id);
         } else if (status === 202) {
           console.log(
             '%s is still being uploaded to the PermaWeb (TX_PENDING)',
@@ -300,22 +306,20 @@ export const checkUploadStatus = async () => {
             '%s failed to be uploaded (TX_FAILED)',
             unsyncedFile.file_path
           );
-          await db.remove_fromQueue(unsyncedFile.ardrive_id);
+          await remove_fromQueue(unsyncedFile.ardrive_id);
         } else if (unsyncedFile.file_size === '0') {
           console.log(
             '%s has a file size of 0 and cannot be uploaded to the Permaweb',
             unsyncedFile.file_path
           );
-          await db.remove_fromQueue(unsyncedFile.ardrive_id);
-        } else if (
-          await db.getByFileName_fromCompleted(unsyncedFile.file_name)
-        ) {
+          await remove_fromQueue(unsyncedFile.ardrive_id);
+        } else if (await getByFileName_fromCompleted(unsyncedFile.file_name)) {
           // File name must be changed to something more unique like ardrive_id
           console.log(
             '%s was queued, but has been previously uploaded to the Permaweb',
             unsyncedFile.file_path
           );
-          await db.remove_fromQueue(unsyncedFile.ardrive_id);
+          await remove_fromQueue(unsyncedFile.ardrive_id);
         } else {
           // CHECK IF FILE EXISTS AND IF NOT REMOVE FROM QUEUE
           fs.access(unsyncedFile.file_path, async (err) => {
@@ -324,7 +328,7 @@ export const checkUploadStatus = async () => {
                 '%s was not found locally anymore.  Removing from the queue',
                 unsyncedFile.file_path
               );
-              await db.remove_fromQueue(unsyncedFile.ardrive_id);
+              await remove_fromQueue(unsyncedFile.ardrive_id);
             }
           });
         }
