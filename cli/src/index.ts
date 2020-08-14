@@ -1,18 +1,18 @@
 /* eslint-disable no-await-in-loop */
 // index.ts
-import ArDriveDB from '../../backend/db/db';
-import { getWalletBalance } from '../../backend/arweave';
-import { sleep } from '../../backend/common';
+import ArDriveDB from '../../app/backend/db/db';
+import { getWalletBalance } from '../../app/backend/arweave';
+import { sleep } from '../../app/backend/common';
 import prompts from './prompts';
 import {
   queueNewFiles,
   checkUploadStatus,
   uploadArDriveFiles,
-} from '../../backend/upload';
+} from '../../app/backend/upload';
 import {
   getMyArDriveFiles,
   downloadMyArDriveFiles,
-} from '../../backend/download';
+} from '../../app/backend/download';
 
 const db = new ArDriveDB();
 

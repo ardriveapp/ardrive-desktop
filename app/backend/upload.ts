@@ -1,7 +1,7 @@
 // upload.js
 import { sep, join, extname, basename } from 'path';
 import fs from 'fs';
-import cli from '../cli/src/prompts';
+import cli from '../../cli/src/prompts';
 import ArDriveDB from './db/db';
 import {
   createArDriveTransaction,

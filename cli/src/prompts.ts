@@ -1,9 +1,9 @@
 import promptSync from 'prompt-sync';
 import passwordPrompt from 'prompts';
 import { sep } from 'path';
-import { getLocalWallet, createArDriveWallet } from '../../backend/arweave';
-import { checkOrCreateFolder, backupWallet } from '../../backend/common';
-import { setUser, getUser } from '../../backend/profile';
+import { getLocalWallet, createArDriveWallet } from '../../app/backend/arweave';
+import { checkOrCreateFolder, backupWallet } from '../../app/backend/common';
+import { setUser, getUser } from '../../app/backend/profile';
 
 const prompt = promptSync({ sigint: true });
 
