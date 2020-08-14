@@ -144,6 +144,20 @@ exports.queueNewFiles = async (user, sync_folder_path) => {
         }
       }
     });
+
+    // Check existing queued files to ensure they exist
+    const filesToUpload = await db.getFilesToUpload_fromQueue();
+    await arDriveCommon.asyncForEach(filesToUpload, async (fileToUpload) => {
+      fs.access(fileToUpload.file_path, fs.F_OK, async (err) => {
+        if (err) {
+          console.log(
+            '%s was not found locally anymore.  Removing from the queue',
+            fileToUpload.file_path
+          );
+          await db.remove_fromQueue(fileToUpload.ardrive_id);
+        }
+      })
+    })
     return 'SUCCESS Queuing Files';
   } catch (err) {
     console.log(err);
@@ -161,7 +175,6 @@ exports.uploadArDriveFiles = async (user) => {
 
     console.log('---Uploading All Queued Files---');
     const filesToUpload = await db.getFilesToUpload_fromQueue();
-
     if (Object.keys(filesToUpload).length > 0) {
       await arDriveCommon.asyncForEach(filesToUpload, async (fileToUpload) => {
         totalSize += +fileToUpload.file_size;
