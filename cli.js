@@ -156,3 +156,10 @@ exports.promptForArDriveUpload = async (price, size, amountOfFiles) => {
   const readyToUpload = prompt('Upload all unsynced files? Y/N ');
   return readyToUpload;
 };
+
+// Prompt the user if they want to rename, overwrite or ignore file conflict
+exports.promptForFileOverwrite = async (fullPath) => {
+  console.log('A file has been found on the Permaweb with a different hash but the same file name %s', fullPath);
+  const conflict = prompt('Would you like to Overwrite (O) Rename (R) or Ignore (I): ');
+  return conflict;
+};

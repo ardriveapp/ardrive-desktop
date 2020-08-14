@@ -9,6 +9,7 @@ const AppDAO = require('./db/dao');
 const ArDriveDB = require('./db/db');
 const ArDriveCrypto = require('./crypto');
 const ArDriveCommon = require('./common');
+const cli = require('./cli');
 
 // SQLite Database Setup
 const arDriveDBFile = './ardrive.db'; // NEED AN ENVIRONMENT VARIABLE
@@ -168,7 +169,7 @@ exports.downloadMyArDriveFiles = async (user) => {
         );
         if (!fs.existsSync(full_path)) {
           // console.log("FOUND PERMAFILE! %s is on the Permaweb, but not local.  Downloading...", full_path)
-          const myDownload = await downloadArDriveFile_byTx(
+          await downloadArDriveFile_byTx(
             user,
             incompleteFile.tx_id,
             incompleteFile.file_name,
@@ -186,56 +187,46 @@ exports.downloadMyArDriveFiles = async (user) => {
           if (incompleteFileHash === localFileHash) {
             // console.log("IGNORED! %s is on the Permaweb, but is already downloaded (matching file name and hash)", full_path)
             await db.updateCompletedStatus(incompleteFile.tx_id);
-          } else {
-            let newFileName = incompleteFile.file_name.split('.');
-            newFileName = newFileName[0].concat('1.', newFileName[1]);
-            // const new_full_path = directoryPath.concat('\\', newFileName);
-            const new_full_path = '\\'.concat(newFileName);
-            console.log(
-              'CONFLICT! %s is on the Permaweb, but there is a local file with the same name and different hash.  File will be overwritten if it is not renamed.',
-              incompleteFile.file_name
-            );
-            console.log('   New file name : %s', new_full_path);
-            const renameFile = prompt('   Rename local file? Y/N ');
-            if (renameFile === 'Y') {
-              // rename local file
-              console.log('   ...file being renamed');
-              fs.rename(full_path, new_full_path, (err) => {
-                if (err) console.log(`ERROR: ${err}`);
-              });
-              // console.log ("File renamed.  Downloading %s from the PermaWeb", incompleteFile.file_name)
-              // await downloadArDriveFile_byTx(incompleteFile.tx_id, newFileName)
-              fs.unlinkSync(full_path);
-              const myDownload = await downloadArDriveFile_byTx(
-                user,
-                incompleteFile.tx_id,
-                incompleteFile.file_name,
-                incompleteFile.isPublic,
-                incompleteFile.ardrive_path
-              );
-            } else if (renameFile === 'N') {
-              const overWriteFile = prompt('   Overwrite local file? Y/N ');
-              if (overWriteFile === 'Y') {
-                console.log('   ...file being overwritten');
-                const myDownload = await downloadArDriveFile_byTx(
+          }
+          else {
+            // There is a conflict.  Prompt the user to resolve
+            const conflictResolution = await cli.promptForFileOverwrite(full_path)
+            switch (conflictResolution) {
+              case 'R': // Rename by adding - copy at the end.
+                let newFileName = incompleteFile.file_name.split('.');
+                newFileName = newFileName[0].concat(' - Copy.', newFileName[1]);
+                const new_full_path = user.sync_folder_path.concat(incompleteFile.ardrive_path, newFileName)
+                console.log('   ...renaming existing file to : %s', new_full_path);
+                fs.renameSync(full_path, new_full_path, (err) => {
+                  if (err) console.log(`ERROR: ${err}`);
+                });
+                await downloadArDriveFile_byTx(
                   user,
                   incompleteFile.tx_id,
                   incompleteFile.file_name,
                   incompleteFile.isPublic,
                   incompleteFile.ardrive_path
                 );
-              } else {
-                const ignoreFile = prompt(
-                  '   Leave this file on the PermaWeb and ignore future downloads? Y/N '
+                fs.unlinkSync(full_path.concat('.enc'));
+                break;
+              case 'O': // Overwrite existing file
+                console.log('   ...file being overwritten');
+                await downloadArDriveFile_byTx(
+                  user,
+                  incompleteFile.tx_id,
+                  incompleteFile.file_name,
+                  incompleteFile.isPublic,
+                  incompleteFile.ardrive_path
                 );
-                if (ignoreFile === 'Y') {
-                  // SET TO IGNORE
-                  db.setIncompleteFileToIgnore(incompleteFile.tx_id);
-                  console.log('   ...excluding file from future downloads');
-                } else {
-                  // Do nothing and skip file
-                }
-              }
+                fs.unlinkSync(full_path.concat('.enc'));
+                break;
+              case 'I':
+                console.log('   ...excluding file from future downloads');
+                db.setIncompleteFileToIgnore(incompleteFile.tx_id);
+                break;
+              default:
+                // Skipping this time
+                break;
             }
           }
         }
