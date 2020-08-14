@@ -2,16 +2,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // upload.js
 import fs from 'fs';
-import promptSync from 'prompt-sync';
-import ArDriveDB from './db/db';
 import { sleep, asyncForEach, gatewayURL } from './common';
 import { getTransactionData, getAllMyTxIds, getTransaction } from './arweave';
 import { checksumFile, decryptFile } from './crypto';
-
-const prompt = promptSync({ sigint: true });
-
-// SQLite Database Setup
-const db = new ArDriveDB();
+import { promptForFileOverwrite } from '../../cli/src/prompts';
+import {
+  getAll_fromCompleted,
+  updateCompletedStatus,
+  setIncompleteFileToIgnore,
+  getByTx_fromCompleted,
+  completeFile,
+} from './db';
 
 // Downloads a single file from ArDrive by transaction
 async function downloadArDriveFile_byTx(
@@ -73,7 +74,7 @@ export const getMyArDriveFiles = async (user: {
   await asyncForEach(txids, async (txid: string) => {
     // txids.forEach(async function (txid) {
     try {
-      const isCompleted = await db.getByTx_fromCompleted(txid);
+      const isCompleted = await getByTx_fromCompleted(txid);
       if (isCompleted) {
         // skip
       } else {
@@ -138,7 +139,7 @@ export const getMyArDriveFiles = async (user: {
           isPublic: ardrive_public,
           file_extension: undefined, // TODO - FIX THIS
         };
-        await db.completeFile(fileToAdd);
+        await completeFile(fileToAdd);
         foundFiles += 1;
       }
       return true;
@@ -162,7 +163,7 @@ export const downloadMyArDriveFiles = async (user: {
 }) => {
   try {
     console.log('---Downloading any unsynced files---');
-    const incompleteFiles = await db.getAll_fromCompleted();
+    const incompleteFiles = await getAll_fromCompleted();
 
     await asyncForEach(
       incompleteFiles,
@@ -196,37 +197,38 @@ export const downloadMyArDriveFiles = async (user: {
           const incompleteFileHash = incompleteFileArDriveID[0];
           if (incompleteFileHash === localFileHash) {
             // console.log("IGNORED! %s is on the Permaweb, but is already downloaded (matching file name and hash)", full_path)
-            await db.updateCompletedStatus(incompleteFile.tx_id);
+            await updateCompletedStatus(incompleteFile.tx_id);
           } else {
-            const splitFileName = incompleteFile.file_name.split('.');
-            const newFileName = splitFileName[0].concat('1.', splitFileName[1]);
-            // const new_full_path = directoryPath.concat('\\', newFileName);
-            const new_full_path = '\\'.concat(newFileName);
-            console.log(
-              'CONFLICT! %s is on the Permaweb, but there is a local file with the same name and different hash.  File will be overwritten if it is not renamed.',
-              incompleteFile.file_name
-            );
-            console.log('   New file name : %s', new_full_path);
-            const renameFile = prompt('   Rename local file? Y/N ');
-            if (renameFile === 'Y') {
-              // rename local file
-              console.log('   ...file being renamed');
-              fs.rename(full_path, new_full_path, (err) => {
-                if (err) console.log(`ERROR: ${err}`);
-              });
-              // console.log ("File renamed.  Downloading %s from the PermaWeb", incompleteFile.file_name)
-              // await downloadArDriveFile_byTx(incompleteFile.tx_id, newFileName)
-              fs.unlinkSync(full_path);
-              await downloadArDriveFile_byTx(
-                user,
-                incompleteFile.tx_id,
-                incompleteFile.file_name,
-                incompleteFile.isPublic,
-                incompleteFile.ardrive_path
-              );
-            } else if (renameFile === 'N') {
-              const overWriteFile = prompt('   Overwrite local file? Y/N ');
-              if (overWriteFile === 'Y') {
+            // There is a conflict.  Prompt the user to resolve
+            const conflictResolution = await promptForFileOverwrite(full_path);
+            switch (conflictResolution) {
+              case 'R': {
+                // Rename by adding - copy at the end.
+                let newFileName:
+                  | string[]
+                  | string = incompleteFile.file_name.split('.');
+                newFileName = newFileName[0].concat(' - Copy.', newFileName[1]);
+                const new_full_path = user.sync_folder_path.concat(
+                  incompleteFile.ardrive_path,
+                  newFileName
+                );
+                console.log(
+                  '   ...renaming existing file to : %s',
+                  new_full_path
+                );
+                fs.renameSync(full_path, new_full_path);
+
+                await downloadArDriveFile_byTx(
+                  user,
+                  incompleteFile.tx_id,
+                  incompleteFile.file_name,
+                  incompleteFile.isPublic,
+                  incompleteFile.ardrive_path
+                );
+                fs.unlinkSync(full_path.concat('.enc'));
+                break;
+              }
+              case 'O': // Overwrite existing file
                 console.log('   ...file being overwritten');
                 await downloadArDriveFile_byTx(
                   user,
@@ -235,18 +237,15 @@ export const downloadMyArDriveFiles = async (user: {
                   incompleteFile.isPublic,
                   incompleteFile.ardrive_path
                 );
-              } else {
-                const ignoreFile = prompt(
-                  '   Leave this file on the PermaWeb and ignore future downloads? Y/N '
-                );
-                if (ignoreFile === 'Y') {
-                  // SET TO IGNORE
-                  db.setIncompleteFileToIgnore(incompleteFile.tx_id);
-                  console.log('   ...excluding file from future downloads');
-                } else {
-                  // Do nothing and skip file
-                }
-              }
+                fs.unlinkSync(full_path.concat('.enc'));
+                break;
+              case 'I':
+                console.log('   ...excluding file from future downloads');
+                setIncompleteFileToIgnore(incompleteFile.tx_id);
+                break;
+              default:
+                // Skipping this time
+                break;
             }
           }
         }

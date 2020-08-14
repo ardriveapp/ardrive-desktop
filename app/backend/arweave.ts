@@ -5,12 +5,10 @@ import path from 'path';
 import Arweave from 'arweave/node';
 import Community from 'community-js';
 import { JWKInterface } from 'arweave/node/lib/wallet';
-import ArDriveDB from './db/db';
 import { getWinston, extToMime } from './common';
 import { checksumFile } from './crypto';
 import { Wallet } from './types';
-
-const db = new ArDriveDB();
+import { updateQueueStatus } from './db';
 
 // ArDrive Version Tag
 const VERSION = '0.1.1';
@@ -174,7 +172,7 @@ export const createArDriveTransaction = async (
       isPublic: arDrivePublic,
     };
     // Update the queue since the file is now being uploaded
-    await db.updateQueueStatus(fileToUpdate);
+    await updateQueueStatus(fileToUpdate);
     while (!uploader.isComplete) {
       // eslint-disable-next-line no-await-in-loop
       await uploader.uploadChunk();
