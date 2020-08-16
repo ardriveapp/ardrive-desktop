@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import sqlite3 from 'sqlite3';
+import sqlite3, { Database } from 'sqlite3';
 
 // Use verbose mode in development
 let sql3 = sqlite3;
@@ -10,7 +10,7 @@ if (
   sql3 = sqlite3.verbose();
 }
 
-let db: sqlite3.Database | null;
+let db: Database | null;
 
 const run = (sql: any, params: any[] = []) => {
   return new Promise((resolve, reject) => {
@@ -365,6 +365,18 @@ export const getFilesToUpload_fromQueue = () => {
   return all('SELECT * FROM Queue WHERE tx_id = 0 ');
 };
 
+const createOrOpenDb = (dbFilePath: string): Promise<Database> => {
+  return new Promise((resolve, reject) => {
+    const database: Database = new sql3.Database(dbFilePath, (err) => {
+      if (err) {
+        console.error('Could not connect to database: '.concat(err.message));
+        return reject(err);
+      }
+      return resolve(database);
+    });
+  });
+};
+
 const createTablesInDB = async () => {
   await createProfileTable();
   await createQueueTable();
@@ -372,19 +384,14 @@ const createTablesInDB = async () => {
 };
 
 // Main entrypoint for database. MUST call this before anything else can happen
-export const setupDatabase = async (dbFilePath: string) => {
-  return new Promise((resolve, reject) => {
-    db = new sql3.Database(dbFilePath, async (err) => {
-      if (err) {
-        console.error('Could not connect to database: '.concat(err.message));
-        return reject(err);
-      }
-      try {
-        await createTablesInDB();
-      } catch (tableErr) {
-        return reject(tableErr);
-      }
-      return resolve();
-    });
-  });
+export const setupDatabase = async (
+  dbFilePath: string
+): Promise<Error | null> => {
+  try {
+    db = await createOrOpenDb(dbFilePath);
+    await createTablesInDB();
+  } catch (err) {
+    return err;
+  }
+  return null;
 };
