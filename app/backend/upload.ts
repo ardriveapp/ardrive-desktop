@@ -158,6 +158,23 @@ export const queueNewFiles = async (
         }
       }
     });
+
+    const filesToUpload = await getFilesToUpload_fromQueue();
+    await asyncForEach(
+      filesToUpload,
+      async (fileToUpload: { file_path: fs.PathLike; ardrive_id: any }) => {
+        fs.access(fileToUpload.file_path, fs.constants.F_OK, async (err) => {
+          if (err) {
+            console.log(
+              '%s was not found locally anymore.  Removing from the queue',
+              fileToUpload.file_path
+            );
+            await remove_fromQueue(fileToUpload.ardrive_id);
+          }
+        });
+      }
+    );
+
     return 'SUCCESS Queuing Files';
   } catch (err) {
     console.log(err);
