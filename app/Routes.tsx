@@ -3,16 +3,16 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import routes from './constants/routes.json';
 import App from './containers/App';
-import HomePage from './containers/HomePage';
+import WelcomePage from './containers/WelcomePage';
 
-// Lazily load routes and code split with webpacck
-const LazyCounterPage = React.lazy(() =>
-  import(/* webpackChunkName: "CounterPage" */ './containers/CounterPage')
+// Lazily load routes and code split with webpack
+const LazyHomePage = React.lazy(() =>
+  import(/* webpackChunkName: "HomePage" */ './containers/HomePage')
 );
 
-const CounterPage = (props: Record<string, any>) => (
+const HomePage = (props: Record<string, any>) => (
   <React.Suspense fallback={<h1>Loading...</h1>}>
-    <LazyCounterPage {...props} />
+    <LazyHomePage {...props} />
   </React.Suspense>
 );
 
@@ -20,7 +20,7 @@ export default function Routes() {
   return (
     <App>
       <Switch>
-        <Route path={routes.COUNTER} component={CounterPage} />
+        <Route path={routes.WELCOME} component={WelcomePage} />
         <Route path={routes.HOME} component={HomePage} />
       </Switch>
     </App>

@@ -1,0 +1,15 @@
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.welcome .logo {
+  width: 100px;
+  height: 100px;
+}
+
+.welcome h2 {
+  font-size: 5rem;
+}

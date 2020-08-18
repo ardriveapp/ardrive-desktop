@@ -15,6 +15,7 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import { setupDatabase } from './backend/db';
 
 export default class AppUpdater {
   constructor() {
@@ -123,4 +124,11 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
+});
+
+app.on('ready', () => {
+  console.log('ready', app.getAppPath());
+
+  // Once app is ready, get databse setup
+  setupDatabase(app.getAppPath().concat(path.sep, '.app.db'));
 });
