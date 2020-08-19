@@ -15,7 +15,6 @@ import {
   extToMime,
 } from './common';
 import { encryptFile, checksumFile, encryptTag } from './crypto';
-import { promptForArDriveUpload } from '../../cli/src/prompts';
 import {
   getByFileName_fromCompleted,
   getByFilePath_fromQueue,
@@ -54,6 +53,8 @@ async function uploadArDriveFile(
   try {
     let arDrivePublic;
     let arPrice;
+    let stats;
+    let encryptedStats;
     const fileName = basename(filePath);
     const fileHash = await checksumFile(filePath);
     const contentType = extToMime(filePath);
@@ -76,49 +77,58 @@ async function uploadArDriveFile(
     } else {
       // private by default, encrypt file
       arDrivePublic = '0';
+      const encryptedFilePath = filePath.concat('.enc');
       await encryptFile(filePath, user.password, user.jwk);
       await sleep(250);
-      const encryptedFileName = await encryptTag(
-        fileName,
-        user.password,
-        user.jwk
-      );
-      const encryptedFileHash = await encryptTag(
-        fileHash,
-        user.password,
-        user.jwk
-      );
-      const encryptedContentType = await encryptTag(
-        contentType,
-        user.password,
-        user.jwk
-      );
-      const encryptedArDrivePath = await encryptTag(
-        arDrivePath,
-        user.password,
-        user.jwk
-      );
-      const encryptedModifiedDate = await encryptTag(
-        modifiedDate,
-        user.password,
-        user.jwk
-      );
-      const encryptedFilePath = filePath.concat('.enc');
-      arPrice = await createArDriveTransaction(
-        user,
-        encryptedFilePath,
-        JSON.stringify(encryptedFileName),
-        JSON.stringify(encryptedFileHash),
-        JSON.stringify(encryptedContentType),
-        JSON.stringify(encryptedArDrivePath),
-        JSON.stringify(encryptedModifiedDate),
-        arDrivePublic
-      );
-      // Delete the .enc file since it has been uploaded
-      fs.unlinkSync(encryptedFilePath);
+      stats = fs.statSync(filePath);
+      encryptedStats = fs.statSync(encryptedFilePath);
+      if (encryptedStats.size > stats.size) {
+        const encryptedFileName = await encryptTag(
+          fileName,
+          user.password,
+          user.jwk
+        );
+        const encryptedFileHash = await encryptTag(
+          fileHash,
+          user.password,
+          user.jwk
+        );
+        const encryptedContentType = await encryptTag(
+          contentType,
+          user.password,
+          user.jwk
+        );
+        const encryptedArDrivePath = await encryptTag(
+          arDrivePath,
+          user.password,
+          user.jwk
+        );
+        const encryptedModifiedDate = await encryptTag(
+          modifiedDate,
+          user.password,
+          user.jwk
+        );
+        arPrice = await createArDriveTransaction(
+          user,
+          encryptedFilePath,
+          JSON.stringify(encryptedFileName),
+          JSON.stringify(encryptedFileHash),
+          JSON.stringify(encryptedContentType),
+          JSON.stringify(encryptedArDrivePath),
+          JSON.stringify(encryptedModifiedDate),
+          arDrivePublic
+        );
+        // Delete the .enc file since it has been uploaded
+        fs.unlinkSync(encryptedFilePath);
+        // Send the ArDrive fee to ARDRIVE Profit Sharing Comunity smart contract
+        await sendArDriveFee(user, arPrice.toFixed(6));
+      } else {
+        // Issue with encrypting - delete the encrypted file and try again
+        console.log('ERROR Encryption has failed... retrying');
+        fs.unlinkSync(encryptedFilePath);
+        await uploadArDriveFile(user, filePath, arDrivePath, modifiedDate);
+      }
     }
-    // Send the ArDrive fee to ARDRIVE Profit Sharing Comunity smart contract
-    await sendArDriveFee(user, arPrice.toFixed(6));
     return 'Uploaded';
   } catch (err) {
     console.log(err);
@@ -228,76 +238,80 @@ export const queueNewFiles = async (
   }
 };
 
+// Gets the price of latest upload batch
+export const getPriceOfNextUploadBatch = async () => {
+  let totalWinston = 0;
+  let totalSize = 0;
+  let winston = 0;
+  const filesToUpload = await getFilesToUpload_fromQueue();
+  if (Object.keys(filesToUpload).length > 0) {
+    await asyncForEach(
+      filesToUpload,
+      async (fileToUpload: { file_size: string | number }) => {
+        totalSize += +fileToUpload.file_size;
+        winston = await getWinston(fileToUpload.file_size);
+        totalWinston += +winston;
+      }
+    );
+    const totalArweavePrice = totalWinston * 0.000000000001;
+    let arDriveFee = +totalArweavePrice.toFixed(9) * 0.15;
+    if (arDriveFee < 0.00001) {
+      arDriveFee = 0.00001;
+    }
+    const totalArDrivePrice = +totalArweavePrice.toFixed(9) + arDriveFee;
+    return {
+      totalArDrivePrice,
+      totalSize: formatBytes(totalSize),
+      totalNumberOfFiles: Object.keys(filesToUpload).length,
+    };
+  }
+  return 0;
+};
+
 // Uploads all queued files
-export const uploadArDriveFiles = async (user: any) => {
+export const uploadArDriveFiles = async (user: any, readyToUpload: any) => {
   try {
     let filesUploaded = 0;
-    let totalWinston = 0;
-    let totalSize = 0;
-    let winston = 0;
-
     console.log('---Uploading All Queued Files---');
     const filesToUpload = await getFilesToUpload_fromQueue();
 
-    if (Object.keys(filesToUpload).length > 0) {
+    if (Object.keys(filesToUpload).length > 0 && readyToUpload === 'Y') {
+      // Ready to upload
       await asyncForEach(
         filesToUpload,
-        async (fileToUpload: { file_size: string | number }) => {
-          totalSize += +fileToUpload.file_size;
-          winston = await getWinston(fileToUpload.file_size);
-          totalWinston += +winston;
+        async (fileToUpload: {
+          file_size: string;
+          file_path: any;
+          file_name: string;
+          ardrive_path: any;
+          file_hash: any;
+          file_modified_date: any;
+        }) => {
+          if (fileToUpload.file_size === '0') {
+            console.log(
+              '%s has a file size of 0 and cannot be uploaded to the Permaweb',
+              fileToUpload.file_path
+            );
+            await remove_fromQueue(fileToUpload.file_path);
+          } else if (
+            await getByFileName_fromCompleted(fileToUpload.file_name)
+          ) {
+            console.log(
+              '%s was queued, but has been previously uploaded to the Permaweb',
+              fileToUpload.file_path
+            );
+            await remove_fromQueue(fileToUpload.file_path);
+          } else {
+            await uploadArDriveFile(
+              user,
+              fileToUpload.file_path,
+              fileToUpload.ardrive_path,
+              fileToUpload.file_modified_date
+            );
+            filesUploaded += 1;
+          }
         }
       );
-      const totalArweavePrice = totalWinston * 0.000000000001;
-      let arDriveFee = +totalArweavePrice.toFixed(9) * 0.15;
-      if (arDriveFee < 0.00001) {
-        arDriveFee = 0.00001;
-      }
-      const totalArDrivePrice = +totalArweavePrice.toFixed(9) + arDriveFee;
-      const readyToUpload = await promptForArDriveUpload(
-        totalArDrivePrice,
-        formatBytes(totalSize),
-        Object.keys(filesToUpload).length
-      );
-      if (readyToUpload === 'Y') {
-        // Ready to upload
-        await asyncForEach(
-          filesToUpload,
-          async (fileToUpload: {
-            file_size: string;
-            file_path: any;
-            file_name: string;
-            ardrive_path: any;
-            file_hash: any;
-            file_modified_date: any;
-          }) => {
-            if (fileToUpload.file_size === '0') {
-              console.log(
-                '%s has a file size of 0 and cannot be uploaded to the Permaweb',
-                fileToUpload.file_path
-              );
-              await remove_fromQueue(fileToUpload.file_path);
-            } else if (
-              await getByFileName_fromCompleted(fileToUpload.file_name)
-            ) {
-              console.log(
-                '%s was queued, but has been previously uploaded to the Permaweb',
-                fileToUpload.file_path
-              );
-              await remove_fromQueue(fileToUpload.file_path);
-            } else {
-              await uploadArDriveFile(
-                user,
-                fileToUpload.file_path,
-                fileToUpload.ardrive_path,
-                fileToUpload.file_modified_date
-              );
-              // console.log ("Removing old encrypted file %s", file_path)
-              filesUploaded += 1;
-            }
-          }
-        );
-      }
     }
     if (filesUploaded < 0) {
       console.log('Uploaded %s files to your ArDrive!', filesUploaded);

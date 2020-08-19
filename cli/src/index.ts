@@ -7,12 +7,13 @@ import {
   queueNewFiles,
   checkUploadStatus,
   uploadArDriveFiles,
+  getPriceOfNextUploadBatch,
 } from '../../app/backend/upload';
 import {
   getMyArDriveFiles,
   downloadMyArDriveFiles,
 } from '../../app/backend/download';
-import { setupAndGetUser, userLogin } from './prompts';
+import { setupAndGetUser, userLogin, promptForArDriveUpload } from './prompts';
 
 async function main() {
   console.log('       ___   _____    _____   _____    _   _     _   _____  ');
@@ -39,6 +40,8 @@ async function main() {
   // Check if user exists, if not, create a new one
   const profile = await getAll_fromProfile();
   let user;
+  let uploadBatch;
+  let readyToUpload;
   if (profile === undefined || profile.length === 0) {
     user = await setupAndGetUser();
   } else {
@@ -50,7 +53,16 @@ async function main() {
     await getMyArDriveFiles(user);
     await queueNewFiles(user, user.sync_folder_path);
     await checkUploadStatus();
-    await uploadArDriveFiles(user);
+    uploadBatch = await getPriceOfNextUploadBatch();
+    if (uploadBatch) {
+      readyToUpload = await promptForArDriveUpload(
+        uploadBatch.totalArDrivePrice,
+        uploadBatch.totalSize,
+        uploadBatch.totalAmountOfFiles
+      );
+      await uploadArDriveFiles(user, readyToUpload);
+    }
+
     await downloadMyArDriveFiles(user);
     const today = new Date();
     const date = `${today.getFullYear()}-${
