@@ -109,7 +109,6 @@ const createSyncTable = () => {
         isApproved text,
         isPublic text DEFAULT 0,
         file_modified_date text,
-        ardrive_id text UNIQUE,
         ardrive_path text,
         keywords text,
         prev_tx_id text,
@@ -126,15 +125,14 @@ const createQueueTable = () => {
           owner text,
           file_path text NOT NULL UNIQUE,
           file_name text,
-          file_extension text,
+          file_hash text,
           file_size text,
           sync_status INTEGER DEFAULT 0,
-          file_hash text,
           ignore INTEGER DEFAULT 0,
           isPublic text DEFAULT 0,
           file_modified_date text,
-          ardrive_id text,
           ardrive_path text,
+          ardrive_version text,
           keywords text,
           permaweb_link text,
           prev_tx_id text,
@@ -149,14 +147,14 @@ const createCompletedTable = () => {
           id integer NOT NULL PRIMARY KEY,
           tx_id text NOT NULL UNIQUE,
           isLocal text,
-          file_name text UNIQUE,
+          file_name text,
+          file_hash text,
           owner text,
           permaweb_link text,
-          ardrive_id text,
           isPublic text DEFAULT 0,
           file_modified_date text,
-          file_extension text,
           ardrive_path text,
+          ardrive_version text,
           ignore INTEGER DEFAULT 0,
           keywords text,
           prev_tx_id text,
@@ -169,39 +167,39 @@ export const queueFile = (file: {
   owner: any;
   file_path: any;
   file_name: any;
-  file_extension: any;
+  file_hash: any;
   file_size: any;
   file_modified_date: any;
   tx_id: any;
-  ardrive_id: any;
   isPublic: any;
   ardrive_path: any;
+  ardrive_version: any;
 }) => {
   const {
     owner,
     file_path,
     file_name,
-    file_extension,
+    file_hash,
     file_size,
     file_modified_date,
     tx_id,
-    ardrive_id,
     isPublic,
     ardrive_path,
+    ardrive_version,
   } = file;
   return run(
-    'REPLACE INTO Queue (owner, file_path, file_name, file_extension, file_size, file_modified_date, tx_id, ardrive_id, isPublic, ardrive_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'REPLACE INTO Queue (owner, file_path, file_name, file_hash, file_size, file_modified_date, tx_id, isPublic, ardrive_path, ardrive_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       owner,
       file_path,
       file_name,
-      file_extension,
+      file_hash,
       file_size,
       file_modified_date,
       tx_id,
-      ardrive_id,
       isPublic,
       ardrive_path,
+      ardrive_version,
     ]
   );
 };
@@ -209,43 +207,43 @@ export const queueFile = (file: {
 export const completeFile = (file: {
   owner: any;
   file_name: any;
-  file_extension: any;
+  file_hash: any;
   file_modified_date: any;
-  ardrive_id: any;
   ardrive_path: any;
   permaweb_link: any;
   tx_id: any;
   prev_tx_id: any;
   isLocal: any;
   isPublic: any;
+  ardrive_version: any;
 }) => {
   const {
     owner,
     file_name,
-    file_extension,
+    file_hash,
     file_modified_date,
-    ardrive_id,
     ardrive_path,
     permaweb_link,
     tx_id,
     prev_tx_id,
     isLocal,
     isPublic,
+    ardrive_version,
   } = file;
   return run(
-    'REPLACE INTO Completed (owner, file_name, file_extension, file_modified_date, ardrive_id, ardrive_path, permaweb_link, tx_id, prev_tx_id, isLocal, isPublic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'REPLACE INTO Completed (owner, file_name, file_hash, file_modified_date, ardrive_path, permaweb_link, tx_id, prev_tx_id, isLocal, isPublic, ardrive_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       owner,
       file_name,
-      file_extension,
+      file_hash,
       file_modified_date,
-      ardrive_id,
       ardrive_path,
       permaweb_link,
       tx_id,
       prev_tx_id,
       isLocal,
       isPublic,
+      ardrive_version,
     ]
   );
 };
@@ -282,8 +280,15 @@ export const createArDriveProfile = (profile: {
   );
 };
 
-export const getByArDriveId_fromCompleted = (ardrive_id: string) => {
-  return get(`SELECT * FROM Completed WHERE ardrive_id = ?`, [ardrive_id]);
+export const getByFileNameAndHash_fromCompleted = (file: {
+  file_hash: string;
+  file_name: string;
+}) => {
+  const { file_hash, file_name } = file;
+  return get(`SELECT * FROM Completed WHERE file_hash = ? AND file_name = ?`, [
+    file_hash,
+    file_name,
+  ]);
 };
 
 export const getByFileName_fromCompleted = (file_name: string) => {
@@ -291,7 +296,7 @@ export const getByFileName_fromCompleted = (file_name: string) => {
 };
 
 export const getByTx_fromCompleted = (tx_id: string) => {
-  return get(`SELECT ardrive_id FROM Completed WHERE tx_id = ?`, [tx_id]);
+  return get(`SELECT file_name FROM Completed WHERE tx_id = ?`, [tx_id]);
 };
 
 export const getAllIncomplete_fromCompleted = () => {
@@ -306,21 +311,21 @@ export const getAll_fromProfileWithWalletPublicKey = (
   ]);
 };
 
-export const remove_fromQueue = (ardrive_id: string) => {
-  return get(`DELETE FROM Queue WHERE ardrive_id = ?`, [ardrive_id]);
+export const remove_fromQueue = (file_path: string) => {
+  return get(`DELETE FROM Queue WHERE file_path = ?`, [file_path]);
 };
 
 export const updateQueueStatus = (file: {
   tx_id: any;
-  ardrive_id: any;
   isPublic: any;
   file_path: any;
 }) => {
-  const { tx_id, ardrive_id, isPublic, file_path } = file;
-  return run(
-    `UPDATE Queue SET tx_id = ?, ardrive_id = ?, isPublic = ? WHERE file_path = ?`,
-    [tx_id, ardrive_id, isPublic, file_path]
-  );
+  const { tx_id, isPublic, file_path } = file;
+  return run(`UPDATE Queue SET tx_id = ?, isPublic = ? WHERE file_path = ?`, [
+    tx_id,
+    isPublic,
+    file_path,
+  ]);
 };
 
 export const setIncompleteFileToIgnore = (tx_id: string) => {
@@ -339,10 +344,6 @@ export const setCompletedFileToDownload = (file_name: string) => {
 
 export const setQueuedFileToPublic = (file_path: string) => {
   return get(`UPDATE Queue SET isPublic = 1 WHERE file_path = ?`, [file_path]);
-};
-
-export const getByArDriveId_fromQueue = (ardrive_id: string) => {
-  return get(`SELECT * FROM Queue WHERE ardrive_id = ?`, [ardrive_id]);
 };
 
 export const getByFilePath_fromQueue = (file_path: string) => {

@@ -4,7 +4,7 @@
 import fs from 'fs';
 import { sleep, asyncForEach, gatewayURL } from './common';
 import { getTransactionData, getAllMyTxIds, getTransaction } from './arweave';
-import { checksumFile, decryptFile } from './crypto';
+import { checksumFile, decryptFile, decryptTag } from './crypto';
 import { promptForFileOverwrite } from '../../cli/src/prompts';
 import {
   getAll_fromCompleted,
@@ -56,6 +56,8 @@ async function downloadArDriveFile_byTx(
 export const getMyArDriveFiles = async (user: {
   wallet_public_key: string;
   owner: string;
+  password: string;
+  jwk: string;
 }) => {
   // console.log ("FOUND PERMAFILE %s but not ready to be downloaded yet", full_path)
   console.log('---Getting all your ArDrive files---');
@@ -63,10 +65,12 @@ export const getMyArDriveFiles = async (user: {
   let ardrive_owner: any;
   let ardrive_path: any;
   let ardrive_filename: any;
+  let ardrive_filehash: any;
   let ardrive_modifieddate: any;
   let ardrive_public: any;
-  let ardrive_id: any;
+  let ardrive_version: any;
   let foundFiles = 0;
+  let fileToAdd: any;
 
   const txids = await getAllMyTxIds(user);
 
@@ -97,28 +101,25 @@ export const getMyArDriveFiles = async (user: {
 
               switch (key) {
                 case 'User-Agent':
-                  // version = value;
-                  break;
-                case 'ArDrive-Path':
-                  ardrive_path = value;
-                  break;
-                case 'ArDrive-Extension':
-                  // ardrive_extension = value;
-                  break;
-                case 'ArDrive-ModifiedDate':
-                  ardrive_modifieddate = value;
+                  ardrive_version = value;
                   break;
                 case 'ArDrive-Owner':
                   ardrive_owner = value;
                   break;
+                case 'ArDrive-Public':
+                  ardrive_public = value;
+                  break;
                 case 'ArDrive-FileName':
                   ardrive_filename = value;
                   break;
-                case 'ArDrive-Id':
-                  ardrive_id = value;
+                case 'ArDrive-FileHash':
+                  ardrive_filehash = value;
                   break;
-                case 'ArDrive-Public':
-                  ardrive_public = value;
+                case 'ArDrive-Path':
+                  ardrive_path = value;
+                  break;
+                case 'ArDrive-ModifiedDate':
+                  ardrive_modifieddate = value;
                   break;
                 default:
                   break;
@@ -126,19 +127,51 @@ export const getMyArDriveFiles = async (user: {
             }
           );
 
-        const fileToAdd = {
-          owner: ardrive_owner,
-          file_name: ardrive_filename,
-          file_modified_date: ardrive_modifieddate,
-          ardrive_path,
-          ardrive_id,
-          permaweb_link: gatewayURL.concat(txid),
-          tx_id: txid,
-          prev_tx_id: txid,
-          isLocal: '0',
-          isPublic: ardrive_public,
-          file_extension: undefined, // TODO - FIX THIS
-        };
+        if (ardrive_public === '0') {
+          fileToAdd = {
+            owner: ardrive_owner,
+            file_name: await decryptTag(
+              JSON.parse(ardrive_filename),
+              user.password,
+              user.jwk
+            ),
+            file_hash: await decryptTag(
+              JSON.parse(ardrive_filehash),
+              user.password,
+              user.jwk
+            ),
+            file_modified_date: await decryptTag(
+              JSON.parse(ardrive_modifieddate),
+              user.password,
+              user.jwk
+            ),
+            ardrive_path: await decryptTag(
+              JSON.parse(ardrive_path),
+              user.password,
+              user.jwk
+            ),
+            permaweb_link: gatewayURL.concat(txid),
+            tx_id: txid,
+            prev_tx_id: txid,
+            isLocal: '0',
+            isPublic: ardrive_public,
+            ardrive_version,
+          };
+        } else {
+          fileToAdd = {
+            owner: ardrive_owner,
+            file_name: ardrive_filename,
+            file_hash: ardrive_filehash,
+            file_modified_date: ardrive_modifieddate,
+            ardrive_path,
+            permaweb_link: gatewayURL.concat(txid),
+            tx_id: txid,
+            prev_tx_id: txid,
+            isLocal: '0',
+            isPublic: ardrive_public,
+            ardrive_version,
+          };
+        }
         await completeFile(fileToAdd);
         foundFiles += 1;
       }
@@ -172,7 +205,7 @@ export const downloadMyArDriveFiles = async (user: {
         file_name: string;
         tx_id: string;
         isPublic: string;
-        ardrive_id: string;
+        file_hash: string;
       }) => {
         const full_path = user.sync_folder_path.concat(
           incompleteFile.ardrive_path,
@@ -193,9 +226,7 @@ export const downloadMyArDriveFiles = async (user: {
         } else {
           // console.log("%s is on the Permaweb, but is already downloaded with matching file name", full_path)
           const localFileHash = await checksumFile(full_path);
-          const incompleteFileArDriveID = incompleteFile.ardrive_id.split('//');
-          const incompleteFileHash = incompleteFileArDriveID[0];
-          if (incompleteFileHash === localFileHash) {
+          if (incompleteFile.file_hash === localFileHash) {
             // console.log("IGNORED! %s is on the Permaweb, but is already downloaded (matching file name and hash)", full_path)
             await updateCompletedStatus(incompleteFile.tx_id);
           } else {

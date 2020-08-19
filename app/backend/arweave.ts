@@ -6,9 +6,10 @@ import Arweave from 'arweave/node';
 import Community from 'community-js';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { getWinston, extToMime } from './common';
-import { checksumFile } from './crypto';
+import { checksumFile, encryptTag } from './crypto';
 import { Wallet } from './types';
 import { updateQueueStatus } from './db';
+import { encryptText } from '../../cli/build/app/backend/crypto';
 
 // ArDrive Version Tag
 const VERSION = '0.1.1';
@@ -73,7 +74,7 @@ export const getAllMyTxIds = async (user: {
     });
     return txids;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return Promise.reject(err);
   }
 };
@@ -84,7 +85,7 @@ export const getTransaction = async (txid: string): Promise<any> => {
     const tx = await arweave.transactions.get(txid);
     return tx;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return Promise.reject(err);
   }
 };
@@ -106,7 +107,7 @@ export const getTransactionStatus = async (txid: string) => {
     const response = await arweave.transactions.getStatus(txid);
     return response.status;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return 0;
   }
 };
@@ -126,14 +127,16 @@ export const getWalletBalance = async (walletPublicKey: string) => {
 export const createArDriveTransaction = async (
   user: { jwk: string; owner: string },
   filePath: string,
+  fileName: string,
+  fileHash: string,
+  contentType: string,
   arDrivePath: string,
-  extension: string,
   modifiedDate: string,
   arDrivePublic: string
 ) => {
   try {
     const fileToUpload = fs.readFileSync(filePath);
-    const fileName = path.basename(filePath.replace('.enc', ''));
+    // const fileName = path.basename(filePath.replace('.enc', ''));
     const transaction = await arweave.createTransaction(
       { data: arweave.utils.concatBuffers([fileToUpload]) },
       JSON.parse(user.jwk)
@@ -147,28 +150,24 @@ export const createArDriveTransaction = async (
       txSize,
       arPrice
     );
-    // Ideally, all tags would also be encrypted if the file is encrypted
-    const unencryptedFilePath = filePath.replace('.enc', '');
-    const localFileHash = await checksumFile(unencryptedFilePath);
-    const arDriveId = localFileHash.concat('//', fileName);
-    // Get Content-Type of file
-    const contentType = extToMime(extension);
+
     // Tag file
     transaction.addTag('Content-Type', contentType);
     transaction.addTag('User-Agent', `ArDrive/${VERSION}`);
+    transaction.addTag('ArDrive-Owner', user.owner);
+    transaction.addTag('ArDrive-Public', arDrivePublic);
     transaction.addTag('ArDrive-FileName', fileName);
+    transaction.addTag('ArDrive-FileHash', fileHash);
     transaction.addTag('ArDrive-Path', arDrivePath);
     transaction.addTag('ArDrive-ModifiedDate', modifiedDate);
-    transaction.addTag('ArDrive-Owner', user.owner);
-    transaction.addTag('ArDrive-Id', arDriveId);
-    transaction.addTag('ArDrive-Public', arDrivePublic);
+    // transaction.addTag('ArDrive-Id', arDriveId); no longer needed
+
     // Sign file
     await arweave.transactions.sign(transaction, JSON.parse(user.jwk));
     const uploader = await arweave.transactions.getUploader(transaction);
     const fileToUpdate = {
       file_path: filePath.replace('.enc', ''),
       tx_id: transaction.id,
-      ardrive_id: arDriveId,
       isPublic: arDrivePublic,
     };
     // Update the queue since the file is now being uploaded

@@ -2,7 +2,7 @@
 import mime from 'mime-types';
 import fetch from 'node-fetch';
 import fs from 'fs';
-import path from 'path';
+import { sep, join, extname, basename } from 'path';
 import { Wallet } from './types';
 
 export const gatewayURL = 'https://arweave.net/';
@@ -42,8 +42,10 @@ const formatBytes = (bytes: number) => {
   return `${(bytes / gigaBytes).toFixed(decimal)} GB`;
 };
 
-const extToMime = (type: string): string => {
-  const m = mime.lookup(type);
+const extToMime = (fullpath: string): string => {
+  let extension = extname(fullpath);
+  extension = extension.toLowerCase();
+  const m = mime.lookup(extension);
   return m === false ? 'unknown' : m;
 };
 
@@ -79,7 +81,7 @@ const backupWallet = async (
 ) => {
   try {
     const backupWalletFile = backupWalletPath.concat(
-      path.sep,
+      sep,
       'ArDrive_Backup_',
       owner,
       '.json'

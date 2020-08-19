@@ -137,3 +137,46 @@ export const decryptText = async (
     return 0;
   }
 };
+
+export const encryptTag = async (
+  text: crypto.BinaryLike,
+  password: any,
+  jwk: any
+) => {
+  try {
+    const initVect = crypto.randomBytes(16);
+    const CIPHER_KEY = getFileCipherKey(password, jwk);
+    const cipher = crypto.createCipheriv('aes256', CIPHER_KEY, initVect);
+    let encryptedText = cipher.update(text);
+    encryptedText = Buffer.concat([encryptedText, cipher.final()]);
+    return {
+      iv: initVect.toString('hex'),
+      encryptedText: encryptedText.toString('hex'),
+    };
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+};
+
+export const decryptTag = async (
+  text: {
+    iv: { toString: () => string };
+    encryptedText: { toString: () => string };
+  },
+  password: any,
+  jwk: any
+) => {
+  try {
+    const iv = Buffer.from(text.iv.toString(), 'hex');
+    const encryptedText = Buffer.from(text.encryptedText.toString(), 'hex');
+    const cipherKey = getFileCipherKey(password, jwk);
+    const decipher = crypto.createDecipheriv('aes256', cipherKey, iv);
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+};
