@@ -7,6 +7,8 @@ import {
   getAll_fromProfileWithWalletPublicKey,
 } from './db';
 
+const uuidv4 = require('uuid/v4');
+
 export const setupArDriveSyncFolder = async (syncFolderPath: string) => {
   try {
     const stats = fs.statSync(syncFolderPath);
@@ -54,8 +56,10 @@ export const setUser = async (
   const syncSchedule = '1 minute';
   // 5 minutes, 15 mintues, 30 minutes, 60 minutes
   // Save to Database
+  const arDriveId = uuidv4();
   const profileToAdd = {
     owner,
+    arDriveId,
     sync_schedule: syncSchedule,
     data_protection_key: JSON.stringify(encryptedDataProtectionKey),
     wallet_private_key: JSON.stringify(encryptedWalletPrivateKey),
@@ -69,6 +73,7 @@ export const setUser = async (
   console.log('New ArDrive user added!');
   return {
     owner,
+    arDriveId,
     password: dataProtectionKey,
     jwk: JSON.stringify(walletPrivateKey),
     wallet_public_key: walletPublicKey,
