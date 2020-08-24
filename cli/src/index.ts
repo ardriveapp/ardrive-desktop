@@ -58,7 +58,7 @@ async function main() {
       readyToUpload = await promptForArDriveUpload(
         uploadBatch.totalArDrivePrice,
         uploadBatch.totalSize,
-        uploadBatch.totalAmountOfFiles
+        uploadBatch.totalNumberOfFiles
       );
       await uploadArDriveFiles(user, readyToUpload);
     }
