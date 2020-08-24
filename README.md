@@ -9,14 +9,9 @@ ArDrive is built with Electron and React.
 To get started, install deps and start dev:
 
 ```
-$ git clone https://github.com/ardrive/ardrive-desktop
+$ git clone https://github.com/ardriveapp/ardrive-desktop
 $ cd ardrive-desktop
 $ yarn
 $ yarn dev
 ```
-
-old:
-
-To use ArDrive, please set the configuration options in the index.js for your wallet, password and sync folder.
-
-Please leave me any feedback at vilenarios@gmail.com!
+Have any questions?  Join the ArDrive Discord channel for support, news and updates.  https://discord.gg/ya4hf2H
