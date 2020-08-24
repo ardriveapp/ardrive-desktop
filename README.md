@@ -21,14 +21,8 @@ To get started with the CLI, install deps and start dev:
 $ git clone https://github.com/ardriveapp/ardrive-desktop
 $ cd ardrive-desktop
 $ yarn
-$ cd app/backend
+$ cd cli
 $ yarn
-$ cd ../../cli
-$ yarn
-$ yarn start <- THIS WILL THROW AN ERROR
-$ cd build/app/backend
-$ yarn
-$ cd ../../..
-$ yarn start
+$ yarn start (this may need to be run twice)
 ```
 Have any questions?  Join the ArDrive Discord channel for support, news and updates.  https://discord.gg/ya4hf2H
