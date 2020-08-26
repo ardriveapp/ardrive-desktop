@@ -23,7 +23,7 @@ const arweave = Arweave.init({
 });
 
 // ArDrive Profit Sharing Community Smart Contract
-const communityTxId = 'Zxsxx2ON_dojHD_WlLBbOAo3N_KBQUmJ4JxYl-P19pQ';
+const communityTxId = 'HzCmXxpvcnPSEPx0y64WKT-9_gYDxMhMZlb6-R_STQ8';
 // eslint-disable-next-line new-cap
 const community = new Community(arweave);
 
