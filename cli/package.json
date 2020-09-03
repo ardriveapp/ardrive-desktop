@@ -1,6 +1,6 @@
 {
   "name": "ardrive-cli",
-  "version": "0.0.1",
+  "version": "0.1.12",
   "description": "simple cli wrapper for ardrive api",
   "main": "index.js",
   "dependencies": {

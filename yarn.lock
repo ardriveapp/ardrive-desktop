@@ -2635,7 +2635,7 @@ arrify@^2.0.1:
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-2.0.1.tgz#c9655e9331e0abcd588d2a7cad7e9956f66701fa"
   integrity sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==
 
-arweave@^1.7.1, arweave@^1.9.0:
+arweave@^1.7.1, arweave@^1.9.0, arweave@^1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.9.1.tgz#9b3754eeb38a244ed9abf1024ab0df6bfb76a990"
   integrity sha512-S0oLpxTKV0r6TPQ3l7ZZu8c6tE4F2xtnw+vQKR2+232k/rHbXqeuOijZZMEgHLoTi7c/MasXgyj4QLALh7hrXA==
@@ -3702,6 +3702,11 @@ bignumber.js@^8.1.1:
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-8.1.1.tgz#4b072ae5aea9c20f6730e4e5d529df1271c4d885"
   integrity sha512-QD46ppGintwPGuL1KqmwhR0O+N2cZUg8JG/VzwI2e28sM9TqHjQB10lI4QAaMHVbLzwVLLAwEglpKPViWX+5NQ==
 
+bignumber.js@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
+  integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
+
 bin-v8-flags-filter@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/bin-v8-flags-filter/-/bin-v8-flags-filter-1.2.0.tgz#023fc4ee22999b2b1f6dd1b7253621366841537e"
@@ -4615,6 +4620,15 @@ commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=
+
+community-js@^1.0.9:
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/community-js/-/community-js-1.0.13.tgz#4857523b6f7894c201d9dcd5339f015cfcdc07f6"
+  integrity sha512-VOZGbHppnmayoLK20DI3/zc/Rb8/WYiurnHOy0E5i0633RhymFnDyaA2PJ3d06JULJ56QRF6HM0RCcZZ2Byo2w==
+  dependencies:
+    arweave "^1.9.1"
+    smartweave "^0.3.3"
+    tiny-worker "^2.3.0"
 
 compare-versions@^3.6.0:
   version "3.6.0"
@@ -6297,6 +6311,11 @@ eslint@^7.5.0:
     table "^5.2.3"
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
+
+esm@^3.2.25:
+  version "3.2.25"
+  resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
+  integrity sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==
 
 esotope-hammerhead@0.5.5:
   version "0.5.5"
@@ -12671,6 +12690,15 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
+smartweave@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/smartweave/-/smartweave-0.3.3.tgz#331b31f099cfe655e4b1300210234cee097bc70d"
+  integrity sha512-G//7xPG4vRRC3FR7u269zzzvAY5e67Kp5Ypkiu03hOyIHYh4kDFGlOAdSJJcJ+mWKE9MhOjdU4IxxZqbFVJQeA==
+  dependencies:
+    arweave "^1.9.1"
+    bignumber.js "^9.0.0"
+    yargs "^15.3.1"
+
 "smartweave@https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs":
   version "0.3.2"
   resolved "https://arweave.net/AM-u4X2po-3Tx7fma3lRonCfLwrjI42IALwDL_YFXBs#b0dfab671e01f51a0f6fcd60d7672203c79b4c2d"
@@ -13754,6 +13782,13 @@ tiny-warning@^1.0.0, tiny-warning@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
+
+tiny-worker@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/tiny-worker/-/tiny-worker-2.3.0.tgz#715ae34304c757a9af573ae9a8e3967177e6011e"
+  integrity sha512-pJ70wq5EAqTAEl9IkGzA+fN0836rycEuz2Cn6yeZ6FRzlVS5IDOkFHpIoEsksPRQV34GDqXm65+OlnZqUSyK2g==
+  dependencies:
+    esm "^3.2.25"
 
 tmp-promise@^1.0.5:
   version "1.1.0"

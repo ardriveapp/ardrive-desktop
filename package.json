@@ -1,7 +1,7 @@
 {
-  "name": "ArDrive",
+  "name": "ardrive",
   "productName": "ArDrive",
-  "version": "0.0.1",
+  "version": "0.1.12",
   "description": "ArDrive - Secure, Permenant Storage",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -107,7 +107,7 @@
   },
   "author": {
     "name": "ArDrive DevTeam",
-    "email": "dev@ardrive.io",
+    "email": "info@ardrive.io",
     "url": "https://ardrive.io"
   },
   "contributors": [],
