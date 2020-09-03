@@ -180,3 +180,23 @@ export const decryptTag = async (
     return 0;
   }
 };
+
+export const decryptFileMetaData = async (
+  fileIv: { toString: () => string },
+  fileEncryptedText: { toString: () => string },
+  password: any,
+  jwk: any
+) => {
+  try {
+    const iv = Buffer.from(fileIv.toString(), 'hex');
+    const encryptedText = Buffer.from(fileEncryptedText.toString(), 'hex');
+    const cipherKey = getFileCipherKey(password, jwk);
+    const decipher = crypto.createDecipheriv('aes256', cipherKey, iv);
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return JSON.parse(decrypted.toString());
+  } catch (err) {
+    console.log(err);
+    return 0;
+  }
+};

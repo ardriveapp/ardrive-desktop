@@ -1,11 +1,16 @@
 import promptSync from 'prompt-sync';
 import passwordPrompt from 'prompts';
 import { sep } from 'path';
-import { getLocalWallet, createArDriveWallet } from '../../app/backend/arweave';
+import {
+  getLocalWallet,
+  createArDriveWallet,
+  getAllMyArDriveIds,
+} from '../../app/backend/arweave';
 import { checkOrCreateFolder, backupWallet } from '../../app/backend/common';
 import { setUser, getUser } from '../../app/backend/profile';
 
 const prompt = promptSync({ sigint: true });
+const uuidv4 = require('uuid/v4');
 
 // Get path to local wallet and return that wallet public and private key
 const promptForLocalWallet = async () => {
@@ -21,6 +26,24 @@ const promptForNickname = async () => {
   console.log('What is the nickname you would like to give to this wallet?');
   const owner = prompt('Please enter your nickname: ');
   return owner;
+};
+
+// Get the ArDrive owner nickname
+const promptForArDriveId = async (uniqueArDriveIds: any) => {
+  console.log(
+    'Existing ArDrive IDs have been found for this wallet.  Which one would you like to use?'
+  );
+  let i = 0;
+  uniqueArDriveIds.forEach((uniqueArDriveId: any) => {
+    console.log('%s: %s', i, uniqueArDriveId);
+    i += 1;
+  });
+  console.log('%s: Generate a new ArDrive ID', i);
+  const choice = prompt('Please select which number: ');
+  if (+choice === i) {
+    return uuidv4();
+  }
+  return uniqueArDriveIds[choice];
 };
 
 // Get the location to backup the new wallet
@@ -120,10 +143,7 @@ export const setupAndGetUser = async () => {
     );
 
     let wallet;
-    const owner = await promptForNickname();
-    const syncFolderPath = await promptForSyncFolderPath();
-    const newLoginPasswordResponse = await promptForNewLoginPassword();
-    const dataProtectionKeyResponse = await promptForDataProtectionKey();
+    const owner = await promptForNickname(); // Must replace with Arweave ID
 
     const existingWallet = await promptForWallet();
     if (existingWallet === 'N') {
@@ -133,8 +153,21 @@ export const setupAndGetUser = async () => {
     } else {
       wallet = await promptForLocalWallet();
     }
+
+    const uniqueArDriveIds = await getAllMyArDriveIds(wallet.walletPublicKey);
+    let arDriveId: string;
+    if (uniqueArDriveIds.length > 0) {
+      arDriveId = await promptForArDriveId(uniqueArDriveIds);
+    } else {
+      arDriveId = uuidv4();
+    }
+    const syncFolderPath = await promptForSyncFolderPath();
+    const newLoginPasswordResponse = await promptForNewLoginPassword();
+    const dataProtectionKeyResponse = await promptForDataProtectionKey();
+
     const user = await setUser(
       owner,
+      arDriveId,
       syncFolderPath,
       wallet.walletPrivateKey,
       wallet.walletPublicKey,
@@ -156,10 +189,18 @@ export const userLogin = async (walletPublicKey, owner) => {
   return user;
 };
 
-export const promptForArDriveUpload = async (price, size, amountOfFiles) => {
+export const promptForArDriveUpload = async (
+  price,
+  size,
+  amountOfFiles,
+  amountOfMetaData,
+  amountOfFolders
+) => {
   console.log(
-    'Uploading %s files (%s) to the Permaweb, totaling %s AR',
+    'Uploading %s files, %s folders and %s changes (%s) to the Permaweb, totaling %s AR',
     amountOfFiles,
+    amountOfFolders,
+    amountOfMetaData,
     size,
     price
   );

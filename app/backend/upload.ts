@@ -1,8 +1,8 @@
 // upload.js
-import { sep, join, extname, basename } from 'path';
 import fs from 'fs';
 import {
-  createArDriveTransaction,
+  createArDriveMetaDataTransaction,
+  createArDriveDataTransaction,
   sendArDriveFee,
   getTransactionStatus,
 } from './arweave';
@@ -12,308 +12,293 @@ import {
   formatBytes,
   gatewayURL,
   sleep,
-  extToMime,
+  checkFileExistsSync,
 } from './common';
-import { encryptFile, checksumFile, encryptTag } from './crypto';
+import { encryptFile, encryptTag } from './crypto';
 import {
-  getByFileName_fromCompleted,
-  getByFilePath_fromQueue,
-  setCompletedFileToDownload,
-  getFilesToUpload_fromQueue,
-  remove_fromQueue,
-  getAllUploaded_fromQueue,
-  completeFile,
-  queueFile,
-  getByFileNameAndHash_fromCompleted,
+  getFilesToUploadFromSyncTable,
+  getAllUploadedFilesFromSyncTable,
+  removeFromSyncTable,
+  completeFileDataFromSyncTable,
+  completeFileMetaDataFromSyncTable,
+  deleteFromSyncTable,
 } from './db';
 
-// ArDrive Version Tag
-const VERSION = '0.1.1';
-
-// Recursively returns all files in a directory
-const readDirR = (dir: string): any =>
-  fs.statSync(dir).isDirectory()
-    ? Array.prototype.concat(
-        ...fs.readdirSync(dir).map((f) => readDirR(join(dir, f)))
-      )
-    : dir;
-
-// Tags and Uploads a single file to your ArDrive
-async function uploadArDriveFile(
-  user: {
-    sync_folder_path: string;
-    password: any;
-    jwk: string;
-    owner: string;
-  },
-  filePath: string,
-  arDrivePath: any,
-  modifiedDate: any
-) {
-  try {
-    let arDrivePublic;
-    let arPrice;
-    let stats;
-    let encryptedStats;
-    const fileName = basename(filePath);
-    const fileHash = await checksumFile(filePath);
-    const contentType = extToMime(filePath);
-
-    if (
-      filePath.indexOf(user.sync_folder_path.concat(sep, 'Public', sep)) !== -1
-    ) {
-      // Public by choice, do not encrypt
-      arDrivePublic = '1';
-      arPrice = await createArDriveTransaction(
-        user,
-        filePath,
-        fileName,
-        fileHash,
-        contentType,
-        arDrivePath,
-        modifiedDate,
-        arDrivePublic
-      );
-    } else {
-      // private by default, encrypt file
-      arDrivePublic = '0';
-      const encryptedFilePath = filePath.concat('.enc');
-      await encryptFile(filePath, user.password, user.jwk);
-      await sleep(250);
-      stats = fs.statSync(filePath);
-      encryptedStats = fs.statSync(encryptedFilePath);
-      if (encryptedStats.size > stats.size) {
-        const encryptedFileName = await encryptTag(
-          fileName,
-          user.password,
-          user.jwk
-        );
-        const encryptedFileHash = await encryptTag(
-          fileHash,
-          user.password,
-          user.jwk
-        );
-        const encryptedContentType = await encryptTag(
-          contentType,
-          user.password,
-          user.jwk
-        );
-        const encryptedArDrivePath = await encryptTag(
-          arDrivePath,
-          user.password,
-          user.jwk
-        );
-        const encryptedModifiedDate = await encryptTag(
-          modifiedDate,
-          user.password,
-          user.jwk
-        );
-        arPrice = await createArDriveTransaction(
-          user,
-          encryptedFilePath,
-          JSON.stringify(encryptedFileName),
-          JSON.stringify(encryptedFileHash),
-          JSON.stringify(encryptedContentType),
-          JSON.stringify(encryptedArDrivePath),
-          JSON.stringify(encryptedModifiedDate),
-          arDrivePublic
-        );
-        // Delete the .enc file since it has been uploaded
-        fs.unlinkSync(encryptedFilePath);
-        // Send the ArDrive fee to ARDRIVE Profit Sharing Comunity smart contract
-        await sendArDriveFee(user, arPrice.toFixed(6));
-      } else {
-        // Issue with encrypting - delete the encrypted file and try again
-        console.log('ERROR Encryption has failed... retrying');
-        fs.unlinkSync(encryptedFilePath);
-        await uploadArDriveFile(user, filePath, arDrivePath, modifiedDate);
-      }
-    }
-    return 'Uploaded';
-  } catch (err) {
-    console.log(err);
-    return 'Error uploading file';
-  }
-}
-
-// Checks for any new files in the folder that arent synced or queued
-export const queueNewFiles = async (
-  user: { sync_folder_path: any; owner: any },
-  sync_folder_path: string | any[]
-) => {
-  try {
-    console.log('---Queueing New Files in %s---', sync_folder_path);
-    let allFiles = null;
-    try {
-      allFiles = readDirR(user.sync_folder_path);
-    } catch (err) {
-      console.error(err);
-      return 'Unable to scan directory';
-    }
-
-    // listing all files using forEach
-    await asyncForEach(allFiles, async (file: any) => {
-      const fullpath = file;
-      let stats = null;
-      try {
-        stats = fs.statSync(fullpath);
-      } catch (err) {
-        console.log('File not ready yet %s', fullpath);
-        return;
-      }
-
-      let extension = extname(fullpath);
-      const fileName = basename(fullpath);
-      extension = extension.toLowerCase();
-
-      if (extension !== '.enc' && stats.size !== 0) {
-        const localFileHash = await checksumFile(fullpath);
-        let ardrivePublic = '0';
-
-        if (fullpath.indexOf(sync_folder_path.concat('\\Public\\')) !== -1) {
-          // Public by choice, do not encrypt
-          ardrivePublic = '1';
-        }
-
-        const fileToCheck = {
-          file_name: fileName,
-          file_hash: localFileHash,
-        };
-        const matchingFileNameAndHash = await getByFileNameAndHash_fromCompleted(
-          fileToCheck
-        );
-        const matchingFileName = await getByFileName_fromCompleted(fileName);
-        const isQueued = await getByFilePath_fromQueue(fullpath);
-        let ardrivePath = fullpath.replace(user.sync_folder_path, '');
-        ardrivePath = ardrivePath.replace(fileName, '');
-
-        if (matchingFileNameAndHash) {
-          // console.log("%s is already completed with a matching file name and file hash
-        } else if (matchingFileName) {
-          // A file exists on the permaweb with a different hash.  Changing that file's local status to 0 to force user to resolve conflict.
-          setCompletedFileToDownload(fileName);
-          // console.log ("Forcing user to resolve conflict %s", file)
-        } else if (isQueued) {
-          await getByFileName_fromCompleted(fileName);
-          // console.log ("%s found in the queue", fullpath)
-        } else {
-          // console.log("%s queueing file", fullpath)
-          const fileToQueue = {
-            owner: user.owner,
-            file_path: fullpath,
-            file_name: fileName,
-            file_hash: localFileHash,
-            file_size: stats.size,
-            isPublic: ardrivePublic,
-            file_modified_date: stats.mtime,
-            tx_id: '0',
-            ardrive_path: ardrivePath,
-            ardrive_version: VERSION,
-          };
-          queueFile(fileToQueue);
-        }
-      }
-    });
-
-    const filesToUpload = await getFilesToUpload_fromQueue();
-    await asyncForEach(
-      filesToUpload,
-      async (fileToUpload: { file_path: string }) => {
-        fs.access(fileToUpload.file_path, fs.constants.F_OK, async (err) => {
-          if (err) {
-            console.log(
-              '%s was not found locally anymore.  Removing from the queue',
-              fileToUpload.file_path
-            );
-            await remove_fromQueue(fileToUpload.file_path);
-          }
-        });
-      }
-    );
-
-    return 'SUCCESS Queuing Files';
-  } catch (err) {
-    console.log(err);
-    return 'ERROR Queuing Files';
-  }
-};
-
-// Gets the price of latest upload batch
 export const getPriceOfNextUploadBatch = async () => {
-  let totalWinston = 0;
+  let totalWinstonData = 0;
+  let totalArweaveMetadataPrice = 0;
+  let totalNumberOfFileUploads = 0;
+  let totalNumberOfFolderUploads = 0;
+  let totalNumberOfMetaDataUploads = 0;
   let totalSize = 0;
   let winston = 0;
-  const filesToUpload = await getFilesToUpload_fromQueue();
+
+  // Get all files that are ready to be uploaded
+  const filesToUpload = await getFilesToUploadFromSyncTable();
   if (Object.keys(filesToUpload).length > 0) {
     await asyncForEach(
       filesToUpload,
-      async (fileToUpload: { file_size: string | number }) => {
-        totalSize += +fileToUpload.file_size;
-        winston = await getWinston(fileToUpload.file_size);
-        totalWinston += +winston;
+      async (fileToUpload: {
+        id: string;
+        filePath: string;
+        entityType: string;
+        fileMetaDataSyncStatus: any;
+        fileDataSyncStatus: any;
+        fileSize: string | number;
+      }) => {
+        // If the file doesnt exist, we must remove it from the Sync table and not include it in our upload price
+        if (!checkFileExistsSync(fileToUpload.filePath)) {
+          console.log(
+            '%s is not local anymore.  Removing from the queue.',
+            fileToUpload.filePath
+          );
+          await deleteFromSyncTable(fileToUpload.id);
+          return 'File not local anymore';
+        }
+        if (
+          fileToUpload.fileMetaDataSyncStatus === '1' &&
+          fileToUpload.entityType === 'folder'
+        ) {
+          totalArweaveMetadataPrice += 0.0000005;
+          totalNumberOfFolderUploads += 1;
+        }
+        if (
+          fileToUpload.fileMetaDataSyncStatus === '1' &&
+          fileToUpload.fileDataSyncStatus === '1'
+        ) {
+          totalSize += +fileToUpload.fileSize;
+          winston = await getWinston(fileToUpload.fileSize);
+          totalWinstonData += +winston + 0.0000005;
+          totalNumberOfFileUploads += 1;
+        } else if (fileToUpload.entityType === 'file') {
+          totalArweaveMetadataPrice += 0.0000005;
+          totalNumberOfMetaDataUploads += 1;
+        }
+        return 'Calculated price';
       }
     );
-    const totalArweavePrice = totalWinston * 0.000000000001;
-    let arDriveFee = +totalArweavePrice.toFixed(9) * 0.15;
-    if (arDriveFee < 0.00001) {
+    const totalArweaveDataPrice = totalWinstonData * 0.000000000001;
+    let arDriveFee = +totalArweaveDataPrice.toFixed(9) * 0.15;
+    if (arDriveFee < 0.00001 && totalArweaveDataPrice > 0) {
       arDriveFee = 0.00001;
     }
-    const totalArDrivePrice = +totalArweavePrice.toFixed(9) + arDriveFee;
+    const totalArDrivePrice =
+      +totalArweaveDataPrice.toFixed(9) +
+      arDriveFee +
+      totalArweaveMetadataPrice;
+
     return {
       totalArDrivePrice,
       totalSize: formatBytes(totalSize),
-      totalNumberOfFiles: Object.keys(filesToUpload).length,
+      totalNumberOfFileUploads,
+      totalNumberOfMetaDataUploads,
+      totalNumberOfFolderUploads,
     };
   }
   return 0;
 };
+
+// Tags and Uploads a single file to your ArDrive
+async function uploadArDriveFileData(
+  user: { sync_folder_path: string; password: any; jwk: string; owner: string },
+  fileToUpload: {
+    id: any;
+    appName: string;
+    appVersion: string;
+    unixTime: string;
+    contentType: string;
+    entityType: string;
+    arDriveId: string;
+    parentFolderId: string;
+    fileId: string;
+    fileSize: string;
+    filePath: any;
+    fileName: string;
+    arDrivePath: any;
+    fileHash: any;
+    fileModifiedDate: any;
+    fileVersion: any;
+    isPublic: any;
+    fileDataSyncStatus: any;
+    fileMetaDataSyncStatus: any;
+    dataTxId: any;
+  }
+) {
+  try {
+    const winston = await getWinston(fileToUpload.fileSize);
+    const arPrice = +winston * 0.000000000001;
+    let dataTxId;
+    console.log(
+      'Uploading %s (%d bytes) at %s to the Permaweb',
+      fileToUpload.filePath,
+      fileToUpload.fileSize,
+      arPrice
+    );
+
+    if (fileToUpload.isPublic === '1') {
+      // Public file, do not encrypt
+      dataTxId = await createArDriveDataTransaction(
+        user,
+        fileToUpload.filePath,
+        fileToUpload.contentType,
+        fileToUpload.id
+      );
+    } else {
+      // Private file, so it must be encrypted
+      const encryptedFilePath = fileToUpload.filePath.concat('.enc');
+      await encryptFile(fileToUpload.filePath, user.password, user.jwk);
+      await sleep(250);
+
+      // If encrypted file is not bigger than non-encrypted file, then there is a problem and we skip for now
+      const encryptedStats = fs.statSync(encryptedFilePath);
+      if (encryptedStats.size < +fileToUpload.fileSize) {
+        return 0;
+      }
+      dataTxId = await createArDriveDataTransaction(
+        user,
+        encryptedFilePath,
+        fileToUpload.contentType,
+        fileToUpload.id
+      );
+      fs.unlinkSync(encryptedFilePath);
+    }
+    await sendArDriveFee(user, arPrice);
+    return dataTxId;
+  } catch (err) {
+    console.log(err);
+    return 'Error uploading file data';
+  }
+}
+
+// Tags and Uploads a single file/folder metadata to your ArDrive
+async function uploadArDriveFileMetaData(
+  user: { sync_folder_path: string; password: any; jwk: string; owner: string },
+  fileToUpload: {
+    id: any;
+    appName: string;
+    appVersion: string;
+    unixTime: string;
+    contentType: string;
+    entityType: string;
+    arDriveId: string;
+    parentFolderId: string;
+    fileId: string;
+    fileSize: string;
+    filePath: any;
+    fileName: string;
+    arDrivePath: any;
+    fileHash: any;
+    fileModifiedDate: any;
+    fileVersion: any;
+    isPublic: any;
+    fileDataSyncStatus: any;
+    fileMetaDataSyncStatus: any;
+    dataTxId: any;
+  }
+) {
+  try {
+    // create primary metadata, used to tag this transaction
+    const primaryFileMetaDataTags = {
+      appName: fileToUpload.appName,
+      appVersion: fileToUpload.appVersion,
+      unixTime: fileToUpload.unixTime,
+      contentType: 'application/json',
+      entityType: fileToUpload.entityType,
+      arDriveId: fileToUpload.arDriveId,
+      parentFolderId: fileToUpload.parentFolderId,
+      fileId: fileToUpload.fileId,
+    };
+    // create secondary metadata, used to further ID the file (with encryption if necessary)
+    const secondaryFileMetaDataTags = {
+      name: fileToUpload.fileName,
+      size: fileToUpload.fileSize,
+      hash: fileToUpload.fileHash,
+      path: fileToUpload.arDrivePath,
+      modifiedDate: fileToUpload.fileModifiedDate,
+      dataTxId: fileToUpload.dataTxId,
+      fileVersion: fileToUpload.fileVersion,
+    };
+    // Convert to JSON string
+    const secondaryFileMetaDataJSON = JSON.stringify(secondaryFileMetaDataTags);
+
+    if (fileToUpload.isPublic === '1') {
+      // Public file, do not encrypt
+      await createArDriveMetaDataTransaction(
+        user,
+        primaryFileMetaDataTags,
+        secondaryFileMetaDataJSON,
+        fileToUpload.filePath,
+        fileToUpload.id
+      );
+    } else {
+      // Private file, so it must be encrypted
+      const encryptedSecondaryFileMetaDataJSON = await encryptTag(
+        JSON.stringify(secondaryFileMetaDataTags),
+        user.password,
+        user.jwk
+      );
+      await createArDriveMetaDataTransaction(
+        user,
+        primaryFileMetaDataTags,
+        JSON.stringify(encryptedSecondaryFileMetaDataJSON),
+        fileToUpload.filePath,
+        fileToUpload.id
+      );
+    }
+    return 'Success';
+  } catch (err) {
+    console.log(err);
+    return 'Error uploading file metadata';
+  }
+}
 
 // Uploads all queued files
 export const uploadArDriveFiles = async (user: any, readyToUpload: any) => {
   try {
     let filesUploaded = 0;
     console.log('---Uploading All Queued Files---');
-    const filesToUpload = await getFilesToUpload_fromQueue();
-
+    const filesToUpload = await getFilesToUploadFromSyncTable();
     if (Object.keys(filesToUpload).length > 0 && readyToUpload === 'Y') {
       // Ready to upload
       await asyncForEach(
         filesToUpload,
         async (fileToUpload: {
-          file_size: string;
-          file_path: any;
-          file_name: string;
-          ardrive_path: any;
-          file_hash: any;
-          file_modified_date: any;
+          id: any;
+          appName: string;
+          appVersion: string;
+          unixTime: string;
+          contentType: string;
+          entityType: string;
+          arDriveId: string;
+          parentFolderId: string;
+          fileId: string;
+          fileSize: string;
+          filePath: any;
+          fileName: string;
+          arDrivePath: any;
+          fileHash: any;
+          fileModifiedDate: any;
+          fileVersion: any;
+          isPublic: any;
+          fileDataSyncStatus: any;
+          fileMetaDataSyncStatus: any;
+          dataTxId: any;
         }) => {
-          if (fileToUpload.file_size === '0') {
-            console.log(
-              '%s has a file size of 0 and cannot be uploaded to the Permaweb',
-              fileToUpload.file_path
-            );
-            await remove_fromQueue(fileToUpload.file_path);
-          } else if (
-            await getByFileName_fromCompleted(fileToUpload.file_name)
-          ) {
-            console.log(
-              '%s was queued, but has been previously uploaded to the Permaweb',
-              fileToUpload.file_path
-            );
-            await remove_fromQueue(fileToUpload.file_path);
-          } else {
-            await uploadArDriveFile(
-              user,
-              fileToUpload.file_path,
-              fileToUpload.ardrive_path,
-              fileToUpload.file_modified_date
-            );
-            filesUploaded += 1;
+          if (fileToUpload.fileDataSyncStatus === '1') {
+            // file data and metadata transaction
+            const dataTxId = await uploadArDriveFileData(user, fileToUpload);
+            fileToUpload.dataTxId = dataTxId;
+            await uploadArDriveFileMetaData(user, fileToUpload);
+            // console.log('Metadata and file uploaded.');
+          } else if (fileToUpload.fileMetaDataSyncStatus === '1') {
+            await uploadArDriveFileMetaData(user, fileToUpload);
+            // console.log('Metadata uploaded!');
           }
+          filesUploaded += 1;
         }
       );
     }
-    if (filesUploaded < 0) {
+    if (filesUploaded > 0) {
       console.log('Uploaded %s files to your ArDrive!', filesUploaded);
     }
     return 'SUCCESS';
@@ -327,89 +312,94 @@ export const uploadArDriveFiles = async (user: any, readyToUpload: any) => {
 export const checkUploadStatus = async () => {
   try {
     console.log('---Checking Upload Status---');
-    const unsyncedFiles = await getAllUploaded_fromQueue();
-
+    let permaWebLink: string;
+    const unsyncedFiles = await getAllUploadedFilesFromSyncTable();
+    let status: any;
     await asyncForEach(
       unsyncedFiles,
       async (unsyncedFile: {
-        tx_id: string;
-        file_path: string;
-        owner: any;
-        file_name: string;
-        file_hash: any;
-        file_modified_date: any;
-        ardrive_path: any;
-        ardrive_version: string;
-        isPublic: any;
-        file_size: string;
+        id: any;
+        filePath: any;
+        fileDataSyncStatus: any;
+        fileMetaDataSyncStatus: any;
+        dataTxId: any;
+        metaDataTxId: any;
       }) => {
         // Is the file uploaded on the web?
-        const status = await getTransactionStatus(unsyncedFile.tx_id);
-        if (status === 200) {
-          console.log(
-            'SUCCESS! %s was uploaded with TX of %s',
-            unsyncedFile.file_path,
-            unsyncedFile.tx_id
-          );
-          console.log(
-            '...you can access the file here %s',
-            gatewayURL.concat(unsyncedFile.tx_id)
-          );
-          const fileToComplete = {
-            owner: unsyncedFile.owner,
-            file_name: unsyncedFile.file_name,
-            file_hash: unsyncedFile.file_hash,
-            file_modified_date: unsyncedFile.file_modified_date,
-            ardrive_path: unsyncedFile.ardrive_path,
-            ardrive_version: unsyncedFile.ardrive_version,
-            permaweb_link: gatewayURL.concat(unsyncedFile.tx_id),
-            tx_id: unsyncedFile.tx_id,
-            prev_tx_id: unsyncedFile.tx_id,
-            isLocal: '1',
-            isPublic: unsyncedFile.isPublic,
-          };
-          await completeFile(fileToComplete);
-          await remove_fromQueue(unsyncedFile.file_path);
+        if (unsyncedFile.fileDataSyncStatus === '2') {
+          status = await getTransactionStatus(unsyncedFile.dataTxId);
+          if (status === 200) {
+            permaWebLink = gatewayURL.concat(unsyncedFile.dataTxId);
+            console.log(
+              'SUCCESS! %s data was uploaded with TX of %s',
+              unsyncedFile.filePath,
+              unsyncedFile.dataTxId
+            );
+            console.log(
+              '...you can access the file here %s',
+              gatewayURL.concat(unsyncedFile.dataTxId)
+            );
+            const fileToComplete = {
+              fileDataSyncStatus: '3',
+              permaWebLink,
+              id: unsyncedFile.id,
+            };
+            await completeFileDataFromSyncTable(fileToComplete);
+          }
         } else if (status === 202) {
           console.log(
-            '%s is still being uploaded to the PermaWeb (TX_PENDING)',
-            unsyncedFile.file_path
+            '%s data is still being uploaded to the PermaWeb (TX_PENDING)',
+            unsyncedFile.filePath
           );
         } else if (status === 410) {
           console.log(
-            '%s failed to be uploaded (TX_FAILED)',
-            unsyncedFile.file_path
+            '%s data failed to be uploaded (TX_FAILED)',
+            unsyncedFile.filePath
           );
-          await remove_fromQueue(unsyncedFile.file_path);
-        } else if (unsyncedFile.file_size === '0') {
-          console.log(
-            '%s has a file size of 0 and cannot be uploaded to the Permaweb',
-            unsyncedFile.file_path
-          );
-          await remove_fromQueue(unsyncedFile.file_path);
-        } else if (await getByFileName_fromCompleted(unsyncedFile.file_name)) {
-          console.log(
-            '%s was queued, but has been previously uploaded to the Permaweb',
-            unsyncedFile.file_path
-          );
-          await remove_fromQueue(unsyncedFile.file_path);
         } else {
           // CHECK IF FILE EXISTS AND IF NOT REMOVE FROM QUEUE
-          fs.access(unsyncedFile.file_path, async (err) => {
+          fs.access(unsyncedFile.filePath, async (err) => {
             if (err) {
               console.log(
-                '%s was not found locally anymore.  Removing from the queue',
-                unsyncedFile.file_path
+                '%s data was not found locally anymore.  Removing from the queue',
+                unsyncedFile.filePath
               );
-              await remove_fromQueue(unsyncedFile.file_path);
+              await removeFromSyncTable(unsyncedFile.id);
             }
           });
         }
+        if (unsyncedFile.fileMetaDataSyncStatus === '2') {
+          status = await getTransactionStatus(unsyncedFile.metaDataTxId);
+          if (status === 200) {
+            permaWebLink = gatewayURL.concat(unsyncedFile.metaDataTxId);
+            console.log(
+              'SUCCESS! %s metadata was uploaded with TX of %s',
+              unsyncedFile.filePath,
+              unsyncedFile.metaDataTxId
+            );
+            const fileMetaDataToComplete = {
+              fileMetaDataSyncStatus: '3',
+              permaWebLink,
+              id: unsyncedFile.id,
+            };
+            await completeFileMetaDataFromSyncTable(fileMetaDataToComplete);
+          }
+        } else if (status === 202) {
+          console.log(
+            '%s metadata is still being uploaded to the PermaWeb (TX_PENDING)',
+            unsyncedFile.filePath
+          );
+        } else if (status === 410) {
+          console.log(
+            '%s metadata failed to be uploaded (TX_FAILED)',
+            unsyncedFile.filePath
+          );
+        }
       }
     );
-    return 'Success checking upload status';
+    return 'Success checking upload file status';
   } catch (err) {
     console.log(err);
-    return 'Error checking upload status';
+    return 'Error checking upload file status';
   }
 };

@@ -92,7 +92,8 @@ const createProfileTable = async () => {
 const createSyncTable = () => {
   const sql = `CREATE TABLE IF NOT EXISTS Sync (
         id integer NOT NULL PRIMARY KEY,
-        dataTxId text UNIQUE,
+        metaDataTxId text NOT NULL,
+        dataTxId text,
         appName text DEFAULT ArDrive,
         appVersion text,
         unixTime integer,
@@ -100,16 +101,17 @@ const createSyncTable = () => {
         entityType text,
         arDriveId text,
         parentFolderId text,
-        fileId text UNIQUE,
+        fileId text,
         filePath text,
         arDrivePath text,
         fileName text,
         fileHash text,
         fileSize text,
         fileModifiedDate text,
-        fileVersion text DEFAULT 0,
-        permawebLink text,
-        syncStatus text,
+        fileVersion integer DEFAULT 0,
+        permaWebLink text,
+        fileDataSyncStatus text,
+        fileMetaDataSyncStatus text,
         ignore INTEGER DEFAULT 0,
         isPublic text DEFAULT 0,
         isLocal text,
@@ -118,52 +120,7 @@ const createSyncTable = () => {
   return run(sql);
 };
 
-const createQueueTable = () => {
-  const sql = `CREATE TABLE IF NOT EXISTS Queue (
-          id integer NOT NULL PRIMARY KEY,
-          tx_id text,
-          owner text,
-          file_path text NOT NULL UNIQUE,
-          file_name text,
-          file_hash text,
-          file_size text,
-          sync_status INTEGER DEFAULT 0,
-          ignore INTEGER DEFAULT 0,
-          isPublic text DEFAULT 0,
-          file_modified_date text,
-          ardrive_path text,
-          ardrive_version text,
-          keywords text,
-          permaweb_link text,
-          prev_tx_id text,
-          block_hash text,
-          file_version INTEGER DEFAULT 0
-       );`;
-  return run(sql);
-};
-
-const createCompletedTable = () => {
-  const sql = `CREATE TABLE IF NOT EXISTS Completed (
-          id integer NOT NULL PRIMARY KEY,
-          tx_id text NOT NULL UNIQUE,
-          isLocal text,
-          file_name text,
-          file_hash text,
-          owner text,
-          permaweb_link text,
-          isPublic text DEFAULT 0,
-          file_modified_date text,
-          ardrive_path text,
-          ardrive_version text,
-          ignore INTEGER DEFAULT 0,
-          keywords text,
-          prev_tx_id text,
-          block_hash text
-       );`;
-  return run(sql);
-};
-
-export const queueFileInDb = (file: {
+export const addFileToSyncTable = (file: {
   appName: any;
   appVersion: any;
   unixTime: any;
@@ -178,8 +135,14 @@ export const queueFileInDb = (file: {
   fileHash: any;
   fileSize: any;
   fileModifiedDate: any;
+  fileVersion: any;
   isPublic: any;
+  isLocal: any;
+  metaDataTxId: any;
   dataTxId: any;
+  fileDataSyncStatus: any;
+  fileMetaDataSyncStatus: any;
+  permaWebLink: any;
 }) => {
   const {
     appName,
@@ -196,11 +159,17 @@ export const queueFileInDb = (file: {
     fileHash,
     fileSize,
     fileModifiedDate,
+    fileVersion,
     isPublic,
+    isLocal,
+    metaDataTxId,
     dataTxId,
+    fileDataSyncStatus,
+    fileMetaDataSyncStatus,
+    permaWebLink,
   } = file;
   return run(
-    'REPLACE INTO Queue (appName, appVersion, unixTime, contentType, entityType, arDriveId, parentFolderId, fileId, filePath, arDrivePath, fileName, fileHash, fileSize, fileModifiedDate, isPublic, dataTxId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'REPLACE INTO Sync (appName, appVersion, unixTime, contentType, entityType, arDriveId, parentFolderId, fileId, filePath, arDrivePath, fileName, fileHash, fileSize, fileModifiedDate, fileVersion, isPublic, isLocal, metaDataTxId, dataTxId, fileDataSyncStatus, fileMetaDataSyncStatus, permaWebLink) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       appName,
       appVersion,
@@ -216,54 +185,196 @@ export const queueFileInDb = (file: {
       fileHash,
       fileSize,
       fileModifiedDate,
+      fileVersion,
       isPublic,
+      isLocal,
+      metaDataTxId,
       dataTxId,
+      fileDataSyncStatus,
+      fileMetaDataSyncStatus,
+      permaWebLink,
     ]
   );
 };
 
-export const completeFile = (file: {
-  owner: any;
-  file_name: any;
-  file_hash: any;
-  file_modified_date: any;
-  ardrive_path: any;
-  permaweb_link: any;
-  tx_id: any;
-  prev_tx_id: any;
-  isLocal: any;
-  isPublic: any;
-  ardrive_version: any;
+export const getFolderFromSyncTable = (folderPath: string) => {
+  return get(
+    `SELECT fileId FROM Sync WHERE filePath = ? AND entityType = 'folder'`,
+    [folderPath]
+  );
+};
+
+export const getByFilePathAndHashFromSyncTable = (file: {
+  fileHash: string;
+  filePath: string;
+}) => {
+  const { fileHash, filePath } = file;
+  return get(`SELECT * FROM Sync WHERE fileHash = ? AND filePath = ?`, [
+    fileHash,
+    filePath,
+  ]);
+};
+
+export const getByFileHashAndModifiedDateAndArDrivePathFromSyncTable = (file: {
+  fileHash: string;
+  fileModifiedDate: number;
+  arDrivePath: string;
+}) => {
+  const { fileHash, fileModifiedDate, arDrivePath } = file;
+  return get(
+    `SELECT * FROM Sync WHERE fileHash = ? AND fileModifiedDate = ? AND arDrivePath = ?`,
+    [fileHash, fileModifiedDate, arDrivePath]
+  );
+};
+
+export const getByFileHashAndModifiedDateAndFileNameFromSyncTable = (file: {
+  fileHash: string;
+  fileModifiedDate: number;
+  fileName: string;
+}) => {
+  const { fileHash, fileModifiedDate, fileName } = file;
+  return get(
+    `SELECT * FROM Sync WHERE fileHash = ? AND fileModifiedDate = ? AND fileName = ?`,
+    [fileHash, fileModifiedDate, fileName]
+  );
+};
+
+export const getByFilePathFromSyncTable = (filePath: string) => {
+  return get(
+    `SELECT * FROM Sync WHERE filePath = ? ORDER BY fileVersion DESC`,
+    [filePath]
+  );
+};
+
+export const getLatestFileVersionFromSyncTable = (fileId: string) => {
+  return get(`SELECT * FROM Sync WHERE fileId = ? ORDER BY unixTime DESC`, [
+    fileId,
+  ]);
+};
+
+export const getFilesToUploadFromSyncTable = () => {
+  return all(
+    'SELECT * FROM Sync WHERE fileDataSyncStatus = 1 OR fileMetaDataSyncStatus = 1 '
+  );
+};
+
+export const getAllUploadedFilesFromSyncTable = () => {
+  return all(
+    'SELECT * FROM Sync WHERE fileDataSyncStatus = 2 OR fileMetaDataSyncStatus = 2'
+  );
+};
+
+export const getFilesToDownload = () => {
+  return all(
+    'SELECT * FROM Sync WHERE ignore = 0 AND isLocal = 0 AND entityType = "file"'
+  );
+};
+
+export const getFoldersToCreate = () => {
+  return all(
+    'SELECT * FROM Sync WHERE ignore = 0 AND isLocal = 0 AND entityType = "folder"'
+  );
+};
+
+export const updateFileMetaDataSyncStatus = (file: {
+  fileMetaDataSyncStatus: any;
+  metaDataTxId: any;
+  id: any;
+}) => {
+  const { fileMetaDataSyncStatus, metaDataTxId, id } = file;
+  return get(
+    `UPDATE Sync SET fileMetaDataSyncStatus = ?, metaDataTxId = ? WHERE id = ?`,
+    [fileMetaDataSyncStatus, metaDataTxId, id]
+  );
+};
+
+export const updateFileDataSyncStatus = (file: {
+  fileDataSyncStatus: any;
+  dataTxId: any;
+  id: any;
+}) => {
+  const { fileDataSyncStatus, dataTxId, id } = file;
+  return get(
+    `UPDATE Sync SET fileDataSyncStatus = ?, dataTxId = ? WHERE id = ?`,
+    [fileDataSyncStatus, dataTxId, id]
+  );
+};
+
+export const updateFileInSyncTable = (file: {
+  arDriveId: any;
+  parentFolderId: any;
+  fileId: any;
+  fileVersion: any;
+  metaDataTxId: any;
+  dataTxId: any;
+  fileDataSyncStatus: any;
+  fileMetaDataSyncStatus: any;
+  permaWebLink: any;
+  id: any;
 }) => {
   const {
-    owner,
-    file_name,
-    file_hash,
-    file_modified_date,
-    ardrive_path,
-    permaweb_link,
-    tx_id,
-    prev_tx_id,
-    isLocal,
-    isPublic,
-    ardrive_version,
+    arDriveId,
+    parentFolderId,
+    fileId,
+    fileVersion,
+    metaDataTxId,
+    dataTxId,
+    fileDataSyncStatus,
+    fileMetaDataSyncStatus,
+    permaWebLink,
+    id,
   } = file;
   return run(
-    'REPLACE INTO Completed (owner, file_name, file_hash, file_modified_date, ardrive_path, permaweb_link, tx_id, prev_tx_id, isLocal, isPublic, ardrive_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'UPDATE Sync SET arDriveId = ?, parentFolderId = ?, fileId = ?, fileVersion = ?, metaDataTxId = ?, dataTxId = ?, fileDataSyncStatus = ?, fileMetaDataSyncStatus = ?, permaWebLink = ? WHERE id = ?',
     [
-      owner,
-      file_name,
-      file_hash,
-      file_modified_date,
-      ardrive_path,
-      permaweb_link,
-      tx_id,
-      prev_tx_id,
-      isLocal,
-      isPublic,
-      ardrive_version,
+      arDriveId,
+      parentFolderId,
+      fileId,
+      fileVersion,
+      metaDataTxId,
+      dataTxId,
+      fileDataSyncStatus,
+      fileMetaDataSyncStatus,
+      permaWebLink,
+      id,
     ]
   );
+};
+
+export const completeFileDataFromSyncTable = (file: {
+  fileDataSyncStatus: any;
+  permaWebLink: any;
+  id: any;
+}) => {
+  const { fileDataSyncStatus, permaWebLink, id } = file;
+  return get(
+    `UPDATE Sync SET fileDataSyncStatus = ?, permaWebLink = ? WHERE id = ?`,
+    [fileDataSyncStatus, permaWebLink, id]
+  );
+};
+
+export const completeFileMetaDataFromSyncTable = (file: {
+  fileMetaDataSyncStatus: any;
+  permaWebLink: any;
+  id: any;
+}) => {
+  const { fileMetaDataSyncStatus, permaWebLink, id } = file;
+  return get(
+    `UPDATE Sync SET fileMetaDataSyncStatus = ?, permaWebLink = ? WHERE id = ?`,
+    [fileMetaDataSyncStatus, permaWebLink, id]
+  );
+};
+
+export const removeFromSyncTable = (id: string) => {
+  return get(`DELETE FROM Sync WHERE id = ?`, [id]);
+};
+
+export const getByMetaDataTxFromSyncTable = (metaDataTxId: string) => {
+  return get(`SELECT * FROM Sync WHERE metaDataTxId = ?`, [metaDataTxId]);
+};
+
+export const getMyFileDownloadConflicts = () => {
+  return all('SELECT * FROM Sync WHERE isLocal = 2 ');
 };
 
 export const createArDriveProfile = (profile: {
@@ -301,29 +412,6 @@ export const createArDriveProfile = (profile: {
   );
 };
 
-export const getByFileNameAndHash_fromCompleted = (file: {
-  file_hash: string;
-  file_name: string;
-}) => {
-  const { file_hash, file_name } = file;
-  return get(`SELECT * FROM Completed WHERE file_hash = ? AND file_name = ?`, [
-    file_hash,
-    file_name,
-  ]);
-};
-
-export const getByFileName_fromCompleted = (file_name: string) => {
-  return get(`SELECT * FROM Completed WHERE file_name= ?`, [file_name]);
-};
-
-export const getByTx_fromCompleted = (tx_id: string) => {
-  return get(`SELECT file_name FROM Completed WHERE tx_id = ?`, [tx_id]);
-};
-
-export const getAllIncomplete_fromCompleted = () => {
-  return all('SELECT * FROM COMPLETED WHERE isLocal = 0 AND ignore = 0');
-};
-
 export const getAll_fromProfileWithWalletPublicKey = (
   wallet_public_key: string
 ) => {
@@ -332,59 +420,24 @@ export const getAll_fromProfileWithWalletPublicKey = (
   ]);
 };
 
-export const remove_fromQueue = (file_path: string) => {
-  return get(`DELETE FROM Queue WHERE file_path = ?`, [file_path]);
+export const deleteFromSyncTable = (id: string) => {
+  return get(`DELETE FROM Sync WHERE id = ?`, [id]);
 };
 
-export const updateQueueStatus = (file: {
-  tx_id: any;
-  isPublic: any;
-  file_path: any;
-}) => {
-  const { tx_id, isPublic, file_path } = file;
-  return run(`UPDATE Queue SET tx_id = ?, isPublic = ? WHERE file_path = ?`, [
-    tx_id,
-    isPublic,
-    file_path,
-  ]);
+export const setPermaWebFileToIgnore = (id: string) => {
+  return get(`UPDATE Sync SET ignore = 1 WHERE id = ?`, [id]);
 };
 
-export const setIncompleteFileToIgnore = (tx_id: string) => {
-  return get(`UPDATE Completed SET ignore = 1 WHERE tx_id = ?`, [tx_id]);
+export const setPermaWebFileToOverWrite = (id: string) => {
+  return get(`UPDATE Sync SET isLocal = 2 WHERE id = ?`, [id]);
 };
 
-export const updateCompletedStatus = (tx_id: string) => {
-  return get(`UPDATE Completed SET isLocal = 1 WHERE tx_id = ?`, [tx_id]);
-};
-
-export const setCompletedFileToDownload = (file_name: string) => {
-  return get(`UPDATE Completed SET isLocal = 0 WHERE file_name = ?`, [
-    file_name,
-  ]);
-};
-
-export const setQueuedFileToPublic = (file_path: string) => {
-  return get(`UPDATE Queue SET isPublic = 1 WHERE file_path = ?`, [file_path]);
-};
-
-export const getByFilePath_fromQueue = (file_path: string) => {
-  return get(`SELECT * FROM Queue WHERE file_path = ?`, [file_path]);
-};
-
-export const getAllUploaded_fromQueue = () => {
-  return all('SELECT * FROM Queue WHERE tx_id != 0');
+export const updateFileDownloadStatus = (isLocal: string, id: string) => {
+  return get(`UPDATE Sync SET isLocal = ? WHERE id = ?`, [isLocal, id]);
 };
 
 export const getAll_fromProfile = (): Promise<any[]> => {
   return all('SELECT * FROM Profile');
-};
-
-export const getAll_fromCompleted = () => {
-  return all('SELECT * FROM COMPLETED WHERE ignore = 0');
-};
-
-export const getFilesToUpload_fromQueue = () => {
-  return all('SELECT * FROM Queue WHERE tx_id = 0 ');
 };
 
 const createOrOpenDb = (dbFilePath: string): Promise<Database> => {
@@ -401,8 +454,6 @@ const createOrOpenDb = (dbFilePath: string): Promise<Database> => {
 
 const createTablesInDB = async () => {
   await createProfileTable();
-  await createQueueTable();
-  await createCompletedTable();
   await createSyncTable();
 };
 

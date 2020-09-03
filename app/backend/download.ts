@@ -2,47 +2,215 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // upload.js
 import fs from 'fs';
-import { sleep, asyncForEach, gatewayURL } from './common';
-import { getTransactionData, getAllMyTxIds, getTransaction } from './arweave';
-import { checksumFile, decryptFile, decryptTag } from './crypto';
-import { promptForFileOverwrite } from '../../cli/src/prompts';
+import { dirname } from 'path';
+import { sleep, asyncForEach, gatewayURL, extToMime } from './common';
 import {
-  getAll_fromCompleted,
-  updateCompletedStatus,
-  setIncompleteFileToIgnore,
-  getByTx_fromCompleted,
-  completeFile,
+  getTransactionMetaData,
+  getAllMyDataFileTxs,
+  getTransactionData,
+} from './arweave';
+import { checksumFile, decryptFile, decryptFileMetaData } from './crypto';
+import {
+  getFilesToDownload,
+  getFoldersToCreate,
+  updateFileDownloadStatus,
+  addFileToSyncTable,
+  getByMetaDataTxFromSyncTable,
+  getByFilePathAndHashFromSyncTable,
+  updateFileInSyncTable,
+  getLatestFileVersionFromSyncTable,
+  setPermaWebFileToIgnore,
+  getMyFileDownloadConflicts,
 } from './db';
+
+async function binArrayToJSON(binArray: any) {
+  let str = '';
+  for (let i = 0; i < binArray.length; i += 1) {
+    str += String.fromCharCode(parseInt(binArray[i], 10));
+  }
+  return JSON.parse(str);
+}
 
 // Downloads a single file from ArDrive by transaction
 async function downloadArDriveFile_byTx(
   user: { sync_folder_path: string; password: string; jwk: string },
-  txid: string,
-  file_name: any,
-  isPublic: string,
-  ardrive_path: any
+  filePath: any,
+  dataTxId: string,
+  isPublic: string
 ) {
   try {
-    const full_path = user.sync_folder_path.concat(ardrive_path, file_name);
-    const folderPath = user.sync_folder_path.concat(ardrive_path);
+    const folderPath = dirname(filePath);
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
       await sleep(1000);
     }
-    const data = await getTransactionData(txid);
+    const data = await getTransactionData(dataTxId);
 
     // console.log("FOUND PERMAFILE! %s is on the Permaweb, but not local.  Downloading...", full_path, data)
     if (isPublic === '1') {
-      fs.writeFileSync(full_path, data);
-      console.log('DOWNLOADED %s', full_path);
+      fs.writeFileSync(filePath, data);
+      console.log('DOWNLOADED %s', filePath);
     } else {
       // Method with decryption
-      fs.writeFileSync(full_path.concat('.enc'), data);
-      // const stats = fs.statSync(full_path.concat('.enc'));
+      fs.writeFileSync(filePath.concat('.enc'), data);
       await sleep(500);
-      await decryptFile(full_path.concat('.enc'), user.password, user.jwk);
+      await decryptFile(filePath.concat('.enc'), user.password, user.jwk);
       await sleep(500);
-      console.log('DOWNLOADED AND DECRYPTED %s', full_path);
+      fs.unlinkSync(filePath.concat('.enc'));
+      console.log('DOWNLOADED AND DECRYPTED %s', filePath);
+    }
+    return 'Success';
+  } catch (err) {
+    console.log(err);
+    // console.log ("FOUND PERMAFILE %s but not ready to be downloaded yet", full_path)
+    return 'Error downloading file';
+  }
+}
+
+// Takes an ArDrive File Data Transaction and writes to the database.
+async function getFileMetaDataFromTx(
+  fileDataTx: any,
+  user: {
+    sync_folder_path: string;
+    wallet_public_key: string;
+    arDriveId: string;
+    password: string;
+    jwk: string;
+  }
+) {
+  try {
+    const newFileToDownload = {
+      appName: '',
+      appVersion: '',
+      unixTime: '',
+      contentType: '',
+      entityType: '',
+      arDriveId: '',
+      parentFolderId: '',
+      fileId: '',
+      fileSize: '',
+      filePath: '',
+      fileName: '',
+      arDrivePath: '',
+      fileHash: '',
+      fileModifiedDate: '',
+      fileVersion: 0,
+      isPublic: '',
+      isLocal: 0,
+      fileDataSyncStatus: 0,
+      fileMetaDataSyncStatus: 0,
+      permaWebLink: '',
+      metaDataTxId: '',
+      dataTxId: '',
+    };
+
+    const { node } = fileDataTx;
+    const metaDataTxId = node.id;
+    const isCompleted = await getByMetaDataTxFromSyncTable(metaDataTxId);
+    if (isCompleted) {
+      // Does the file actual exist?
+      fs.access(isCompleted.filePath, async (err) => {
+        if (err) {
+          await updateFileDownloadStatus('0', isCompleted.id);
+        }
+        return 0;
+      });
+    }
+    const { tags } = node;
+    const data = await getTransactionMetaData(metaDataTxId);
+    let dataJSON = await binArrayToJSON(data);
+    tags.forEach((tag: any) => {
+      const key = tag.name;
+      const { value } = tag;
+      switch (key) {
+        case 'App-Name':
+          newFileToDownload.appName = value;
+          break;
+        case 'App-Version':
+          newFileToDownload.appVersion = value;
+          break;
+        case 'Unix-Time':
+          newFileToDownload.unixTime = value;
+          break;
+        case 'Content-Type':
+          newFileToDownload.contentType = value;
+          break;
+        case 'Entity-Type':
+          newFileToDownload.entityType = value;
+          break;
+        case 'Drive-Id':
+          newFileToDownload.arDriveId = value;
+          break;
+        case 'File-Id':
+          newFileToDownload.fileId = value;
+          break;
+        case 'Parent-Folder-Id':
+          newFileToDownload.parentFolderId = value;
+          break;
+        default:
+          break;
+      }
+    });
+
+    if (Object.prototype.hasOwnProperty.call(dataJSON, 'iv')) {
+      newFileToDownload.isPublic = '0';
+      dataJSON = await decryptFileMetaData(
+        dataJSON.iv,
+        dataJSON.encryptedText,
+        user.password,
+        user.jwk
+      );
+    } else {
+      newFileToDownload.isPublic = '1';
+    }
+
+    let filePath: string;
+    let permaWebLink: string;
+    if (newFileToDownload.entityType === 'file') {
+      filePath = user.sync_folder_path.concat(dataJSON.path, dataJSON.name);
+      newFileToDownload.contentType = extToMime(filePath); // Since the File MetaData Tx does not have the content type of underlying file, we get it here
+      permaWebLink = gatewayURL.concat(dataJSON.dataTxId);
+    } else {
+      filePath = user.sync_folder_path.concat(dataJSON.path);
+      permaWebLink = gatewayURL.concat(metaDataTxId);
+    }
+    newFileToDownload.fileSize = dataJSON.size;
+    newFileToDownload.filePath = filePath;
+    newFileToDownload.fileName = dataJSON.name;
+    newFileToDownload.arDrivePath = dataJSON.path;
+    newFileToDownload.fileHash = dataJSON.hash;
+    newFileToDownload.fileModifiedDate = dataJSON.modifiedDate;
+    newFileToDownload.fileVersion = dataJSON.fileVersion;
+    newFileToDownload.fileDataSyncStatus = 3;
+    newFileToDownload.fileMetaDataSyncStatus = 3;
+    newFileToDownload.permaWebLink = permaWebLink;
+    newFileToDownload.metaDataTxId = metaDataTxId;
+    newFileToDownload.dataTxId = dataJSON.dataTxId;
+
+    const exactFileMatch = {
+      filePath,
+      fileHash: dataJSON.hash,
+    };
+    // Check if the exact file already exists in the same location
+    const exactMatch = await getByFilePathAndHashFromSyncTable(exactFileMatch);
+    if (exactMatch) {
+      const fileToUpdate = {
+        arDriveId: newFileToDownload.arDriveId,
+        parentFolderId: newFileToDownload.parentFolderId,
+        fileId: newFileToDownload.fileId,
+        fileVersion: newFileToDownload.fileVersion,
+        metaDataTxId: newFileToDownload.metaDataTxId,
+        dataTxId: newFileToDownload.dataTxId,
+        fileDataSyncStatus: '3',
+        fileMetaDataSyncStatus: '3',
+        permaWebLink,
+        id: exactMatch.id,
+      };
+      await updateFileInSyncTable(fileToUpdate);
+      // console.log('%s is already local', filePath);
+    } else {
+      console.log('%s is unsynchronized', filePath);
+      addFileToSyncTable(newFileToDownload);
     }
     return 'Success';
   } catch (err) {
@@ -53,139 +221,22 @@ async function downloadArDriveFile_byTx(
 }
 
 // Gets all of the files from your ArDrive (via ARQL) and loads them into the database.
-export const getMyArDriveFiles = async (user: {
+export const getMyArDriveFilesFromPermaWeb = async (user: {
+  sync_folder_path: string;
   wallet_public_key: string;
-  owner: string;
+  arDriveId: string;
   password: string;
   jwk: string;
 }) => {
   // console.log ("FOUND PERMAFILE %s but not ready to be downloaded yet", full_path)
   console.log('---Getting all your ArDrive files---');
-
-  let ardrive_owner: any;
-  let ardrive_path: any;
-  let ardrive_filename: any;
-  let ardrive_filehash: any;
-  let ardrive_modifieddate: any;
-  let ardrive_public: any;
-  let ardrive_version: any;
-  let foundFiles = 0;
-  let fileToAdd: any;
-
-  const txids = await getAllMyTxIds(user);
-
-  // eslint-disable-next-line consistent-return
+  const txids = await getAllMyDataFileTxs(
+    user.wallet_public_key,
+    user.arDriveId
+  );
   await asyncForEach(txids, async (txid: string) => {
-    // txids.forEach(async function (txid) {
-    try {
-      const isCompleted = await getByTx_fromCompleted(txid);
-      if (isCompleted) {
-        // skip
-      } else {
-        // Get the full TX and add to the DB
-        const transaction = await getTransaction(txid);
-        transaction
-          .get('tags')
-          .forEach(
-            (tag: {
-              get: (
-                arg0: string,
-                arg1: { decode: boolean; string: boolean }
-              ) => any;
-            }) => {
-              const key = tag.get('name', { decode: true, string: true });
-              const value = tag.get('value', {
-                decode: true,
-                string: true,
-              });
-
-              switch (key) {
-                case 'User-Agent':
-                  ardrive_version = value;
-                  break;
-                case 'ArDrive-Owner':
-                  ardrive_owner = value;
-                  break;
-                case 'ArDrive-Public':
-                  ardrive_public = value;
-                  break;
-                case 'ArDrive-FileName':
-                  ardrive_filename = value;
-                  break;
-                case 'ArDrive-FileHash':
-                  ardrive_filehash = value;
-                  break;
-                case 'ArDrive-Path':
-                  ardrive_path = value;
-                  break;
-                case 'ArDrive-ModifiedDate':
-                  ardrive_modifieddate = value;
-                  break;
-                default:
-                  break;
-              }
-            }
-          );
-
-        if (ardrive_public === '0') {
-          fileToAdd = {
-            owner: ardrive_owner,
-            file_name: await decryptTag(
-              JSON.parse(ardrive_filename),
-              user.password,
-              user.jwk
-            ),
-            file_hash: await decryptTag(
-              JSON.parse(ardrive_filehash),
-              user.password,
-              user.jwk
-            ),
-            file_modified_date: await decryptTag(
-              JSON.parse(ardrive_modifieddate),
-              user.password,
-              user.jwk
-            ),
-            ardrive_path: await decryptTag(
-              JSON.parse(ardrive_path),
-              user.password,
-              user.jwk
-            ),
-            permaweb_link: gatewayURL.concat(txid),
-            tx_id: txid,
-            prev_tx_id: txid,
-            isLocal: '0',
-            isPublic: ardrive_public,
-            ardrive_version,
-          };
-        } else {
-          fileToAdd = {
-            owner: ardrive_owner,
-            file_name: ardrive_filename,
-            file_hash: ardrive_filehash,
-            file_modified_date: ardrive_modifieddate,
-            ardrive_path,
-            permaweb_link: gatewayURL.concat(txid),
-            tx_id: txid,
-            prev_tx_id: txid,
-            isLocal: '0',
-            isPublic: ardrive_public,
-            ardrive_version,
-          };
-        }
-        await completeFile(fileToAdd);
-        foundFiles += 1;
-      }
-      return true;
-    } catch (err) {
-      // console.log (err)
-      // console.log ("%s is still pending upload", txid)
-    }
+    await getFileMetaDataFromTx(txid, user);
   });
-
-  if (foundFiles > 0) {
-    // console.log ("Found %s missing files from your ArDrive", foundFiles)
-  }
-  return 'SUCCESS Getting all ArDrive files';
 };
 
 // Downloads all ardrive files that are not local
@@ -196,92 +247,102 @@ export const downloadMyArDriveFiles = async (user: {
 }) => {
   try {
     console.log('---Downloading any unsynced files---');
-    const incompleteFiles = await getAll_fromCompleted();
-
-    await asyncForEach(
-      incompleteFiles,
-      async (incompleteFile: {
-        ardrive_path: any;
-        file_name: string;
-        tx_id: string;
-        isPublic: string;
-        file_hash: string;
-      }) => {
-        const full_path = user.sync_folder_path.concat(
-          incompleteFile.ardrive_path,
-          incompleteFile.file_name
-        );
-        if (!fs.existsSync(full_path)) {
-          // TODO track these individual awaits - don't catch whole thing!
+    const filesToDownload = await getFilesToDownload();
+    const foldersToCreate = await getFoldersToCreate();
+    const fileConflictsToDownload = await getMyFileDownloadConflicts();
+    if (filesToDownload.length > 0) {
+      // There are unsynced files to process
+      await asyncForEach(
+        filesToDownload,
+        async (fileToDownload: {
+          id: any;
+          filePath: any;
+          fileName: string;
+          dataTxId: string;
+          isPublic: string;
+          fileHash: string;
+          fileId: string;
+          isLocal: string;
+        }) => {
+          // Get the latest file version from the DB
+          const latestFileVersion = await getLatestFileVersionFromSyncTable(
+            fileToDownload.fileId
+          );
+          // console.log ("Latest file version is %s", latestFileVersion.filePath)
+          // Only download if this is the latest version
+          if (fileToDownload.id === latestFileVersion.id) {
+            // Does the file exist?
+            if (fs.existsSync(latestFileVersion.filePath)) {
+              // Does it have the same hash i.e. is the same version?
+              const localFileHash = await checksumFile(
+                latestFileVersion.filePath
+              );
+              if (localFileHash === latestFileVersion.fileHash) {
+                await updateFileDownloadStatus('1', latestFileVersion.id); // Mark latest version as local
+                return 'PermaWeb file is already local';
+              }
+              // The file hash is different, therefore we have a conflicting version but the same name.  The user must remediate.
+              await updateFileDownloadStatus('2', latestFileVersion.id);
+              return 'PermaWeb file conflicts with the local file.  Please resolve before continuing.';
+            }
+            // This file is on the Permaweb, but it is not local
+            await downloadArDriveFile_byTx(
+              user,
+              latestFileVersion.filePath,
+              latestFileVersion.dataTxId,
+              latestFileVersion.isPublic
+            );
+            await updateFileDownloadStatus('1', fileToDownload.id);
+          } else {
+            // This is an older version, and we ignore it for now.
+            await updateFileDownloadStatus('0', fileToDownload.id); // Mark older version as not local ignored
+            await setPermaWebFileToIgnore(fileToDownload.id); // Mark older version as ignored
+          }
+          return 'Checked file';
+        }
+      );
+    }
+    if (foldersToCreate.length > 0) {
+      // there are new folders to create
+      await asyncForEach(
+        foldersToCreate,
+        async (folderToCreate: { id: any; filePath: any }) => {
+          if (!fs.existsSync(folderToCreate.filePath)) {
+            console.log(
+              'Creating new folder from permaweb %s',
+              folderToCreate.filePath
+            );
+            fs.mkdirSync(folderToCreate.filePath);
+          }
+          await updateFileDownloadStatus('1', folderToCreate.id);
+        }
+      );
+    }
+    if (fileConflictsToDownload.length > 0) {
+      await asyncForEach(
+        fileConflictsToDownload,
+        async (fileConflictToDownload: {
+          id: any;
+          filePath: any;
+          dataTxId: string;
+          isPublic: string;
+        }) => {
+          // This file is on the Permaweb, but it is not local or the user wants to overwrite the local file
+          console.log(
+            'Overwriting local file %s',
+            fileConflictToDownload.filePath
+          );
           await downloadArDriveFile_byTx(
             user,
-            incompleteFile.tx_id,
-            incompleteFile.file_name,
-            incompleteFile.isPublic,
-            incompleteFile.ardrive_path
+            fileConflictToDownload.filePath,
+            fileConflictToDownload.dataTxId,
+            fileConflictToDownload.isPublic
           );
-          if (incompleteFile.isPublic === '0') {
-            fs.unlinkSync(full_path.concat('.enc'));
-          }
-        } else {
-          // console.log("%s is on the Permaweb, but is already downloaded with matching file name", full_path)
-          const localFileHash = await checksumFile(full_path);
-          if (incompleteFile.file_hash === localFileHash) {
-            // console.log("IGNORED! %s is on the Permaweb, but is already downloaded (matching file name and hash)", full_path)
-            await updateCompletedStatus(incompleteFile.tx_id);
-          } else {
-            // There is a conflict.  Prompt the user to resolve
-            const conflictResolution = await promptForFileOverwrite(full_path);
-            switch (conflictResolution) {
-              case 'R': {
-                // Rename by adding - copy at the end.
-                let newFileName:
-                  | string[]
-                  | string = incompleteFile.file_name.split('.');
-                newFileName = newFileName[0].concat(' - Copy.', newFileName[1]);
-                const new_full_path = user.sync_folder_path.concat(
-                  incompleteFile.ardrive_path,
-                  newFileName
-                );
-                console.log(
-                  '   ...renaming existing file to : %s',
-                  new_full_path
-                );
-                fs.renameSync(full_path, new_full_path);
-
-                await downloadArDriveFile_byTx(
-                  user,
-                  incompleteFile.tx_id,
-                  incompleteFile.file_name,
-                  incompleteFile.isPublic,
-                  incompleteFile.ardrive_path
-                );
-                fs.unlinkSync(full_path.concat('.enc'));
-                break;
-              }
-              case 'O': // Overwrite existing file
-                console.log('   ...file being overwritten');
-                await downloadArDriveFile_byTx(
-                  user,
-                  incompleteFile.tx_id,
-                  incompleteFile.file_name,
-                  incompleteFile.isPublic,
-                  incompleteFile.ardrive_path
-                );
-                fs.unlinkSync(full_path.concat('.enc'));
-                break;
-              case 'I':
-                console.log('   ...excluding file from future downloads');
-                setIncompleteFileToIgnore(incompleteFile.tx_id);
-                break;
-              default:
-                // Skipping this time
-                break;
-            }
-          }
+          await updateFileDownloadStatus('1', fileConflictToDownload.id);
+          return 'File Overwritten';
         }
-      }
-    );
+      );
+    }
     return 'Downloaded all ArDrive files';
   } catch (err) {
     console.log(err);
