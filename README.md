@@ -1,6 +1,6 @@
 # ArDrive Desktop
 
-ArDrive, a simple app that synchronizes your data with the Arweave Permaweb.
+ArDrive, a simple app that synchronizes your data with the Arweave Permaweb.  This is currently an alpha version, so do not store anything sensitive just yet!!
 
 ## Development
 
@@ -23,6 +23,6 @@ $ cd ardrive-desktop
 $ yarn
 $ cd cli
 $ yarn
-$ yarn start (this may need to be run twice)
+$ yarn start
 ```
 Have any questions?  Join the ArDrive Discord channel for support, news and updates.  https://discord.gg/ya4hf2H
