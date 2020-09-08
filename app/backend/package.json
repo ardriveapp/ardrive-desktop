@@ -31,5 +31,5 @@
     "test": "jest"
   },
   "author": "",
-  "license": "GNU"
+  "license": "GPL-3.0-or-later"
 }

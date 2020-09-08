@@ -111,7 +111,7 @@
     "url": "https://ardrive.io"
   },
   "contributors": [],
-  "license": "GNU",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/ardrive/ardrive-desktop/issues"
   },
