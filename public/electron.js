@@ -7,6 +7,7 @@ const startApplication = () => {
         height: 728,
         webPreferences: {
             nodeIntegration: true,
+            worldSafeExecuteJavaScript: true,
         },
     });
 
