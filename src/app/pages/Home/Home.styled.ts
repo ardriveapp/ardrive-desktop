@@ -5,4 +5,8 @@ export const HomeContainer = styled.div`
   height: 100%;
   width: 100%;
   color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
