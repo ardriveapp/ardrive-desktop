@@ -1,11 +1,16 @@
 import React from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-function App() {
+import Routes from "./configuration/routes";
+
+export default () => {
   return (
-    <div>
-        <h1>Hello world</h1>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        {Routes.map((routeProps) => (
+          <Route {...routeProps} />
+        ))}
+      </Switch>
+    </BrowserRouter>
   );
-}
-
-export default App;
+};
