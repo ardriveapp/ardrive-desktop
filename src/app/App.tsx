@@ -10,8 +10,8 @@ export default () => {
       <GlobalStyle />
       <BrowserRouter>
         <Switch>
-          {Routes.map((routeProps) => (
-            <Route {...routeProps} />
+          {Routes.map((routeProps, index) => (
+            <Route key={index} {...routeProps} />
           ))}
         </Switch>
       </BrowserRouter>
