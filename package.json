@@ -5,7 +5,7 @@
   "description": "ArDrive - Secure, Permenant Storage",
   "main": "public/electron.js",
   "scripts": {
-    "react-start": "cross-env BROWSER=none craco start",
+    "react-start": "craco start",
     "react-build": "craco build",
     "react-test": "craco test",
     "react-eject": "craco eject",

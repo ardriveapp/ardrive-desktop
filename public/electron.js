@@ -5,10 +5,6 @@ const startApplication = () => {
     const window = new BrowserWindow({
         width: 1024,
         height: 728,
-        webPreferences: {
-            nodeIntegration: true,
-            worldSafeExecuteJavaScript: true,
-        },
     });
 
     if (isDev) {

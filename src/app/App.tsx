@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { HashRouter, Switch, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import Routes from "./configuration/routes";
@@ -13,13 +13,13 @@ export default () => {
     <>
       <GlobalStyle />
       <Provider store={store}>
-        <BrowserRouter>
+        <HashRouter>
           <Switch>
             {Routes.map((routeProps, index) => (
               <Route key={index} {...routeProps} />
             ))}
           </Switch>
-        </BrowserRouter>
+        </HashRouter>
       </Provider>
     </>
   );
