@@ -1,5 +1,5 @@
 import { RootState } from "../types";
 
-export default {
-  getCounter: (state: RootState) => state.app.counter,
-};
+const getAppState = (state: RootState) => state.app;
+
+export default {};

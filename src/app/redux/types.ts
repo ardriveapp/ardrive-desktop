@@ -1,10 +1,12 @@
-import { type } from "os";
-
 export interface AppState {
   initialized: boolean;
-  counter: number;
+}
+
+export interface AuthState {
+  isLoggedIn: boolean;
 }
 
 export interface RootState {
   app: AppState;
+  auth: AuthState;
 }

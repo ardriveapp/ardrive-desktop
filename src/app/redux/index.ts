@@ -6,7 +6,7 @@ import rootSaga from "./sagas";
 
 const sagaMiddleware = createSagaMiddleware();
 
-export default configureStore({
+export const store = configureStore({
   reducer: rootReducer,
   enhancers: (defaultEnhancers) => [
     ...defaultEnhancers,

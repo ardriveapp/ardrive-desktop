@@ -3,8 +3,8 @@ import { createAction } from "@reduxjs/toolkit";
 import { withPayloadType } from "../../utils";
 
 export default {
-  initializeApplication: createAction(
-    "APPLICATION_INITIALIZE",
+  loginStart: createAction(
+    "AUTH_LOGIN_START",
     withPayloadType<boolean>()
   ),
 };
