@@ -4,7 +4,9 @@ import { Provider } from "react-redux";
 
 import Routes from "./configuration/routes";
 import { GlobalStyle } from "./App.styled";
-import store from "./redux";
+import { store } from "./redux";
+
+import "./configuration/i18n";
 
 export default () => {
   return (

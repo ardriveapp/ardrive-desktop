@@ -1,0 +1,12 @@
+{
+    "pages": {
+        "login": {
+            "username": "Username",
+            "password": "Password (Masked)",
+            "unlock_button": "Unlock",
+            "setup_new_user": "Setup a new user",
+            "need_help": "Need help?"
+        }
+    },
+    "components": {}
+}
