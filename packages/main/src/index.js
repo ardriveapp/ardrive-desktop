@@ -10,7 +10,7 @@ const startApplication = () => {
     if (isDev) {
         window.loadURL("http://localhost:3000");
     } else {
-        window.loadFile(`${__dirname}/index.html`);
+        window.loadFile(`${__dirname}/renderer/index.html`);
     }
 };
 

@@ -1,0 +1,58 @@
+{
+    "productName": "ArDrive",
+    "appId": "com.ardrive.ArDrive",
+    "directories": {
+        "buildResources": "assets"
+    },
+    "files": [
+        {
+            "from": "../renderer/build/",
+            "to": "./renderer/",
+            "filter": [
+                "**/*"
+            ]
+        },
+        {
+            "from": "./src/",
+            "to": "./",
+            "filter": [
+                "index.js"
+            ]
+        },
+        "package.json"
+    ],
+    "dmg": {
+        "contents": [
+            {
+                "x": 130,
+                "y": 220
+            },
+            {
+                "x": 410,
+                "y": 220,
+                "type": "link",
+                "path": "/Applications"
+            }
+        ]
+    },
+    "win": {
+        "target": [
+            "nsis",
+            "msi"
+        ]
+    },
+    "linux": {
+        "target": [
+            "deb",
+            "rpm",
+            "AppImage"
+        ],
+        "category": "Development"
+    },
+    "publish": {
+        "provider": "github",
+        "owner": "ardrive",
+        "repo": "ardrive-desktop",
+        "private": false
+    }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "ardrive-desktop",
+  "productName": "ArDrive",
+  "description": "ArDrive - Secure, Permenant Storage",
+  "version": "0.1.12",
+  "scripts": {
+    "build": "electron-builder",
+    "start": "electron ./src/index.js"
+  },
+  "author": {
+    "name": "ArDrive DevTeam",
+    "email": "info@ardrive.io",
+    "url": "https://ardrive.io"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ardrive/ardrive-desktop/issues"
+  },
+  "devDependencies": {
+    "electron-builder": "^22.8.1",
+    "electron": "^10.1.2"
+  },
+  "dependencies": {
+    "electron-is-dev": "^1.2.0"
+  }
+}
