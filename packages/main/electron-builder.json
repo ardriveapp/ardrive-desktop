@@ -13,10 +13,10 @@
             ]
         },
         {
-            "from": "./src/",
+            "from": "./build/",
             "to": "./",
             "filter": [
-                "index.js"
+                "**/*"
             ]
         },
         "package.json"
