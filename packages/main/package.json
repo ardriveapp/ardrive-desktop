@@ -4,8 +4,9 @@
   "description": "ArDrive - Secure, Permenant Storage",
   "version": "0.1.12",
   "scripts": {
-    "build": "electron-builder",
-    "start": "electron ./src/index.js"
+    "build-dev": "webpack && electron-builder --dir",
+    "build": "webpack && electron-builder",
+    "start": "webpack && electron ./build/index.js"
   },
   "author": {
     "name": "ArDrive DevTeam",
@@ -17,10 +18,18 @@
     "url": "https://github.com/ardrive/ardrive-desktop/issues"
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "electron": "^10.1.2",
     "electron-builder": "^22.8.1",
-    "electron": "^10.1.2"
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "ardrive-core-js": "^0.2.8",
     "electron-is-dev": "^1.2.0"
   }
 }

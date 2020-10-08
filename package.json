@@ -6,9 +6,10 @@
     "main-start": "cd ./packages/main && yarn start",
     "renderer-start": "cd ./packages/renderer && yarn start",
     "main-build": "cd ./packages/main && yarn build",
+    "main-build-dev": "cd ./packages/main && yarn build-dev",
     "renderer-build": "cd ./packages/renderer && yarn build",
     "build": "yarn renderer-build && yarn main-build",
-    "build-dev": "yarn renderer-build && yarn main-build --dir",
+    "build-dev": "yarn renderer-build && yarn main-build-dev",
     "start": "concurrently --kill-others \"yarn renderer-start\" \"wait-on http://localhost:3000 && yarn main-start\""
   },
   "repository": {
