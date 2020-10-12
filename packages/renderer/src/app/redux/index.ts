@@ -3,8 +3,15 @@ import createSagaMiddleware from "redux-saga";
 
 import rootReducer from "./reducers";
 import rootSaga from "./sagas";
+import electronHooks from "../electron-hooks";
 
-const sagaMiddleware = createSagaMiddleware();
+const { ipcRenderer } = window.require("electron");
+
+const sagaMiddleware = createSagaMiddleware({
+  context: {
+    electronHooks: electronHooks(ipcRenderer),
+  },
+});
 
 export const store = configureStore({
   reducer: rootReducer,

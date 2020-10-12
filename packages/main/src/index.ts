@@ -1,10 +1,15 @@
 import { app, BrowserWindow } from "electron";
 import isDev from "electron-is-dev";
 
+import "./hooks";
+
 const startApplication = () => {
   const window = new BrowserWindow({
     width: 1024,
     height: 728,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
 
   if (isDev) {

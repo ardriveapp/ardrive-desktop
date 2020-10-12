@@ -3,6 +3,10 @@ const path = require('path');
 module.exports = {
     entry: './src/index.ts',
     target: 'electron-main',
+    externals: {
+        sqlite3: 'commonjs sqlite3',
+        fsevents: "require('fsevents')",
+    },
     module: {
         rules: [
             {

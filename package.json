@@ -2,15 +2,14 @@
   "name": "ardrive-desktop",
   "productName": "ArDrive",
   "description": "ArDrive - Secure, Permenant Storage",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "main-start": "cd ./packages/main && yarn start",
-    "renderer-start": "cd ./packages/renderer && yarn start",
-    "main-build": "cd ./packages/main && yarn build",
-    "main-build-dev": "cd ./packages/main && yarn build-dev",
-    "renderer-build": "cd ./packages/renderer && yarn build",
-    "build": "yarn renderer-build && yarn main-build",
-    "build-dev": "yarn renderer-build && yarn main-build-dev",
-    "start": "concurrently --kill-others \"yarn renderer-start\" \"wait-on http://localhost:3000 && yarn main-start\""
+    "build": "lerna run build",
+    "build-dev": "lerna run build -- --dir",
+    "start": "lerna run start"
   },
   "repository": {
     "type": "git",
@@ -26,9 +25,6 @@
     "url": "https://github.com/ardrive/ardrive-desktop/issues"
   },
   "devDependencies": {
-    "concurrently": "^5.3.0",
-    "cross-env": "^7.0.2",
-    "wait-on": "^5.2.0"
-  },
-  "dependencies": {}
+    "lerna": "^3.19.0"
+  }
 }

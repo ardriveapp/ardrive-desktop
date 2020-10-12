@@ -1,6 +1,7 @@
 {
   "name": "ardrive-desktop-renderer",
   "homepage": "./",
+  "version": "0.1.12",
   "scripts": {
     "start": "craco start",
     "build": "craco build",
@@ -16,7 +17,9 @@
   "bugs": {
     "url": "https://github.com/ardrive/ardrive-desktop/issues"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "electron": "10.1.2"
+  },
   "dependencies": {
     "@craco/craco": "^5.7.0",
     "@reduxjs/toolkit": "^1.4.0",
