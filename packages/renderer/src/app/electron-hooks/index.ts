@@ -1,6 +1,7 @@
 import { IpcRenderer } from "electron";
 
 import CoreHooks from "./coreHooks";
+import NativeHooks from "./nativeHooks";
 import { ElectronHooks } from "./types";
 
 export default (ipcRenderer: IpcRenderer): ElectronHooks => {
@@ -9,5 +10,6 @@ export default (ipcRenderer: IpcRenderer): ElectronHooks => {
   }
   return {
     core: CoreHooks(ipcRenderer),
+    native: NativeHooks(ipcRenderer),
   };
 };
