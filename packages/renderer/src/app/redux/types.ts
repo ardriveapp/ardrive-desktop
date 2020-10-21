@@ -1,5 +1,6 @@
 export interface AppState {
   initialized: boolean;
+  openFilePath: string | null;
 }
 
 export interface AuthState {

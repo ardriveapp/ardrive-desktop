@@ -3,7 +3,6 @@ import createSagaMiddleware from "redux-saga";
 
 import rootReducer from "./reducers";
 import rootSaga from "./sagas";
-import { asyncAwaitorMiddleware } from "./middlewares";
 import electronHooks from "../electron-hooks";
 
 const { ipcRenderer } = window.require("electron");
@@ -19,7 +18,6 @@ export const store = configureStore({
   enhancers: (defaultEnhancers) => [
     ...defaultEnhancers,
     applyMiddleware(sagaMiddleware),
-    applyMiddleware(asyncAwaitorMiddleware),
   ],
 });
 

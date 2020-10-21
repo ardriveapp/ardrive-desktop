@@ -1,11 +1,12 @@
 import { createAction } from "@reduxjs/toolkit";
 
-import { createAwaitableAction, withPayloadType } from "../../utils";
+import { withPayloadType } from "../../utils";
 
 export default {
   initializeApplication: createAction(
     "APPLICATION_INITIALIZE",
     withPayloadType<boolean>()
   ),
-  openFile: createAwaitableAction("FILE_OPEN"),
+  openFile: createAction("FILE_OPEN"),
+  openFileSuccess: createAction("FILE_OPEN_SUCCESS", withPayloadType<string>()),
 };

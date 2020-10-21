@@ -6,9 +6,8 @@ import { appActions } from "../actions";
 
 function* openFileSaga(_: any) {
   const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  const result = yield call(electronHooks.native.openFile);
-  yield put(appActions.openFile.completor());
-  debugger;
+  const path = yield call(electronHooks.native.openFile);
+  yield put(appActions.openFileSuccess(path));
 }
 
 export default function* () {

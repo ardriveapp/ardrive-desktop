@@ -13,7 +13,8 @@
             "reenter_password": "Reenter password (Masked)",
             "continue": "Continue",
             "create_new": "Create new",
-            "import_existing": "Import existing"
+            "import_existing": "Import existing",
+            "choose_your_wallet": "Choose your wallet"
         }
     },
     "components": {}

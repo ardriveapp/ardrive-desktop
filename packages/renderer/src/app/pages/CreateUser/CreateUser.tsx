@@ -1,8 +1,9 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { appActions } from "../../redux/actions";
+import { appSelectors } from "../../redux/selectors";
 
 import {
   CreateUserPageContainer,
@@ -56,17 +57,26 @@ const FirstStep: React.FC<{
   );
 };
 
-const SecondStep = () => {
+const SecondStep: React.FC<{
+  onContinue(): void;
+}> = ({ onContinue }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const openFilePath = useSelector(appSelectors.getOpenFilePath);
 
   const openFile = useCallback(async () => {
-    const res = await dispatch(appActions.openFile());
+    dispatch(appActions.openFile());
   }, []);
+
+  useEffect(() => {
+    if (openFilePath) {
+      onContinue();
+    }
+  }, [openFilePath]);
 
   return (
     <>
-      <span>Choose your wallet</span>
+      <span>{t("pages.create_user.choose_your_wallet")}</span>
       <CreateNewButton>{t("pages.create_user.create_new")}</CreateNewButton>
       <ImportExistingButton onClick={openFile}>
         {t("pages.create_user.import_existing")}
@@ -91,7 +101,7 @@ export default () => {
       case 0:
         return () => <FirstStep onContinue={goNextStep} />;
       case 1:
-        return SecondStep;
+        return () => <SecondStep onContinue={goNextStep} />;
       case 2:
         return ThirdStep;
       default:
