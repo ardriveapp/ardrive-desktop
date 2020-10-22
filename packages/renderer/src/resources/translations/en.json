@@ -6,6 +6,17 @@
             "unlock_button": "Unlock",
             "setup_new_user": "Setup a new user",
             "need_help": "Need help?"
+        },
+        "create_user": {
+            "username": "Username",
+            "password": "Password (Masked)",
+            "reenter_password": "Reenter password (Masked)",
+            "continue": "Continue",
+            "create_new": "Create new",
+            "import_existing": "Import existing",
+            "choose_your_wallet": "Choose your wallet",
+            "select_sync_folder": "Select sync folder",
+            "lets_go": "Lets go!"
         }
     },
     "components": {}

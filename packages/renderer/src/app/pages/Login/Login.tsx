@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import { authActions } from "../../redux/actions";
 
@@ -19,6 +20,7 @@ export default () => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const history = useHistory();
 
   const login = useCallback(() => {
     dispatch(authActions.loginStart(username, password));
@@ -28,6 +30,10 @@ export default () => {
     return (event: any) => {
       setFunction(event.currentTarget.value);
     };
+  }, []);
+
+  const createNewUser = useCallback(() => {
+    history.push("/create-user");
   }, []);
 
   return (
@@ -44,7 +50,9 @@ export default () => {
       <UnlockButton onClick={login}>
         {t("pages.login.unlock_button")}
       </UnlockButton>
-      <SetupNewUserButton>{t("pages.login.setup_new_user")}</SetupNewUserButton>
+      <SetupNewUserButton onClick={createNewUser}>
+        {t("pages.login.setup_new_user")}
+      </SetupNewUserButton>
       <NeedHelpButton>{t("pages.login.need_help")}</NeedHelpButton>
     </LoginPageContainer>
   );

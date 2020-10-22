@@ -1,6 +1,6 @@
 import { RouteProps } from "react-router-dom";
 
-import { Home, Login } from "../pages";
+import { Home, Login, CreateUser } from "../pages";
 import { withProtection } from "../utils/reactUtils";
 
 const Routes: RouteProps[] = [
@@ -13,6 +13,10 @@ const Routes: RouteProps[] = [
     path: "/login",
     component: Login,
   },
+  {
+    path: "/create-user",
+    component: CreateUser,
+  }
 ];
 
 export default Routes;
