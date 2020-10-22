@@ -14,7 +14,9 @@
             "continue": "Continue",
             "create_new": "Create new",
             "import_existing": "Import existing",
-            "choose_your_wallet": "Choose your wallet"
+            "choose_your_wallet": "Choose your wallet",
+            "select_sync_folder": "Select sync folder",
+            "lets_go": "Lets go!"
         }
     },
     "components": {}

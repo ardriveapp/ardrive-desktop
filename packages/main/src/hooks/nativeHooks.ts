@@ -6,3 +6,10 @@ ipcMain.handle("openFile", async (_) => {
   });
   return result;
 });
+
+ipcMain.handle("openFolder", async (_) => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+  return result;
+});

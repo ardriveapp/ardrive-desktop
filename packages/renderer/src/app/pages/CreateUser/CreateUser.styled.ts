@@ -29,3 +29,13 @@ export const CreateNewButton = styled.button`
 `;
 
 export const ImportExistingButton = styled(CreateNewButton)``;
+
+export const SelectSyncFolderButton = styled.button`
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+
+export const LetsGoButton = styled.button`
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;

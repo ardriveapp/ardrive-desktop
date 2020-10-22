@@ -12,7 +12,12 @@ import {
   ContinueButton,
   CreateNewButton,
   ImportExistingButton,
+  SelectSyncFolderButton,
+  LetsGoButton,
 } from "./CreateUser.styled";
+
+const walletPathName = "wallet_path";
+const syncFolderPathName = "sync_folder_path";
 
 const FirstStep: React.FC<{
   onContinue(): void;
@@ -34,7 +39,7 @@ const FirstStep: React.FC<{
     if (username && passwordEquals) {
       onContinue();
     }
-  }, [password, secondPassword, username]);
+  }, [password, secondPassword, username, onContinue]);
 
   return (
     <>
@@ -62,17 +67,19 @@ const SecondStep: React.FC<{
 }> = ({ onContinue }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const openFilePath = useSelector(appSelectors.getOpenFilePath);
+  const walletPath = useSelector(
+    appSelectors.getOpenedFilePath(walletPathName)
+  );
 
   const openFile = useCallback(async () => {
-    dispatch(appActions.openFile());
+    dispatch(appActions.openFile(walletPathName));
   }, []);
 
   useEffect(() => {
-    if (openFilePath) {
+    if (walletPath) {
       onContinue();
     }
-  }, [openFilePath]);
+  }, [walletPath, onContinue]);
 
   return (
     <>
@@ -85,16 +92,56 @@ const SecondStep: React.FC<{
   );
 };
 
-const ThirdStep = () => {
-  return <h1>Third step</h1>;
+const ThirdStep: React.FC<{
+  onContinue(): void;
+}> = ({ onContinue }) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const syncFolderPath = useSelector(
+    appSelectors.getOpenedFolderPath(syncFolderPathName)
+  );
+
+  const openFile = useCallback(async () => {
+    dispatch(appActions.openFolder(syncFolderPathName));
+  }, []);
+
+  const letsGo = useCallback(() => {
+    if (syncFolderPath) {
+      onContinue();
+    }
+  }, [syncFolderPath, onContinue]);
+
+  return (
+    <>
+      <SelectSyncFolderButton onClick={openFile}>
+        {syncFolderPath || t("pages.create_user.select_sync_folder")}
+      </SelectSyncFolderButton>
+      <LetsGoButton onClick={letsGo}>
+        {t("pages.create_user.lets_go")}
+      </LetsGoButton>
+    </>
+  );
 };
 
 export default () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
 
   const goNextStep = useCallback(() => {
     setStep((prev) => prev + 1);
   }, []);
+
+  const walletPath = useSelector(
+    appSelectors.getOpenedFilePath(walletPathName)
+  );
+  const syncFolderPath = useSelector(
+    appSelectors.getOpenedFolderPath(syncFolderPathName)
+  );
+
+  const completeRegistration = useCallback(() => {
+    if (walletPath && syncFolderPath) {
+      alert("success");
+    }
+  }, [walletPath, syncFolderPath]);
 
   const CurrentStep = useMemo(() => {
     switch (step) {
@@ -103,11 +150,11 @@ export default () => {
       case 1:
         return () => <SecondStep onContinue={goNextStep} />;
       case 2:
-        return ThirdStep;
+        return () => <ThirdStep onContinue={completeRegistration} />;
       default:
         return React.Fragment;
     }
-  }, [step]);
+  }, [step, goNextStep, completeRegistration]);
 
   return (
     <CreateUserPageContainer>

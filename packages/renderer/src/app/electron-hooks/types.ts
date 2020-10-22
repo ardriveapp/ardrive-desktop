@@ -4,7 +4,7 @@ export interface CoreHooks {
 
 export interface NativeHooks {
   openFile(): Promise<string | null>;
-  openDirectory(): Promise<string | null>;
+  openFolder(): Promise<string | null>;
 }
 
 export interface ElectronHooks {

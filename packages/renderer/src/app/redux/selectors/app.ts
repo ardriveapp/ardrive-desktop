@@ -4,9 +4,10 @@ import { RootState } from "../types";
 
 const getAppState = (state: RootState) => state.app;
 
-const getOpenFilePath = createSelector(
-  getAppState,
-  (auth) => auth.openFilePath
-);
+const getOpenedFilePath = (name: string) =>
+  createSelector(getAppState, (app) => app.openedFiles[name]);
 
-export default { getOpenFilePath };
+const getOpenedFolderPath = (name: string) =>
+  createSelector(getAppState, (app) => app.openedFolders[name]);
+
+export default { getOpenedFilePath, getOpenedFolderPath };

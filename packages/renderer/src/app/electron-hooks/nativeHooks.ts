@@ -11,9 +11,12 @@ export default (ipcRenderer: IpcRenderer): NativeHooks => {
       }
       return null;
     },
-    openDirectory: async () => {
-      const result = await ipcRenderer.invoke("openDirectory");
-      return result;
+    openFolder: async () => {
+      const { filePaths, canceled } = await ipcRenderer.invoke("openFolder");
+      if (!canceled) {
+        return filePaths[0];
+      }
+      return null;
     },
   };
 };

@@ -1,6 +1,11 @@
 export interface AppState {
   initialized: boolean;
-  openFilePath: string | null;
+  openedFiles: {
+    [name: string]: string;
+  };
+  openedFolders: {
+    [name: string]: string;
+  };
 }
 
 export interface AuthState {

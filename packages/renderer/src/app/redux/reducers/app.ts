@@ -5,7 +5,8 @@ import { AppState } from "../types";
 
 const initialState: AppState = {
   initialized: false,
-  openFilePath: null,
+  openedFiles: {},
+  openedFolders: {},
 };
 
 export default createReducer(initialState, (builder) => {
@@ -15,6 +16,16 @@ export default createReducer(initialState, (builder) => {
   }));
   builder.addCase(appActions.openFileSuccess, (state, action) => ({
     ...state,
-    openFilePath: action.payload,
+    openedFiles: {
+      ...state.openedFiles,
+      [action.payload.name]: action.payload.path,
+    },
+  }));
+  builder.addCase(appActions.openFolderSuccess, (state, action) => ({
+    ...state,
+    openedFolders: {
+      ...state.openedFolders,
+      [action.payload.name]: action.payload.path,
+    },
   }));
 });
