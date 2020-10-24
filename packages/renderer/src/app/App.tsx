@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(appActions.initializeApplication());
-  }, []);
+  }, [dispatch]);
 
   const Routes = useMemo(() => {
     const main = MainRoutes.map((routeProps, index) => (

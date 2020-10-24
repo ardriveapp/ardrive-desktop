@@ -10,6 +10,7 @@ const startApplication = () => {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      webSecurity: false,
     },
   });
 

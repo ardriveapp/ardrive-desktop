@@ -24,7 +24,7 @@ export default () => {
 
   const login = useCallback(() => {
     dispatch(authActions.loginStart(username, password));
-  }, [username, password]);
+  }, [dispatch, username, password]);
 
   const setField = useCallback((setFunction: any) => {
     return (event: any) => {
@@ -34,7 +34,7 @@ export default () => {
 
   const createNewUser = useCallback(() => {
     history.push("/create-user");
-  }, []);
+  }, [history]);
 
   return (
     <LoginPageContainer>
