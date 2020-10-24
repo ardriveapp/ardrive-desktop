@@ -1,22 +1,23 @@
 import { RouteProps } from "react-router-dom";
 
 import { Home, Login, CreateUser } from "../pages";
-import { withProtection } from "../utils/reactUtils";
 
-const Routes: RouteProps[] = [
+export const MainRoutes: RouteProps[] = [
   {
     exact: true,
     path: "/",
-    component: withProtection(Home),
+    component: Home,
   },
+];
+
+export const LoginRoutes: RouteProps[] = [
   {
-    path: "/login",
+    exact: true,
+    path: "/",
     component: Login,
   },
   {
     path: "/create-user",
     component: CreateUser,
-  }
+  },
 ];
-
-export default Routes;

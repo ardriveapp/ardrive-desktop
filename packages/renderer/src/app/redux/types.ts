@@ -1,5 +1,4 @@
 export interface AppState {
-  initialized: boolean;
   openedFiles: {
     [name: string]: string;
   };

@@ -9,7 +9,7 @@
   "scripts": {
     "build": "lerna run build",
     "build-dev": "lerna run build -- --dir",
-    "start": "lerna run start"
+    "start": "lerna run start --parallel"
   },
   "repository": {
     "type": "git",

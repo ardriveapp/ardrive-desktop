@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
-import { appActions } from "../../redux/actions";
+import { appActions, authActions } from "../../redux/actions";
 import { appSelectors } from "../../redux/selectors";
 
 import {
@@ -20,7 +20,7 @@ const walletPathName = "wallet_path";
 const syncFolderPathName = "sync_folder_path";
 
 const FirstStep: React.FC<{
-  onContinue(): void;
+  onContinue(username: string, password: string): void;
 }> = ({ onContinue }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
@@ -37,7 +37,7 @@ const FirstStep: React.FC<{
     const passwordEquals =
       password != null && secondPassword != null && password === secondPassword;
     if (username && passwordEquals) {
-      onContinue();
+      onContinue(username, password);
     }
   }, [password, secondPassword, username, onContinue]);
 
@@ -125,6 +125,18 @@ const ThirdStep: React.FC<{
 
 export default () => {
   const [step, setStep] = useState(0);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+
+  const firstStepCompleted = useCallback(
+    (username: string, password: string) => {
+      setUsername(username);
+      setPassword(password);
+      setStep((prev) => prev + 1);
+    },
+    []
+  );
 
   const goNextStep = useCallback(() => {
     setStep((prev) => prev + 1);
@@ -138,15 +150,17 @@ export default () => {
   );
 
   const completeRegistration = useCallback(() => {
-    if (walletPath && syncFolderPath) {
-      alert("success");
+    if (username && password && walletPath && syncFolderPath) {
+      dispatch(
+        authActions.createUser(username, password, syncFolderPath, walletPath)
+      );
     }
-  }, [walletPath, syncFolderPath]);
+  }, [username, password, walletPath, syncFolderPath]);
 
   const CurrentStep = useMemo(() => {
     switch (step) {
       case 0:
-        return () => <FirstStep onContinue={goNextStep} />;
+        return () => <FirstStep onContinue={firstStepCompleted} />;
       case 1:
         return () => <SecondStep onContinue={goNextStep} />;
       case 2:

@@ -8,7 +8,12 @@ const initialState: AuthState = {
 };
 
 export default createReducer(initialState, (builder) => {
-  builder.addCase(authActions.loginStart, (state, action) => ({
+  builder.addCase(authActions.loginSuccess, (state, _) => ({
     ...state,
+    isLoggedIn: true,
+  }));
+  builder.addCase(authActions.logout, (state, _) => ({
+    ...state,
+    isLoggedIn: false,
   }));
 });
