@@ -73,7 +73,7 @@ const SecondStep: React.FC<{
 
   const openFile = useCallback(async () => {
     dispatch(appActions.openFile(walletPathName));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (walletPath) {
@@ -103,7 +103,7 @@ const ThirdStep: React.FC<{
 
   const openFile = useCallback(async () => {
     dispatch(appActions.openFolder(syncFolderPathName));
-  }, []);
+  }, [dispatch]);
 
   const letsGo = useCallback(() => {
     if (syncFolderPath) {
@@ -155,7 +155,7 @@ export default () => {
         authActions.createUser(username, password, syncFolderPath, walletPath)
       );
     }
-  }, [username, password, walletPath, syncFolderPath]);
+  }, [dispatch, username, password, walletPath, syncFolderPath]);
 
   const CurrentStep = useMemo(() => {
     switch (step) {
@@ -168,7 +168,7 @@ export default () => {
       default:
         return React.Fragment;
     }
-  }, [step, goNextStep, completeRegistration]);
+  }, [step, goNextStep, completeRegistration, firstStepCompleted]);
 
   return (
     <CreateUserPageContainer>
