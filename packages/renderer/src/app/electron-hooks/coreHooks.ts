@@ -12,8 +12,23 @@ export default (ipcRenderer: IpcRenderer): CoreHooks => {
       );
       return result;
     },
-    // createUser: async(username: string, password: string) => {
-
-    // }
+    createNewUser: async (
+      username: string,
+      password: string,
+      syncFolderPath: string,
+      walletPath: string
+    ) => {
+      const result = await ipcRenderer.invoke(
+        "createNewUser",
+        username,
+        password,
+        syncFolderPath,
+        walletPath
+      );
+      return result;
+    },
+    setupDatabase: async () => {
+      await ipcRenderer.invoke("setupDatabase");
+    },
   };
 };

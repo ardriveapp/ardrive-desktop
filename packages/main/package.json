@@ -1,8 +1,9 @@
 {
-  "name": "ardrive-desktop",
+  "name": "main",
   "productName": "ArDrive",
   "description": "ArDrive - Secure, Permenant Storage",
   "version": "0.1.12",
+  "private": true,
   "scripts": {
     "build": "webpack && electron-builder",
     "start": "webpack && electron ./build/index.js"

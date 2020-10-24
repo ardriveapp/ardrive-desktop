@@ -1,7 +1,8 @@
 {
-  "name": "ardrive-desktop-renderer",
+  "name": "renderer",
   "homepage": "./",
   "version": "0.1.12",
+  "private": true,
   "scripts": {
     "start": "craco start",
     "build": "craco build",
@@ -29,6 +30,7 @@
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.5",
     "@types/styled-components": "^5.1.3",
+    "electron-store": "^6.0.1",
     "i18next": "^19.8.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -36,6 +38,8 @@
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "redux-persist": "^6.0.0",
+    "redux-persist-electron-storage": "^2.1.0",
     "redux-saga": "^1.1.3",
     "styled-components": "^5.2.0",
     "typescript": "~3.7.2"

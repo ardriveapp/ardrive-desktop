@@ -1,7 +1,6 @@
-import { call, getContext, takeLatest } from "redux-saga/effects";
+import { all, call, getContext, put, takeLatest } from "redux-saga/effects";
 
 import { ElectronHooks } from "../../electron-hooks/types";
-
 import { authActions } from "../actions";
 
 function* loginStartSaga(action: any) {
@@ -11,8 +10,29 @@ function* loginStartSaga(action: any) {
     action.payload.username,
     action.payload.password
   );
+  if (result) {
+    yield put(authActions.loginSuccess());
+  }
+}
+
+function* createUserSaga(action: any) {
+  const electronHooks: ElectronHooks = yield getContext("electronHooks");
+  const { username, password, syncFolderPath, walletPath } = action.payload;
+  const result = yield call(
+    electronHooks.core.createNewUser,
+    username,
+    password,
+    syncFolderPath,
+    walletPath
+  );
+  if (result) {
+    yield put(authActions.loginStart(username, password));
+  }
 }
 
 export default function* () {
-  yield takeLatest(authActions.loginStart.type, loginStartSaga);
+  yield all([
+    takeLatest(authActions.loginStart.type, loginStartSaga),
+    takeLatest(authActions.createUser.type, createUserSaga),
+  ]);
 }

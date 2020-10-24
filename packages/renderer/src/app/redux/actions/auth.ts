@@ -10,4 +10,22 @@ export default {
       },
     })
   ),
+  loginSuccess: createAction("AUTH_LOGIN_SUCCESS"),
+  logout: createAction("AUTH_LOGOUT"),
+  createUser: createAction(
+    "AUTH_USER_CREATE",
+    (
+      username: string,
+      password: string,
+      syncFolderPath: string,
+      walletPath: string
+    ) => ({
+      payload: {
+        username: username,
+        password: password,
+        syncFolderPath: syncFolderPath,
+        walletPath: walletPath,
+      },
+    })
+  ),
 };
