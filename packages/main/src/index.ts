@@ -5,7 +5,7 @@ import "./hooks";
 
 const startApplication = () => {
   const window = new BrowserWindow({
-    width: 1024,
+    width: 580,
     height: 728,
     webPreferences: {
       nodeIntegration: true,
