@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 
 import { WelcomeContainer } from "app/components";
@@ -9,9 +9,15 @@ import {
   Bold,
   ContinueButton,
 } from "./HowItWork.styled";
+import { useHistory } from "react-router-dom";
 
 export default () => {
   const { t } = useTranslation();
+  const history = useHistory();
+
+  const continueHandler = useCallback(() => {
+    history.push("/login");
+  }, [history]);
 
   return (
     <WelcomeContainer>
@@ -22,7 +28,9 @@ export default () => {
           components={[<Bold />]}
         />
       </DesciptionText>
-      <ContinueButton>{t("pages.how_it_work.continue")}</ContinueButton>
+      <ContinueButton onClick={continueHandler}>
+        {t("pages.how_it_work.continue")}
+      </ContinueButton>
     </WelcomeContainer>
   );
 };
