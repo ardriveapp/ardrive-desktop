@@ -1,6 +1,6 @@
 import { all, call, getContext, put, takeLatest } from "redux-saga/effects";
 
-import { ElectronHooks } from "../../electron-hooks/types";
+import { ElectronHooks } from "app/electron-hooks/types";
 import { authActions } from "../actions";
 
 function* loginStartSaga(action: any) {

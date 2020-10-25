@@ -17,6 +17,16 @@
             "choose_your_wallet": "Choose your wallet",
             "select_sync_folder": "Select sync folder",
             "lets_go": "Lets go!"
+        },
+        "welcome": {
+            "welcome_to": "Welcome to",
+            "description": "Your private and secure,\n decentralized,\n pay-as-you-go,\n censorship-resistant and\n <0>permanent</0> hard drive",
+            "jump_in": "Jump In"
+        },
+        "how_it_work": {
+            "how_does_it_work": "How does it work?",
+            "description": "ArDrive is a simple, yet robust app that protects and syncs your data to and from the cloud.\n\nNo subscription needed! <0>Pay once</0> to store your files, pictures, music, videos and apps permanently.\n\nYour Private Drive is encrypted, meaning ArDrive or anyone else can’t read your content. <0>Only you!</0>\n\nYour Public Drive is open for anyone on the internet to see. <0>Post carefully!</0>\n\nAny data uploaded is permanently stored and secured on a decentralized blockchain network. <0>Deleting is not an option!</0>\n\nPowered by the <0>Arweave</0> Permaweb",
+            "continue": "Continue"
         }
     },
     "components": {}

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { authActions } from "../../redux/actions";
+import { authActions } from "app/redux/actions";
 
 import {
   LoginPageContainer,

@@ -5,7 +5,7 @@ import "./hooks";
 
 const startApplication = () => {
   const window = new BrowserWindow({
-    width: 1024,
+    width: 580,
     height: 728,
     webPreferences: {
       nodeIntegration: true,
@@ -13,6 +13,7 @@ const startApplication = () => {
       webSecurity: false,
     },
   });
+  window.setMenuBarVisibility(false);
 
   if (isDev) {
     window.loadURL("http://localhost:3000");
