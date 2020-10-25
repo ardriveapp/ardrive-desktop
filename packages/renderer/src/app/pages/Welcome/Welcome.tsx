@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 
-import { RoundedButton, WelcomeContainer } from "../../components";
+import { RoundedButton, WelcomeContainer } from "app/components";
 
 import { AppText, WelcomeText, DesciptionText, Red } from "./Welcome.styled";
 

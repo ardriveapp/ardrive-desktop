@@ -1,6 +1,6 @@
 import { call, getContext, put, takeLatest, all } from "redux-saga/effects";
 
-import { ElectronHooks } from "../../electron-hooks/types";
+import { ElectronHooks } from "app/electron-hooks/types";
 
 import { appActions } from "../actions";
 

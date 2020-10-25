@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 
-import { withPayloadType } from "../../utils";
+import { withPayloadType } from "app/utils";
 
 export default {
   initializeApplication: createAction("APP_APPLICATION_INITIALIZE"),

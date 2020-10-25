@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
-import { appActions, authActions } from "../../redux/actions";
-import { appSelectors } from "../../redux/selectors";
+import { appActions, authActions } from "app/redux/actions";
+import { appSelectors } from "app/redux/selectors";
 
 import {
   CreateUserPageContainer,

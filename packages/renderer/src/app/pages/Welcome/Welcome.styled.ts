@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { ReactComponent as Text } from "../../../resources/images/text.svg";
+import { ReactComponent as Text } from "resources/images/text.svg";
 
 export const WelcomeText = styled.span`
   font-size: 30px;

@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-import { ReactComponent as Logo } from "../../../resources/images/icon-light.svg";
-import { ReactComponent as Corder } from "../../../resources/images/corder.svg";
+import { ReactComponent as Logo } from "resources/images/icon-light.svg";
+import { ReactComponent as Corder } from "resources/images/corder.svg";
 
 const WelcomeContainer = styled.div`
   position: relative;
