@@ -9,4 +9,5 @@ export const RoundedButton = styled.button`
   font-size: 20px;
   outline: none;
   border: none;
+  letter-spacing: 3.5px;
 `;

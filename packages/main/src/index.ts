@@ -13,6 +13,7 @@ const startApplication = () => {
       webSecurity: false,
     },
   });
+  window.setMenuBarVisibility(false);
 
   if (isDev) {
     window.loadURL("http://localhost:3000");
