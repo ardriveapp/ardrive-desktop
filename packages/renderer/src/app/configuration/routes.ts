@@ -1,6 +1,6 @@
 import { RouteProps } from "react-router-dom";
 
-import { Home, Login, CreateUser, Welcome, HowItWork } from "../pages";
+import { Home, Login, CreateUser, Welcome } from "../pages";
 
 export const HomeRoutes: RouteProps[] = [
   {
@@ -27,10 +27,6 @@ export const WelcomeRoutes: RouteProps[] = [
     exact: true,
     path: "/",
     component: Welcome,
-  },
-  {
-    path: "/how-it-work",
-    component: HowItWork,
   },
   {
     path: "/create-user",
