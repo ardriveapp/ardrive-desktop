@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { appActions, authActions } from "app/redux/actions";
 import { appSelectors } from "app/redux/selectors";
 
 import {
-  CreateUserPageContainer,
   UsernamePrompt,
   PasswordPrompt,
   ContinueButton,
@@ -14,7 +13,13 @@ import {
   ImportExistingButton,
   SelectSyncFolderButton,
   LetsGoButton,
+  InputCaption,
+  PageHeader,
+  Red,
+  Bold,
+  Description,
 } from "./CreateUser.styled";
+import { WelcomeContainer } from "app/components";
 
 const walletPathName = "wallet_path";
 const syncFolderPathName = "sync_folder_path";
@@ -43,16 +48,27 @@ const FirstStep: React.FC<{
 
   return (
     <>
+      <PageHeader>
+        <Trans
+          i18nKey="pages.create_user.lets_get_aquainted"
+          components={[<Red />]}
+        />
+      </PageHeader>
+      <InputCaption>{t("pages.create_user.enter_your_login")}</InputCaption>
       <UsernamePrompt
         placeholder={t("pages.create_user.username")}
         onChange={setField(setUsername)}
       />
+      <InputCaption>{t("pages.create_user.enter_your_password")}</InputCaption>
       <PasswordPrompt
         placeholder={t("pages.create_user.password")}
         onChange={setField(setPassword)}
       />
+      <InputCaption>
+        {t("pages.create_user.reenter_your_password")}
+      </InputCaption>
       <PasswordPrompt
-        placeholder={t("pages.create_user.reenter_password")}
+        placeholder={t("pages.create_user.password")}
         onChange={setField(setSecondPassword)}
       />
       <ContinueButton onClick={continueHandler}>
@@ -83,7 +99,18 @@ const SecondStep: React.FC<{
 
   return (
     <>
-      <span>{t("pages.create_user.choose_your_wallet")}</span>
+      <PageHeader>
+        <Trans
+          i18nKey="pages.create_user.choose_your_wallet"
+          components={[<Bold />]}
+        />
+      </PageHeader>
+      <Description>
+        <Trans
+          i18nKey="pages.create_user.wallet_description"
+          components={[<Bold />, <Red />]}
+        />
+      </Description>
       <CreateNewButton>{t("pages.create_user.create_new")}</CreateNewButton>
       <ImportExistingButton onClick={openFile}>
         {t("pages.create_user.import_existing")}
@@ -113,6 +140,15 @@ const ThirdStep: React.FC<{
 
   return (
     <>
+      <PageHeader>
+        <Trans i18nKey="pages.create_user.your_path" components={[<Red />]} />
+      </PageHeader>
+      <Description>
+        <Trans
+          i18nKey="pages.create_user.path_description"
+          components={[<Bold />]}
+        />
+      </Description>
       <SelectSyncFolderButton onClick={openFile}>
         {syncFolderPath || t("pages.create_user.select_sync_folder")}
       </SelectSyncFolderButton>
@@ -171,8 +207,8 @@ export default () => {
   }, [step, goNextStep, completeRegistration, firstStepCompleted]);
 
   return (
-    <CreateUserPageContainer>
+    <WelcomeContainer>
       <CurrentStep />
-    </CreateUserPageContainer>
+    </WelcomeContainer>
   );
 };

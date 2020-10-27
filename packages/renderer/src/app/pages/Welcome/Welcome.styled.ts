@@ -1,15 +1,8 @@
 import styled from "styled-components";
 
-import { ReactComponent as Text } from "resources/images/text.svg";
-
 export const WelcomeText = styled.span`
   font-size: 30px;
   font-weight: 500;
-`;
-
-export const AppText = styled(Text)`
-  width: 300px;
-  height: 85px;
 `;
 
 export const DesciptionText = styled.span`

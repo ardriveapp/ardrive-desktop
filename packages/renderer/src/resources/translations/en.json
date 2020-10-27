@@ -8,19 +8,25 @@
             "need_help": "Need help?"
         },
         "create_user": {
+            "lets_get_aquainted": "Let’s get <0>aquainted</0>",
+            "enter_your_login": "Enter your login name",
             "username": "Username",
+            "enter_your_password": "Enter your login password",
+            "reenter_your_password": "Re-enter your login password",
             "password": "Password (Masked)",
-            "reenter_password": "Reenter password (Masked)",
             "continue": "Continue",
             "create_new": "Create new",
             "import_existing": "Import existing",
-            "choose_your_wallet": "Choose your wallet",
+            "choose_your_wallet": "Choose your <0>wallet</0>",
             "select_sync_folder": "Select sync folder",
-            "lets_go": "Lets go!"
+            "lets_go": "Lets go!",
+            "wallet_description": "The Arweave wallet used for\nAR<0>DRIVE</0> is the key to unlock all your private data.\n\n<0>Keep it secret, keep it safe!</0>\n\nNeed more <1>help?</1>",
+            "your_path": "Your path to the <0>PermaWeb</0>",
+            "path_description": "Any file dropped into your\nAR<0>DRIVE</0> sync folder will be\nuploaded after your approval.\n\nPick your sync folder\nfor your Public and Private Drive"
         },
         "welcome": {
             "welcome_to": "Welcome to",
-            "description": "Your private and secure,\n decentralized,\n pay-as-you-go,\n censorship-resistant and\n <0>permanent</0> hard drive",
+            "description": "Your private and secure,\ndecentralized,\npay-as-you-go,\ncensorship-resistant and\n<0>permanent</0> hard drive",
             "jump_in": "Jump In"
         },
         "how_it_work": {

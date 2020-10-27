@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { ReactComponent as Logo } from "resources/images/icon-light.svg";
-import { ReactComponent as Corder } from "resources/images/corder.svg";
+import { AppLogo, CorderLogo } from "../Logos.styled";
 
 const WelcomeContainer = styled.div`
   position: relative;
@@ -14,7 +13,7 @@ const WelcomeContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLogo = styled(Logo)`
+const StyledLogo = styled(AppLogo)`
   position: absolute;
   height: 80px;
   width: 80px;
@@ -22,7 +21,7 @@ const StyledLogo = styled(Logo)`
   left: 0;
 `;
 
-const StyledCorder = styled(Corder)`
+const StyledCorder = styled(CorderLogo)`
   position: absolute;
   height: 80px;
   width: 80px;

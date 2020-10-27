@@ -4,15 +4,16 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import { authActions } from "app/redux/actions";
+import { AppLogo, AppTextLogo } from "app/components";
 
 import {
   LoginPageContainer,
-  AppLogo,
   UsernamePrompt,
   PasswordPrompt,
   UnlockButton,
   SetupNewUserButton,
   NeedHelpButton,
+  TopCorder,
 } from "./Login.styled";
 
 export default () => {
@@ -38,7 +39,9 @@ export default () => {
 
   return (
     <LoginPageContainer>
+      <TopCorder />
       <AppLogo />
+      <AppTextLogo />
       <UsernamePrompt
         placeholder={t("pages.login.username")}
         onChange={setField(setUsername)}
