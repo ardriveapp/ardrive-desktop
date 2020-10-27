@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import { authActions } from "app/redux/actions";
 import { AppLogo, AppTextLogo } from "app/components";
+import { useTranslationAt } from "app/utils/hooks";
 
 import {
   LoginPageContainer,
@@ -17,7 +17,7 @@ import {
 } from "./Login.styled";
 
 export default () => {
-  const { t } = useTranslation();
+  const { t } = useTranslationAt("pages.login");
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,20 +43,18 @@ export default () => {
       <AppLogo />
       <AppTextLogo />
       <UsernamePrompt
-        placeholder={t("pages.login.username")}
+        placeholder={t("username")}
         onChange={setField(setUsername)}
       />
       <PasswordPrompt
-        placeholder={t("pages.login.password")}
+        placeholder={t("password")}
         onChange={setField(setPassword)}
       />
-      <UnlockButton onClick={login}>
-        {t("pages.login.unlock_button")}
-      </UnlockButton>
+      <UnlockButton onClick={login}>{t("unlock_button")}</UnlockButton>
       <SetupNewUserButton onClick={createNewUser}>
-        {t("pages.login.setup_new_user")}
+        {t("setup_new_user")}
       </SetupNewUserButton>
-      <NeedHelpButton>{t("pages.login.need_help")}</NeedHelpButton>
+      <NeedHelpButton>{t("need_help")}</NeedHelpButton>
     </LoginPageContainer>
   );
 };
