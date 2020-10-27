@@ -9,6 +9,7 @@ export interface AppState {
 
 export interface AuthState {
   isLoggedIn: boolean;
+  isFirstLaunch: boolean;
 }
 
 export interface RootState {

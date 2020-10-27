@@ -16,7 +16,7 @@ export default () => {
   const history = useHistory();
 
   const continueHandler = useCallback(() => {
-    history.push("/login");
+    history.push("/create-user");
   }, [history]);
 
   return (
