@@ -7,6 +7,8 @@ const startApplication = () => {
   const window = new BrowserWindow({
     width: 580,
     height: 728,
+    icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
+    title: "ArDrive",
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,

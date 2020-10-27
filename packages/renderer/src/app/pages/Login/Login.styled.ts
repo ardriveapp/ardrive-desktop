@@ -37,6 +37,7 @@ export const SetupNewUserButton = styled.button`
   font-weight: 500;
   font-size: 14px;
   letter-spacing: 1px;
+  cursor: pointer;
 `;
 
 export const NeedHelpButton = styled.button`
@@ -48,6 +49,7 @@ export const NeedHelpButton = styled.button`
   font-weight: bold;
   font-size: 14px;
   letter-spacing: 1px;
+  cursor: pointer;
 `;
 
 export const TopCorder = styled(CorderTopLogo)`

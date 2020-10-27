@@ -12,4 +12,5 @@ export const RoundedButton = styled.button`
   letter-spacing: 3.5px;
   padding-left: 20px;
   padding-right: 20px;
+  cursor: pointer;
 `;
