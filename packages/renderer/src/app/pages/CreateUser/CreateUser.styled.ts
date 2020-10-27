@@ -68,11 +68,11 @@ export const LetsGoButton = styled(RoundedButton)`
 `;
 
 export const Red = styled.span`
-  color: #990033;
+  color: ${(props) => props.theme.colors.red};
   font-weight: 700;
 `;
 
 export const Bold = styled.span`
-  color: #000;
+  color: ${(props) => props.theme.colors.black};
   font-weight: bold;
 `;

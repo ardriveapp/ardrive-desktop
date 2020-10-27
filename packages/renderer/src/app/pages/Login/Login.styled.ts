@@ -24,7 +24,7 @@ export const PasswordPrompt = styled(UsernamePrompt).attrs(() => ({
 export const UnlockButton = styled(RoundedButton)`
   margin-top: 10px;
   margin-bottom: 10px;
-  background-color: #990033;
+  background-color: ${(props) => props.theme.colors.red};
   width: 150px;
 `;
 
