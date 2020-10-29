@@ -1,13 +1,13 @@
 import React from "react";
 
-import {
-  AppTextLogo,
-  FontVariants,
-  RoundedButton,
-  TranslationAt,
-} from "app/components";
+import { FontVariants, TranslationAt } from "app/components";
 
-import { DesciptionText, WelcomeText } from "./FirstStep.styled";
+import {
+  DesciptionText,
+  WelcomeText,
+  AppTextLogo,
+  JumpIn,
+} from "./FirstStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
 
 const translationsPath = "pages.welcome.steps.first";
@@ -25,10 +25,10 @@ const FirstStep: React.FC<{
         <TranslationAt
           atPath={translationsPath}
           i18nKey="description"
-          components={[<FontVariants.Red />]}
+          components={[<FontVariants.Bold />]}
         />
       </DesciptionText>
-      <RoundedButton onClick={onContinue}>{t("jump_in")}</RoundedButton>
+      <JumpIn onClick={onContinue}>{t("jump_in")}</JumpIn>
     </>
   );
 };

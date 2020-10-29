@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "app/redux/actions";
 import { appSelectors } from "app/redux/selectors";
 
-import { WelcomeContainer } from "app/components";
+import { CreateUser, WelcomeContainer } from "app/components";
 
 import {
   FirstStep,
@@ -62,7 +62,7 @@ export default () => {
   }, [step, goNextStep, completeRegistration, firstStepCompleted]);
 
   return (
-    <WelcomeContainer>
+    <WelcomeContainer rightImage={<CreateUser />}>
       <CurrentStep />
     </WelcomeContainer>
   );

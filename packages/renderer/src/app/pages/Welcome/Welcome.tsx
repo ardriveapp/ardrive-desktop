@@ -1,7 +1,11 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 
-import { WelcomeContainer } from "app/components";
+import {
+  FirstWelcomeStep,
+  SecondWelcomeStep,
+  WelcomeContainer,
+} from "app/components";
 import { FirstStep, SecondStep } from "./steps";
 
 export default () => {
@@ -27,8 +31,19 @@ export default () => {
     }
   }, [step, jumpIn, continueHandler]);
 
+  const CurrentImage = useMemo(() => {
+    switch (step) {
+      case 0:
+        return <FirstWelcomeStep />;
+      case 1:
+        return <SecondWelcomeStep />;
+      default:
+        return React.Fragment;
+    }
+  }, [step]);
+
   return (
-    <WelcomeContainer>
+    <WelcomeContainer rightImage={CurrentImage}>
       <CurrentStep />
     </WelcomeContainer>
   );

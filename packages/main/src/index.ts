@@ -5,8 +5,8 @@ import "./hooks";
 
 const startApplication = () => {
   const window = new BrowserWindow({
-    width: 580,
-    height: 728,
+    width: 1440,
+    height: 900,
     icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
     title: "ArDrive",
     webPreferences: {

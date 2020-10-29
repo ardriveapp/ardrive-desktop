@@ -1,15 +1,35 @@
 import styled from "styled-components";
 
+import { LogoTextRed, RoundedButton } from "app/components";
+
 export const WelcomeText = styled.span`
-  font-size: 30px;
-  font-weight: 500;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 34px;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 `;
 
 export const DesciptionText = styled.span`
-  width: 360px;
+  width: 400px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 32px;
   text-align: center;
-  font-weight: 500;
-  font-size: 25px;
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-bottom: 56px;
+  font-family: "Open Sans";
+`;
+
+export const AppTextLogo = styled(LogoTextRed)`
+  margin-top: 16px;
+  margin-bottom: 32px;
+  width: 315px;
+  height: 35px;
+`;
+
+export const JumpIn = styled(RoundedButton)`
+  width: 191px;
 `;

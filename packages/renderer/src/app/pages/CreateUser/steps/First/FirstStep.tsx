@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from "react";
 
-import { FontVariants, TranslationAt } from "app/components";
+import { RoundedButton } from "app/components";
 
 import {
-  ContinueButton,
-  InputCaption,
-  PageHeader,
-  PasswordPrompt,
-  UsernamePrompt,
+  AppTextLogo,
+  CreateUserFormContainer,
+  HeaderText,
 } from "./FirstStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
+import { ArdriveInput } from "app/components/inputs/ArdriveInput";
 
 const translationsPath = "pages.create_user.steps.first";
 
@@ -37,29 +36,25 @@ const FirstStep: React.FC<{
 
   return (
     <>
-      <PageHeader>
-        <TranslationAt
-          atPath={translationsPath}
-          i18nKey="lets_get_aquainted"
-          components={[<FontVariants.Red />]}
+      <HeaderText>{t("create_account")}</HeaderText>
+      <AppTextLogo />
+      <CreateUserFormContainer>
+        <ArdriveInput
+          placeholder={t("username")}
+          onChange={setField(setUsername)}
         />
-      </PageHeader>
-      <InputCaption>{t("enter_your_login")}</InputCaption>
-      <UsernamePrompt
-        placeholder={t("username")}
-        onChange={setField(setUsername)}
-      />
-      <InputCaption>{t("enter_your_password")}</InputCaption>
-      <PasswordPrompt
-        placeholder={t("password")}
-        onChange={setField(setPassword)}
-      />
-      <InputCaption>{t("reenter_your_password")}</InputCaption>
-      <PasswordPrompt
-        placeholder={t("password")}
-        onChange={setField(setSecondPassword)}
-      />
-      <ContinueButton onClick={continueHandler}>{t("continue")}</ContinueButton>
+        <ArdriveInput
+          type="password"
+          placeholder={t("password")}
+          onChange={setField(setPassword)}
+        />
+        <ArdriveInput
+          type="password"
+          placeholder={t("confirm_password")}
+          onChange={setField(setSecondPassword)}
+        />
+        <RoundedButton onClick={continueHandler}>{t("continue")}</RoundedButton>
+      </CreateUserFormContainer>
     </>
   );
 };

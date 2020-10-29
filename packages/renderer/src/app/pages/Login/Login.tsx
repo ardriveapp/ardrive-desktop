@@ -3,18 +3,18 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import { authActions } from "app/redux/actions";
-import { AppLogo, AppTextLogo } from "app/components";
+import { Login, WelcomeContainer } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
 
 import {
-  LoginPageContainer,
-  UsernamePrompt,
-  PasswordPrompt,
   UnlockButton,
   SetupNewUserButton,
   NeedHelpButton,
-  TopCorder,
+  HeaderText,
+  AppTextLogo,
+  LoginFormContainer,
 } from "./Login.styled";
+import { ArdriveInput } from "app/components/inputs/ArdriveInput";
 
 export default () => {
   const { t } = useTranslationAt("pages.login");
@@ -38,23 +38,25 @@ export default () => {
   }, [history]);
 
   return (
-    <LoginPageContainer>
-      <TopCorder />
-      <AppLogo />
+    <WelcomeContainer rightImage={<Login />}>
+      <HeaderText>{t("login")}</HeaderText>
       <AppTextLogo />
-      <UsernamePrompt
-        placeholder={t("username")}
-        onChange={setField(setUsername)}
-      />
-      <PasswordPrompt
-        placeholder={t("password")}
-        onChange={setField(setPassword)}
-      />
-      <UnlockButton onClick={login}>{t("unlock_button")}</UnlockButton>
+      <LoginFormContainer>
+        <ArdriveInput
+          placeholder={t("username")}
+          onChange={setField(setUsername)}
+        />
+        <ArdriveInput
+          type="password"
+          placeholder={t("password")}
+          onChange={setField(setPassword)}
+        />
+        <UnlockButton onClick={login}>{t("unlock_button")}</UnlockButton>
+      </LoginFormContainer>
       <SetupNewUserButton onClick={createNewUser}>
         {t("setup_new_user")}
       </SetupNewUserButton>
       <NeedHelpButton>{t("need_help")}</NeedHelpButton>
-    </LoginPageContainer>
+    </WelcomeContainer>
   );
 };

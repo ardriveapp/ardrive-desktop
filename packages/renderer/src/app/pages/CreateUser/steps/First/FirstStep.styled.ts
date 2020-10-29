@@ -1,37 +1,24 @@
 import styled from "styled-components";
 
-import { RoundedButton, RoundedInput } from "app/components";
+import { LogoTextRed } from "app/components";
 
-export const PageHeader = styled.span`
-  font-size: 26px;
-  margin-bottom: 25px;
-  letter-spacing: 2px;
+export const CreateUserFormContainer = styled.div`
+  width: 380px;
 `;
 
-export const Description = styled.span`
+export const HeaderText = styled.span`
+  font-style: normal;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 34px;
   text-align: center;
-  margin-bottom: 20px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 `;
 
-export const InputCaption = styled.span`
-  margin-top: 10px;
-  margin-bottom: 5px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-`;
-
-export const UsernamePrompt = styled(RoundedInput)`
-  margin-bottom: 10px;
-  width: 400px;
-`;
-
-export const PasswordPrompt = styled(UsernamePrompt).attrs(() => ({
-  type: "password",
-}))``;
-
-export const ContinueButton = styled(RoundedButton)`
-  margin-left: auto;
-  width: auto;
-  margin-right: 100px;
-  margin-top: 70px;
+export const AppTextLogo = styled(LogoTextRed)`
+  margin-top: 16px;
+  margin-bottom: 32px;
+  width: 315px;
+  height: 35px;
 `;
