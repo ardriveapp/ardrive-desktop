@@ -18,16 +18,16 @@
                     "continue": "Continue"
                 },
                 "second": {
-                    "choose_your_wallet": "Choose your <0>wallet</0>",
+                    "choose_your_wallet": "Choose your wallet",
                     "create_new": "Create new",
                     "import_existing": "Import existing",
-                    "wallet_description": "The Arweave wallet used for\nAR<0>DRIVE</0> is the key to unlock all your private data.\n\n<0>Keep it secret, keep it safe!</0>\n\nNeed more <1>help?</1>"
+                    "wallet_description": "The Arweave wallet used for ArDrive is the key to unlock all your private data.\n\n<0>Keep it secret, keep it safe!</0>"
                 },
                 "third": {
                     "select_sync_folder": "Select sync folder",
                     "lets_go": "Lets go!",
                     "your_path": "Your path to the\n<0>PermaWeb</0>",
-                    "path_description": "Any file dropped into your\nAR<0>DRIVE</0> sync folder will be\nuploaded after your approval.\n\nPick your sync folder\nfor your Public and Private Drive"
+                    "path_description": "Pick a local folder to synchronize your Public and Private Drives.\n\nAny files dropped into your local Drives will be uploaded after your approval."
                 }
             }
         },

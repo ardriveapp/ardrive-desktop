@@ -8,10 +8,10 @@ import { FontVariants, TranslationAt } from "app/components";
 import {
   Description,
   LetsGoButton,
-  PageHeader,
   SelectSyncFolderButton,
 } from "./ThirdStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
+import { ArdriveHeader } from "app/components/typography/Headers.styled";
 
 export const SyncFolderPathName = "sync_folder_path";
 
@@ -38,13 +38,15 @@ const ThirdStep: React.FC<{
 
   return (
     <>
-      <PageHeader>
-        <TranslationAt
-          atPath={translationsPath}
-          i18nKey="your_path"
-          components={[<FontVariants.Red />]}
-        />
-      </PageHeader>
+      <ArdriveHeader>
+        {
+          <TranslationAt
+            atPath={translationsPath}
+            i18nKey="your_path"
+            components={[<FontVariants.Red />]}
+          />
+        }
+      </ArdriveHeader>
       <Description>
         <TranslationAt
           atPath={translationsPath}

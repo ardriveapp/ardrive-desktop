@@ -3,18 +3,17 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import { authActions } from "app/redux/actions";
-import { Login, WelcomeContainer } from "app/components";
+import { AppTextLogo, Login, WelcomeContainer } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
 
 import {
   UnlockButton,
   SetupNewUserButton,
   NeedHelpButton,
-  HeaderText,
-  AppTextLogo,
   LoginFormContainer,
 } from "./Login.styled";
 import { ArdriveInput } from "app/components/inputs/ArdriveInput";
+import { ArdriveHeader } from "app/components/typography/Headers.styled";
 
 export default () => {
   const { t } = useTranslationAt("pages.login");
@@ -39,7 +38,7 @@ export default () => {
 
   return (
     <WelcomeContainer rightImage={<Login />}>
-      <HeaderText>{t("login")}</HeaderText>
+      <ArdriveHeader>{t("login")}</ArdriveHeader>
       <AppTextLogo />
       <LoginFormContainer>
         <ArdriveInput
