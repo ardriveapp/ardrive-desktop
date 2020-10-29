@@ -1,8 +1,9 @@
 {
     "pages": {
         "login": {
+            "login": "Log In",
             "username": "Username",
-            "password": "Password (Masked)",
+            "password": "Password",
             "unlock_button": "Unlock",
             "setup_new_user": "Setup a new user",
             "need_help": "Need help?"
@@ -10,12 +11,10 @@
         "create_user": {
             "steps": {
                 "first": {
-                    "lets_get_aquainted": "Let’s get <0>aquainted</0>",
-                    "enter_your_login": "Enter your login name",
+                    "create_account": "Create account",
                     "username": "Username",
-                    "enter_your_password": "Enter your login password",
-                    "reenter_your_password": "Re-enter your login password",
-                    "password": "Password (Masked)",
+                    "password": "Password",
+                    "confirm_password": "Confirm Password",
                     "continue": "Continue"
                 },
                 "second": {
@@ -36,7 +35,7 @@
             "steps": {
                 "first": {
                     "welcome_to": "Welcome to",
-                    "description": "Your private and secure,\ndecentralized,\npay-as-you-go,\ncensorship-resistant and\n<0>permanent</0> hard drive",
+                    "description": "Your private and secure, decentralized, pay-as-you-go, censorship-resistant and <0>permanent</0> hard drive",
                     "jump_in": "Jump In"
                 },
                 "second": {

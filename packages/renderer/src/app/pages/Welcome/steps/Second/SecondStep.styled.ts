@@ -3,22 +3,29 @@ import styled from "styled-components";
 import { RoundedButton } from "app/components";
 
 export const WelcomeText = styled.span`
-  font-size: 30px;
-  font-weight: 500;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 34px;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
 `;
 
 export const DesciptionText = styled.span`
-  width: 460px;
+  width: 500px;
   text-align: left;
-  font-weight: 500;
-  font-size: 15px;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  letter-spacing: 1.5px;
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 160%;
 `;
 
 export const ContinueButton = styled(RoundedButton)`
-  margin-left: auto;
-  width: auto;
-  margin-right: 100px;
+  width: 215px;
+  bottom: 0;
+  position: absolute;
+  margin-bottom: 62px;
 `;

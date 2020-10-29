@@ -1,5 +1,7 @@
 import { createGlobalStyle } from "styled-components";
+
 import "fontsource-montserrat";
+import "fontsource-open-sans";
 
 export const GlobalStyle = createGlobalStyle`
   body {
