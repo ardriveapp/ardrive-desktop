@@ -6,12 +6,12 @@ import { appActions } from "app/redux/actions";
 import { FontVariants, TranslationAt } from "app/components";
 
 import {
-  CreateNewButton,
+  ButtonsContainer,
   Description,
-  ImportExistingButton,
-  PageHeader,
+  ImportWalletButton,
 } from "./SecondStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
+import { ArdriveHeader } from "app/components/typography/Headers.styled";
 
 export const WalletPathName = "wallet_path";
 
@@ -38,24 +38,20 @@ const SecondStep: React.FC<{
 
   return (
     <>
-      <PageHeader>
-        <TranslationAt
-          atPath={translationsPath}
-          i18nKey="choose_your_wallet"
-          components={[<FontVariants.Bold />]}
-        />
-      </PageHeader>
+      <ArdriveHeader>{t("choose_your_wallet")}</ArdriveHeader>
       <Description>
         <TranslationAt
           atPath={translationsPath}
           i18nKey="wallet_description"
-          components={[<FontVariants.Bold />, <FontVariants.Red />]}
+          components={[<FontVariants.Bold />]}
         />
       </Description>
-      <CreateNewButton>{t("create_new")}</CreateNewButton>
-      <ImportExistingButton onClick={openFile}>
-        {t("import_existing")}
-      </ImportExistingButton>
+      <ButtonsContainer>
+        <ImportWalletButton>{t("create_new")}</ImportWalletButton>
+        <ImportWalletButton onClick={openFile}>
+          {t("import_existing")}
+        </ImportWalletButton>
+      </ButtonsContainer>
     </>
   );
 };

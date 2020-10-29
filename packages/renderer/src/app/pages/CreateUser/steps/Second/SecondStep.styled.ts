@@ -2,26 +2,21 @@ import styled from "styled-components";
 
 import { RoundedButton } from "app/components";
 
-export const PageHeader = styled.span`
-  font-size: 26px;
-  margin-bottom: 25px;
-  letter-spacing: 2px;
-`;
-
 export const Description = styled.span`
   text-align: center;
   margin-bottom: 20px;
+  margin-top: 24px;
+  width: 450px;
+  font-family: "Open Sans";
 `;
 
-export const CreateNewButton = styled(RoundedButton)`
-  border-radius: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  height: 60px;
-  width: 270px;
+export const ImportWalletButton = styled(RoundedButton)`
+  height: 64px;
+  width: 244px;
 `;
 
-export const ImportExistingButton = styled(CreateNewButton)`
-  margin-top: 10px;
-  margin-bottom: 10px;
+export const ButtonsContainer = styled.div`
+  display: flex;
+  width: 500px;
+  justify-content: space-between;
 `;

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "app/redux/actions";
 import { appSelectors } from "app/redux/selectors";
 
-import { CreateUser, WelcomeContainer } from "app/components";
+import { CreateUser, Sync, Wallet, WelcomeContainer } from "app/components";
 
 import {
   FirstStep,
@@ -61,8 +61,21 @@ export default () => {
     }
   }, [step, goNextStep, completeRegistration, firstStepCompleted]);
 
+  const CurrentImage = useMemo(() => {
+    switch (step) {
+      case 0:
+        return <CreateUser />;
+      case 1:
+        return <Wallet />;
+      case 2:
+        return <Sync />;
+      default:
+        return React.Fragment;
+    }
+  }, [step]);
+
   return (
-    <WelcomeContainer rightImage={<CreateUser />}>
+    <WelcomeContainer rightImage={CurrentImage}>
       <CurrentStep />
     </WelcomeContainer>
   );

@@ -1,14 +1,11 @@
 import React, { useCallback, useState } from "react";
 
-import { RoundedButton } from "app/components";
+import { AppTextLogo, RoundedButton } from "app/components";
 
-import {
-  AppTextLogo,
-  CreateUserFormContainer,
-  HeaderText,
-} from "./FirstStep.styled";
+import { CreateUserFormContainer } from "./FirstStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
 import { ArdriveInput } from "app/components/inputs/ArdriveInput";
+import { ArdriveHeader } from "app/components/typography/Headers.styled";
 
 const translationsPath = "pages.create_user.steps.first";
 
@@ -36,7 +33,7 @@ const FirstStep: React.FC<{
 
   return (
     <>
-      <HeaderText>{t("create_account")}</HeaderText>
+      <ArdriveHeader>{t("create_account")}</ArdriveHeader>
       <AppTextLogo />
       <CreateUserFormContainer>
         <ArdriveInput
