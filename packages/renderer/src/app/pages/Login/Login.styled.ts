@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { LogoTextRed, RoundedButton } from "app/components";
+import { RoundedButton } from "app/components";
 
 export const LoginFormContainer = styled.div`
   width: 380px;
