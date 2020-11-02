@@ -14,3 +14,5 @@ export { ReactComponent as User } from "resources/images/user.svg";
 export { ReactComponent as Password } from "resources/images/password.svg";
 export { ReactComponent as Wallet } from "resources/images/wallet.svg";
 export { ReactComponent as Sync } from "resources/images/sync.svg";
+export { ReactComponent as Logo } from "resources/images/logo.svg";
+export { ReactComponent as Users } from "resources/images/users.svg";
