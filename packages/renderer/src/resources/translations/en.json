@@ -46,5 +46,15 @@
             }
         }
     },
-    "components": {}
+    "components": {
+        "sidebar": {
+            "create_new": "Create new",
+            "uploads": "Uploads",
+            "personal": "Personal drive",
+            "public": "Public drive",
+            "shared": "Shared drives",
+            "help": "Need help?",
+            "drives": "Personal Drives"
+        }
+    }
 }

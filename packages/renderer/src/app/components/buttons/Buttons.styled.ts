@@ -21,3 +21,38 @@ export const RoundedButton = styled.button`
   padding-right: 20px;
   cursor: pointer;
 `;
+
+export const ButtonImage = styled.div`
+  height: 24px;
+  width: 24px;
+  margin-right: 16px;
+
+  & > svg {
+    fill: white;
+    opacity: 1;
+
+    & > path {
+      opacity: 1;
+    }
+  }
+`;
+
+export const ButtonWithContent = styled(RoundedButton)<{
+  active?: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 233px;
+  height: 56px;
+  font-size: 16px;
+  line-height: 16px;
+  margin-bottom: 36px;
+`;
+
+export const TransparentButtonWithContent = styled(ButtonWithContent)`
+  background-color: transparent;
+  text-transform: capitalize;
+  opacity: ${(props) => (props.active ? "1" : "0.6")};
+  margin-bottom: 0;
+`;
