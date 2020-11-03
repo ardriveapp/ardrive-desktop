@@ -1,12 +1,29 @@
+import { withSubroutes } from "app/utils/reactHOCs";
 import { RouteProps } from "react-router-dom";
 
-import { Home, Login, CreateUser, Welcome } from "../pages";
+import { Home, Login, CreateUser, Welcome, PrivateDrive } from "../pages";
 
 export const HomeRoutes: RouteProps[] = [
   {
-    exact: true,
-    path: "/",
-    component: Home,
+    component: withSubroutes(Home, [
+      {
+        exact: true,
+        path: "/",
+        component: PrivateDrive,
+      },
+      {
+        path: "/public-drive",
+        component: () => null,
+      },
+      {
+        path: "/uploads",
+        component: () => null,
+      },
+      {
+        path: "/shared",
+        component: () => null,
+      },
+    ]),
   },
 ];
 
