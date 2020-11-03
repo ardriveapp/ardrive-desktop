@@ -26,14 +26,22 @@ const getImage = (image: ButtonIcon) => {
   }
 };
 
-const ButtonWithIcon: React.FC<{
+type ButtonWithIconProps = {
   icon: ButtonIcon;
   transparent?: boolean;
   active?: boolean;
-}> = ({ icon: image, children, transparent, active }) => {
+} & React.ComponentProps<typeof TransparentButtonWithContent>;
+
+const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
+  icon: image,
+  children,
+  transparent,
+  active,
+  ...rest
+}) => {
   const Button = transparent ? TransparentButtonWithContent : ButtonWithContent;
   return (
-    <Button active={active}>
+    <Button active={active} {...rest}>
       <ButtonIcon>{getImage(image)}</ButtonIcon>
       {children}
     </Button>
