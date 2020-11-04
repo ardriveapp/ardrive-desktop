@@ -5,11 +5,12 @@ export const SidebarContainer = styled.div`
   padding-left: 25px;
   padding-top: 40px;
   flex-direction: column;
-  height: calc(100% - 40px);
+  height: 100%;
+  width: 100%;
 `;
 
 export const Delimiter = styled.div`
-  width: (100% + 25px);
+  width: calc(100% + 25px);
   height: 1px;
   margin-top: 28px;
   margin-bottom: 28px;

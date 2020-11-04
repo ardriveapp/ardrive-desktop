@@ -7,8 +7,8 @@ export const PageContainer = styled.div`
   flex-direction: column;
   padding-right: 15px;
   background-color: #e5e5e5;
-  height: calc(100% - 40px);
-  width: calc(100% - 25px);
+  height: 100%;
+  width: 100%;
 `;
 
 export const PageHeader = styled.div`

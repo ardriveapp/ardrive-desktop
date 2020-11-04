@@ -16,3 +16,6 @@ export { ReactComponent as Wallet } from "resources/images/wallet.svg";
 export { ReactComponent as Sync } from "resources/images/sync.svg";
 export { ReactComponent as Logo } from "resources/images/logo.svg";
 export { ReactComponent as Users } from "resources/images/users.svg";
+export { ReactComponent as Logout } from "resources/images/logout.svg";
+
+export { default as SampleUserImage } from "resources/images/sample-user-image.png";
