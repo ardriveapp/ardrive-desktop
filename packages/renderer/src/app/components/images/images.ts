@@ -17,5 +17,9 @@ export { ReactComponent as Sync } from "resources/images/sync.svg";
 export { ReactComponent as Logo } from "resources/images/logo.svg";
 export { ReactComponent as Users } from "resources/images/users.svg";
 export { ReactComponent as Logout } from "resources/images/logout.svg";
+export { ReactComponent as AddContent } from "resources/images/add-content.svg";
+export { ReactComponent as Folder } from "resources/images/folder.svg";
+export { ReactComponent as File } from "resources/images/file.svg";
+export { ReactComponent as Options } from "resources/images/options.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";
