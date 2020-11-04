@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const FileListTable = styled.table`
-  width: 1000px;
+  width: 100%;
   table-layout: fixed;
   border-spacing: 0 4px;
 `;
