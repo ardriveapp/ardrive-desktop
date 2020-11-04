@@ -6,6 +6,7 @@ import "fontsource-open-sans";
 export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
+    user-select: none;
   }
 
   body {

@@ -31,6 +31,7 @@ export const SidebarContainer = styled.div`
 
 export const ContentContainer = styled.div`
   height: 100%;
+  width: 100%;
 `;
 
 export const AppLogo = styled(AppMainLogo)`

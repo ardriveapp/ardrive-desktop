@@ -31,7 +31,7 @@
     "renderer": "*"
   },
   "dependencies": {
-    "ardrive-core-js": "^0.2.8",
+    "ardrive-core-js": "^0.2.13",
     "electron-is-dev": "^1.2.0"
   }
 }

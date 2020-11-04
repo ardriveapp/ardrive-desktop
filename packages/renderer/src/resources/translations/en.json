@@ -44,6 +44,9 @@
                     "continue": "Continue"
                 }
             }
+        },
+        "privateDrive": {
+            "header": "Private Drive"
         }
     },
     "components": {
@@ -55,6 +58,14 @@
             "shared": "Shared drives",
             "help": "Need help?",
             "drives": "Personal Drives"
+        },
+        "fileList": {
+            "emptyDescription": " This place looks empty... Upload some files with the \"Create New\" button",
+            "mb": "{{size}} Mb",
+            "fileName": "File Name",
+            "lastModified": "Last Modified Date",
+            "fileSize": "File Size",
+            "uploadedFrom": "Uploaded from {{from}} {{date}}"
         }
     }
 }
