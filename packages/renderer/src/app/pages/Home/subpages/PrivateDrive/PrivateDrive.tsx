@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { FileList, FileListItem } from "app/components";
-
-import { FolderPath, PageContainer, PageHeader } from "./PrivateDrive.styled";
+import { DetailsSidebar, FileList, FileListItem } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
+
+import {
+  FolderPath,
+  PageContentContainer,
+  PageHeader,
+  PageContainer,
+} from "./PrivateDrive.styled";
 
 const testItems: FileListItem[] = [
   {
@@ -22,12 +27,21 @@ const testItems: FileListItem[] = [
 
 export default () => {
   const { t } = useTranslationAt("pages.privateDrive");
+  const [selectedItem, setSelectedItem] = useState<FileListItem | null>(
+    testItems[0]
+  );
 
   return (
     <PageContainer>
-      <PageHeader>{t("header")}</PageHeader>
-      <FolderPath>My Disk / Private Drive</FolderPath>
-      <FileList items={testItems} />
+      <PageContentContainer>
+        <PageHeader>{t("header")}</PageHeader>
+        <FolderPath>My Disk / Private Drive</FolderPath>
+        <FileList items={testItems} onSelect={setSelectedItem} />
+      </PageContentContainer>
+      <DetailsSidebar
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
     </PageContainer>
   );
 };

@@ -21,5 +21,6 @@ export { ReactComponent as AddContent } from "resources/images/add-content.svg";
 export { ReactComponent as Folder } from "resources/images/folder.svg";
 export { ReactComponent as File } from "resources/images/file.svg";
 export { ReactComponent as Options } from "resources/images/options.svg";
+export { ReactComponent as Close } from "resources/images/close.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

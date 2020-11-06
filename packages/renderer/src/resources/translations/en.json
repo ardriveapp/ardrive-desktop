@@ -66,6 +66,10 @@
             "lastModified": "Last Modified Date",
             "fileSize": "File Size",
             "uploadedFrom": "Uploaded from {{from}} {{date}}"
+        },
+        "detailsSidebar": {
+            "details": "Details",
+            "activity": "Activity"
         }
     }
 }
