@@ -37,7 +37,8 @@ const getFileImage = (item: FileListItem) => {
 
 const FileList: React.FC<{
   items: FileListItem[] | null;
-}> = ({ items }) => {
+  onSelect(listItem: FileListItem): void;
+}> = ({ items, onSelect }) => {
   const { t } = useTranslationAt("components.fileList");
 
   const getFileSizeCaption = useCallback(
@@ -83,7 +84,7 @@ const FileList: React.FC<{
             </td>
             <td>{getFileSizeCaption(item.size)}</td>
             <td>
-              <OptionsImage />
+              <OptionsImage onClick={() => onSelect(item)} />
             </td>
           </tr>
         ))}
