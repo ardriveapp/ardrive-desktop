@@ -23,8 +23,11 @@ export default () => {
 
   return (
     <SidebarContainer>
-      <ButtonWithIcon icon="folder">{t("create_new")}</ButtonWithIcon>
+      <ButtonWithIcon disabled icon="folder">
+        {t("create_new")}
+      </ButtonWithIcon>
       <ButtonWithIcon
+        disabled
         onClick={() => history.push("/uploads")}
         active={isActiveRoute("/uploads")}
         icon="upload"
@@ -43,6 +46,7 @@ export default () => {
         {t("personal")}
       </ButtonWithIcon>
       <ButtonWithIcon
+        disabled
         onClick={() => history.push("/public-drive")}
         active={isActiveRoute("/public-drive")}
         icon="public"
@@ -52,6 +56,7 @@ export default () => {
       </ButtonWithIcon>
       <Delimiter />
       <ButtonWithIcon
+        disabled
         onClick={() => history.push("/shared")}
         active={isActiveRoute("/shared")}
         icon="share"
@@ -60,7 +65,7 @@ export default () => {
         {t("shared")}
       </ButtonWithIcon>
       <BottomContainer>
-        <ButtonWithIcon icon="help" transparent>
+        <ButtonWithIcon disabled icon="help" transparent>
           {t("help")}
         </ButtonWithIcon>
       </BottomContainer>

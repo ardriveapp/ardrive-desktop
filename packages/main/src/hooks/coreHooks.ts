@@ -5,6 +5,7 @@ import {
   getLocalWallet,
   addNewUser,
   setupDatabase,
+  startWatchingFolders,
 } from "ardrive-core-js";
 import { ArDriveUser } from "ardrive-core-js/lib/types";
 import { Path } from "typescript";
@@ -18,9 +19,12 @@ ipcMain.handle("setupDatabase", async (_) => {
 ipcMain.handle("login", async (_, username: string, password: string) => {
   const passwordResult: boolean = await passwordCheck(password, username);
   if (passwordResult) {
+    const user = await getUser(password, username);
+    startWatchingFolders(user);
+
     return {
       result: true,
-      user: await getUser(password, username),
+      user: user,
     };
   }
   return {
