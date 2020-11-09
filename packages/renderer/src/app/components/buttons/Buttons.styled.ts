@@ -20,6 +20,10 @@ export const RoundedButton = styled.button`
   padding-left: 20px;
   padding-right: 20px;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 export const ButtonImage = styled.div`
