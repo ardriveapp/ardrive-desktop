@@ -17,6 +17,11 @@ export const PageContentContainer = styled.div`
   width: 100%;
 `;
 
+export const PageHeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 export const PageHeader = styled.div`
   font-style: normal;
   font-weight: 600;
@@ -36,4 +41,25 @@ export const FolderPath = styled.span`
   color: rgba(0, 6, 10, 0.6);
   margin-top: 4px;
   margin-bottom: 28px;
+`;
+
+export const FileMenuContainer = styled.div<{
+  visible: boolean;
+}>`
+  display: ${(props) => (props.visible ? "block" : "none")};
+
+  svg {
+    margin-right: 31px;
+    cursor: pointer;
+
+    &:hover {
+      path {
+        fill: ${(props) => props.theme.colors.red};
+      }
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 `;

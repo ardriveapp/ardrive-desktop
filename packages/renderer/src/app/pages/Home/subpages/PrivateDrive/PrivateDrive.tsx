@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 
-import { DetailsSidebar, FileList, FileListItem } from "app/components";
+import {
+  DetailsSidebar,
+  Edit,
+  FileList,
+  FileListItem,
+  Info,
+  MoveTo,
+  Share,
+} from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
 
 import {
@@ -8,6 +16,8 @@ import {
   PageContentContainer,
   PageHeader,
   PageContainer,
+  PageHeaderContainer,
+  FileMenuContainer,
 } from "./PrivateDrive.styled";
 
 const testItems: FileListItem[] = [
@@ -27,16 +37,28 @@ const testItems: FileListItem[] = [
 
 export default () => {
   const { t } = useTranslationAt("pages.privateDrive");
-  const [selectedItem, setSelectedItem] = useState<FileListItem | null>(
-    testItems[0]
-  );
+  const [selectedItem, setSelectedItem] = useState<FileListItem | null>(null);
+  const [clickedItem, setClickedItem] = useState<FileListItem | null>(null);
 
   return (
     <PageContainer>
       <PageContentContainer>
-        <PageHeader>{t("header")}</PageHeader>
+        <PageHeaderContainer>
+          <PageHeader>{t("header")}</PageHeader>
+          <FileMenuContainer visible={clickedItem != null}>
+            <Edit />
+            <MoveTo />
+            <Share />
+            <Info onClick={() => setSelectedItem(clickedItem)} />
+          </FileMenuContainer>
+        </PageHeaderContainer>
         <FolderPath>My Disk / Private Drive</FolderPath>
-        <FileList items={testItems} onSelect={setSelectedItem} />
+        <FileList
+          items={testItems}
+          onSelect={setSelectedItem}
+          onItemClick={setClickedItem}
+          activeItem={clickedItem}
+        />
       </PageContentContainer>
       <DetailsSidebar
         item={selectedItem}

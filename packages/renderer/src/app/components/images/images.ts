@@ -22,5 +22,9 @@ export { ReactComponent as Folder } from "resources/images/folder.svg";
 export { ReactComponent as File } from "resources/images/file.svg";
 export { ReactComponent as Options } from "resources/images/options.svg";
 export { ReactComponent as Close } from "resources/images/close.svg";
+export { ReactComponent as Edit } from "resources/images/edit.svg";
+export { ReactComponent as Info } from "resources/images/info.svg";
+export { ReactComponent as MoveTo } from "resources/images/move-to.svg";
+export { ReactComponent as Share } from "resources/images/share.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";
