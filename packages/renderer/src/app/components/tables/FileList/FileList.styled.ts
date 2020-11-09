@@ -20,51 +20,67 @@ export const FileListTableHead = styled.thead`
   }
 `;
 
-export const FileListTableBody = styled.tbody`
-  & tr {
-    height: 74px;
-    background-color: white;
-    border-radius: 3px;
+export const FileListTableRow = styled.tr<{
+  active: boolean;
+}>`
+  height: 74px;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: white;
 
-    td:nth-child(1) {
-      padding-left: 16px;
-      padding-right: 20px;
-      width: 50px;
-      overflow: hidden;
-    }
+  td {
+    color: ${(props) =>
+      props.active ? props.theme.colors.red : "initial"} !important;
+  }
 
-    td:nth-child(2) {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 24px;
-      color: rgba(0, 6, 10, 0.87);
-    }
+  &:hover {
+    background-color: transparent;
 
-    td:nth-child(3) {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 20px;
-      color: rgba(0, 6, 10, 0.6);
-    }
-
-    td:nth-child(4) {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 20px;
-      color: #a4a4a4;
-    }
-
-    td:nth-child(5) {
-      padding-right: 26px;
+    td {
+      color: ${(props) => props.theme.colors.red} !important;
     }
   }
+
+  td:nth-child(1) {
+    padding-left: 16px;
+    padding-right: 20px;
+    width: 50px;
+    overflow: hidden;
+  }
+
+  td:nth-child(2) {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(0, 6, 10, 0.87);
+  }
+
+  td:nth-child(3) {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 6, 10, 0.6);
+  }
+
+  td:nth-child(4) {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    color: #a4a4a4;
+  }
+
+  td:nth-child(5) {
+    padding-right: 26px;
+  }
 `;
+
+export const FileListTableBody = styled.tbody``;
 
 export const EmptyContentContainer = styled.div`
   display: flex;

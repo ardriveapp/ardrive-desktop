@@ -10,6 +10,7 @@ import {
   FileListTable,
   FileListTableBody,
   FileListTableHead,
+  FileListTableRow,
   FolderImage,
   OptionsImage,
 } from "./FileList.styled";
@@ -38,7 +39,9 @@ const getFileImage = (item: FileListItem) => {
 const FileList: React.FC<{
   items: FileListItem[] | null;
   onSelect(listItem: FileListItem): void;
-}> = ({ items, onSelect }) => {
+  onItemClick(listItem: FileListItem): void;
+  activeItem: FileListItem | null;
+}> = ({ items, onSelect, onItemClick, activeItem }) => {
   const { t } = useTranslationAt("components.fileList");
 
   const getFileSizeCaption = useCallback(
@@ -73,7 +76,11 @@ const FileList: React.FC<{
       </FileListTableHead>
       <FileListTableBody>
         {items.map((item, index) => (
-          <tr key={index}>
+          <FileListTableRow
+            key={index}
+            onClick={() => onItemClick(item)}
+            active={activeItem == item}
+          >
             <td>{getFileImage(item)}</td>
             <td>{item.name}</td>
             <td>
@@ -86,7 +93,7 @@ const FileList: React.FC<{
             <td>
               <OptionsImage onClick={() => onSelect(item)} />
             </td>
-          </tr>
+          </FileListTableRow>
         ))}
       </FileListTableBody>
     </FileListTable>
