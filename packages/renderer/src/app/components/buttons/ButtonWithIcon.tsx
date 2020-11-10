@@ -1,4 +1,6 @@
 import React from "react";
+import styled from "styled-components";
+
 import { Folder, Help, Private, Public, Share, Upload } from "../images";
 
 import {
@@ -23,11 +25,13 @@ const getImage = (image: ButtonIcon) => {
       return <Share />;
     case "help":
       return <Help />;
+    default:
+      return null;
   }
 };
 
 type ButtonWithIconProps = {
-  icon: ButtonIcon;
+  icon?: ButtonIcon;
   transparent?: boolean;
   active?: boolean;
 } & React.ComponentProps<typeof TransparentButtonWithContent>;
@@ -48,4 +52,4 @@ const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
   );
 };
 
-export default ButtonWithIcon;
+export default styled(ButtonWithIcon)``;
