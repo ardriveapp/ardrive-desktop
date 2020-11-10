@@ -7,6 +7,7 @@ import {
   FileListItem,
   Info,
   MoveTo,
+  MoveToModal,
   Share,
 } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
@@ -39,6 +40,7 @@ export default () => {
   const { t } = useTranslationAt("pages.privateDrive");
   const [selectedItem, setSelectedItem] = useState<FileListItem | null>(null);
   const [clickedItem, setClickedItem] = useState<FileListItem | null>(null);
+  const [showMoveToModal, setShowMoveToModal] = useState(false);
 
   return (
     <PageContainer>
@@ -47,7 +49,7 @@ export default () => {
           <PageHeader>{t("header")}</PageHeader>
           <FileMenuContainer visible={clickedItem != null}>
             <Edit />
-            <MoveTo />
+            <MoveTo onClick={() => setShowMoveToModal(true)} />
             <Share />
             <Info onClick={() => setSelectedItem(clickedItem)} />
           </FileMenuContainer>
@@ -63,6 +65,10 @@ export default () => {
       <DetailsSidebar
         item={selectedItem}
         onClose={() => setSelectedItem(null)}
+      />
+      <MoveToModal
+        visible={showMoveToModal}
+        onClose={() => setShowMoveToModal(false)}
       />
     </PageContainer>
   );
