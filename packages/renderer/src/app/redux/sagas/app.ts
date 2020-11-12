@@ -1,4 +1,10 @@
-import { call, getContext, put, takeLatest, all } from "redux-saga/effects";
+import {
+  call,
+  getContext,
+  put,
+  takeLatest,
+  all,
+} from "redux-saga/effects";
 
 import { ElectronHooks } from "app/electron-hooks/types";
 
@@ -31,6 +37,15 @@ function* openFolderSaga(action: any) {
   );
 }
 
+function* changeWindowSizeSaga(action: any) {
+  const electronHooks: ElectronHooks = yield getContext("electronHooks");
+  yield call(
+    electronHooks.native.changeWindowSize,
+    action.payload.width,
+    action.payload.height
+  );
+}
+
 export default function* () {
   yield all([
     takeLatest(
@@ -39,5 +54,6 @@ export default function* () {
     ),
     takeLatest(appActions.openFile.type, openFileSaga),
     takeLatest(appActions.openFolder.type, openFolderSaga),
+    takeLatest(appActions.changeWindowSize.type, changeWindowSizeSaga),
   ]);
 }

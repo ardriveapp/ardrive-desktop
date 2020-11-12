@@ -20,4 +20,11 @@ export default {
       path: string;
     }>()
   ),
+  changeWindowSize: createAction(
+    "APP_CHANGE_WINDOW_SIZE",
+    withPayloadType<{
+      width: number;
+      height: number;
+    }>()
+  ),
 };

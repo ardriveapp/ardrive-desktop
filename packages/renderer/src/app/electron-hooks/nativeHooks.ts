@@ -18,5 +18,8 @@ export default (ipcRenderer: IpcRenderer): NativeHooks => {
       }
       return null;
     },
+    changeWindowSize: async (width: number, height: number) => {
+      await ipcRenderer.invoke("changeWindowSize", width, height);
+    },
   };
 };

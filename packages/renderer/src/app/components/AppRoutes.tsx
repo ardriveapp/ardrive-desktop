@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   HashRouter,
   Redirect,
@@ -14,6 +14,7 @@ import {
   LoginRoutes,
   WelcomeRoutes,
 } from "app/configuration/routes";
+import { appActions } from "app/redux/actions";
 
 const prepareRoutes = (routes: RouteProps[]) =>
   routes.map((routeProps, index) => <Route key={index} {...routeProps} />);
@@ -21,14 +22,35 @@ const prepareRoutes = (routes: RouteProps[]) =>
 export const AppRoutes = () => {
   const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
   const isFirstLaunch = useSelector(authSelectors.getIsFirstLaunch);
+  const dispatch = useDispatch();
 
   const routes = useMemo(() => {
     if (isFirstLaunch && !isLoggedIn) {
+      dispatch(
+        // TODO: Introduce new method to set default size
+        appActions.changeWindowSize({
+          width: 1440,
+          height: 900,
+        })
+      );
       return prepareRoutes(WelcomeRoutes);
     }
     if (!isLoggedIn) {
+      dispatch(
+        // TODO: Introduce new method to set default size
+        appActions.changeWindowSize({
+          width: 1440,
+          height: 900,
+        })
+      );
       return prepareRoutes(LoginRoutes);
     }
+    // dispatch(
+    //   appActions.changeWindowSize({
+    //     width: 500,
+    //     height: 300,
+    //   })
+    // );
     return prepareRoutes(HomeRoutes);
   }, [isLoggedIn, isFirstLaunch]);
 

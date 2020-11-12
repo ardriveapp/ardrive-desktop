@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import isDev from "electron-is-dev";
 
-import "./hooks";
+import { initializeHooks } from "./hooks";
 
 const startApplication = () => {
   const window = new BrowserWindow({
@@ -22,6 +22,8 @@ const startApplication = () => {
   } else {
     window.loadFile(`${__dirname}/renderer/index.html`);
   }
+
+  initializeHooks([], [window]);
 };
 
 app.on("ready", startApplication);

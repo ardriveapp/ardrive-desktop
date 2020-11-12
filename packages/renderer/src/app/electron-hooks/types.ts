@@ -12,6 +12,7 @@ export interface CoreHooks {
 export interface NativeHooks {
   openFile(): Promise<string | null>;
   openFolder(): Promise<string | null>;
+  changeWindowSize(width: number, height: number): Promise<void>;
 }
 
 export interface ElectronHooks {
