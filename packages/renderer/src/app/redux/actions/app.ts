@@ -1,4 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
+import { WindowType } from "app/electron-hooks/types";
 
 import { withPayloadType } from "app/utils";
 
@@ -23,8 +24,7 @@ export default {
   changeWindowSize: createAction(
     "APP_CHANGE_WINDOW_SIZE",
     withPayloadType<{
-      width: number;
-      height: number;
+      windowType: WindowType;
     }>()
   ),
 };

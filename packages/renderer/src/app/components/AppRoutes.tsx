@@ -27,30 +27,25 @@ export const AppRoutes = () => {
   const routes = useMemo(() => {
     if (isFirstLaunch && !isLoggedIn) {
       dispatch(
-        // TODO: Introduce new method to set default size
         appActions.changeWindowSize({
-          width: 1440,
-          height: 900,
+          windowType: "desktop",
         })
       );
       return prepareRoutes(WelcomeRoutes);
     }
     if (!isLoggedIn) {
       dispatch(
-        // TODO: Introduce new method to set default size
         appActions.changeWindowSize({
-          width: 1440,
-          height: 900,
+          windowType: "desktop",
         })
       );
       return prepareRoutes(LoginRoutes);
     }
-    // dispatch(
-    //   appActions.changeWindowSize({
-    //     width: 500,
-    //     height: 300,
-    //   })
-    // );
+    dispatch(
+      appActions.changeWindowSize({
+        windowType: "mobile",
+      })
+    );
     return prepareRoutes(HomeRoutes);
   }, [isLoggedIn, isFirstLaunch]);
 

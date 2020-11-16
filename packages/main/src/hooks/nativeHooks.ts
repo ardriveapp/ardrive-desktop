@@ -1,5 +1,8 @@
 import { ipcMain, dialog, BrowserWindow } from "electron";
 
+import { Sizes } from "../config";
+import { WindowType } from "../types";
+
 export const initialize = (window: BrowserWindow) => {
   ipcMain.handle("openFile", async (_) => {
     const result = await dialog.showOpenDialog({
@@ -15,13 +18,14 @@ export const initialize = (window: BrowserWindow) => {
     return result;
   });
 
-  ipcMain.handle(
-    "changeWindowSize",
-    async (_, width: number, height: number) => {
-      const [currentWidth, currentHeight] = window.getSize();
-      if (currentWidth !== width && currentHeight !== height) {
-        window.setSize(width, height, true);
-      }
+  ipcMain.handle("changeWindowSize", async (_, windowType: WindowType) => {
+    switch (windowType) {
+      case "desktop":
+      case "mobile":
+        window.setSize(Sizes[windowType].width, Sizes[windowType].height, true);
+        return;
+      default:
+        return;
     }
-  );
+  });
 };
