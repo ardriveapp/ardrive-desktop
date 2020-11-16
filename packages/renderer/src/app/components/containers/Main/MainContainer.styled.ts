@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { AppMainLogo, Logout, Users } from "app/components/images";
+import { LogoWithoutText, Logout, Users } from "app/components/images";
 
 export const Container = styled.div`
   height: 100%;
@@ -15,6 +15,7 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 `;
 
 export const BottomContainer = styled.div`
@@ -23,23 +24,19 @@ export const BottomContainer = styled.div`
   display: flex;
 `;
 
-export const SidebarContainer = styled.div`
-  min-width: 340px;
-  height: 100%;
-  background-color: ${(props) => props.theme.colors.darkGrey};
-`;
-
 export const ContentContainer = styled.div`
   height: 100%;
   width: 100%;
 `;
 
-export const AppLogo = styled(AppMainLogo)`
-  margin-left: 61px;
+export const AppLogo = styled(LogoWithoutText)`
+  margin-left: 16px;
+  width: 64px;
+  height: 38px;
 `;
 
 export const CurrentUserContainer = styled.div`
-  margin-right: 40px;
+  margin-right: 16px;
   display: flex;
   align-items: center;
 `;
@@ -47,7 +44,6 @@ export const CurrentUserContainer = styled.div`
 export const CurrentUserIcon = styled.div<{
   image: string;
 }>`
-  position: relative;
   border: 2px solid ${(props) => props.theme.colors.red};
   width: 32px;
   height: 32px;
@@ -68,13 +64,13 @@ export const CurrentUserDetailsBar = styled.div<{
 }>`
   display: ${(props) => (props.show ? "flex" : "none")};
   position: absolute;
-  width: 388px;
-  height: 102px;
+  width: 100vw;
+  height: 112px;
   background-color: white;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
   border-radius: 3px;
-  right: 0;
-  top: 40px;
+  top: 60px;
+  left: 0;
   padding: 18px;
   cursor: default;
   pointer-events: none;
@@ -127,4 +123,9 @@ export const LogoutButton = styled(Logout)`
   height: 18px;
   cursor: pointer;
   pointer-events: all;
+`;
+
+export const FooterContainer = styled.div`
+  background-color: #333333;
+  height: 58px;
 `;

@@ -8,10 +8,7 @@ export const PageContainer = styled.div`
 
 export const PageContentContainer = styled.div`
   display: flex;
-  padding-left: 40px;
-  padding-top: 40px;
   flex-direction: column;
-  padding-right: 15px;
   background-color: #e5e5e5;
   height: 100%;
   width: 100%;
@@ -19,7 +16,7 @@ export const PageContentContainer = styled.div`
 
 export const PageHeaderContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 `;
 
 export const PageHeader = styled.div`

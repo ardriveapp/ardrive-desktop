@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { AppSidebar } from "app/components/sidebars";
 import { SampleUserImage } from "app/components/images";
 
 import {
@@ -9,7 +8,6 @@ import {
   Container,
   ContentContainer,
   Header,
-  SidebarContainer,
   AppLogo,
   CurrentUserContainer,
   CurrentUserIcon,
@@ -22,6 +20,7 @@ import {
   UserBalance,
   UserNameContainer,
   LogoutButton,
+  FooterContainer,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/actions";
 
@@ -58,11 +57,11 @@ const MainContainer: React.FC = ({ children }) => {
         </CurrentUserContainer>
       </Header>
       <BottomContainer>
-        <SidebarContainer>
-          <AppSidebar />
-        </SidebarContainer>
         <ContentContainer>{children}</ContentContainer>
       </BottomContainer>
+      <FooterContainer>
+
+      </FooterContainer>
     </Container>
   );
 };

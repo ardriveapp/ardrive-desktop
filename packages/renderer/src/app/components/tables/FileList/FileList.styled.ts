@@ -5,7 +5,7 @@ import { Options } from "app/components/images";
 
 export const FileListTable = styled.table`
   width: 100%;
-  border-spacing: 0 4px;
+  border-spacing: 0 1px;
 `;
 
 export const FileListTableHead = styled.thead`
@@ -46,37 +46,6 @@ export const FileListTableRow = styled.tr<{
     padding-right: 20px;
     width: 50px;
     overflow: hidden;
-  }
-
-  td:nth-child(2) {
-    font-family: "Open Sans";
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
-    color: rgba(0, 6, 10, 0.87);
-  }
-
-  td:nth-child(3) {
-    font-family: "Open Sans";
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 20px;
-    color: rgba(0, 6, 10, 0.6);
-  }
-
-  td:nth-child(4) {
-    font-family: "Open Sans";
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 20px;
-    color: #a4a4a4;
-  }
-
-  td:nth-child(5) {
-    padding-right: 26px;
   }
 `;
 
@@ -122,4 +91,38 @@ export const OptionsImage = styled(Options)`
   width: 4px;
   opacity: 0.5;
   cursor: pointer;
+`;
+
+export const ItemContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100px;
+
+  & > span:nth-child(1) {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(0, 6, 10, 0.87);
+  }
+
+  & > span:nth-child(2) {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 6, 10, 0.6);
+  }
+
+  & > span:nth-child(3) {
+    font-family: "Open Sans";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #a4a4a4;
+  }
 `;
