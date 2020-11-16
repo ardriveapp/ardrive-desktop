@@ -12,6 +12,7 @@ import {
   FileListTableHead,
   FileListTableRow,
   FolderImage,
+  ItemContent,
   OptionsImage,
 } from "./FileList.styled";
 
@@ -37,11 +38,20 @@ const getFileImage = (item: FileListItem) => {
 };
 
 const FileList: React.FC<{
+  hideHeader?: boolean;
+  hideOptions?: boolean;
   items: FileListItem[] | null;
   onSelect(listItem: FileListItem): void;
   onItemClick(listItem: FileListItem): void;
   activeItem: FileListItem | null;
-}> = ({ items, onSelect, onItemClick, activeItem }) => {
+}> = ({
+  items,
+  onSelect,
+  onItemClick,
+  activeItem,
+  hideHeader,
+  hideOptions,
+}) => {
   const { t } = useTranslationAt("components.fileList");
 
   const getFileSizeCaption = useCallback(
@@ -65,15 +75,17 @@ const FileList: React.FC<{
 
   return (
     <FileListTable>
-      <FileListTableHead>
-        <tr>
-          <td></td>
-          <td>{t("fileName")}</td>
-          <td>{t("lastModified")}</td>
-          <td>{t("fileSize")}</td>
-          <td></td>
-        </tr>
-      </FileListTableHead>
+      {!hideHeader && (
+        <FileListTableHead>
+          <tr>
+            <td></td>
+            <td>{t("fileName")}</td>
+            <td>{t("lastModified")}</td>
+            <td>{t("fileSize")}</td>
+            <td></td>
+          </tr>
+        </FileListTableHead>
+      )}
       <FileListTableBody>
         {items.map((item, index) => (
           <FileListTableRow
@@ -82,17 +94,23 @@ const FileList: React.FC<{
             active={activeItem == item}
           >
             <td>{getFileImage(item)}</td>
-            <td>{item.name}</td>
             <td>
-              {t("uploadedFrom", {
-                from: "TestName",
-                date: moment(item.modifiedDate).fromNow(),
-              })}
+              <ItemContent>
+                <span> {item.name}</span>
+                <span>
+                  {t("uploadedFrom", {
+                    from: "TestName",
+                    date: moment(item.modifiedDate).fromNow(),
+                  })}
+                </span>
+                <span>{getFileSizeCaption(item.size)}</span>
+              </ItemContent>
             </td>
-            <td>{getFileSizeCaption(item.size)}</td>
-            <td>
-              <OptionsImage onClick={() => onSelect(item)} />
-            </td>
+            {!hideOptions && (
+              <td>
+                <OptionsImage onClick={() => onSelect(item)} />
+              </td>
+            )}
           </FileListTableRow>
         ))}
       </FileListTableBody>

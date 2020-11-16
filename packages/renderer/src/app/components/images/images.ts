@@ -26,5 +26,6 @@ export { ReactComponent as Edit } from "resources/images/edit.svg";
 export { ReactComponent as Info } from "resources/images/info.svg";
 export { ReactComponent as MoveTo } from "resources/images/move-to.svg";
 export { ReactComponent as Share } from "resources/images/share.svg";
+export { ReactComponent as LogoWithoutText } from "resources/images/logo-without-text.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

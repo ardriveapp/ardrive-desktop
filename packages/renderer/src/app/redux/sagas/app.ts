@@ -31,6 +31,11 @@ function* openFolderSaga(action: any) {
   );
 }
 
+function* changeWindowSizeSaga(action: any) {
+  const electronHooks: ElectronHooks = yield getContext("electronHooks");
+  yield call(electronHooks.native.changeWindowSize, action.payload.windowType);
+}
+
 export default function* () {
   yield all([
     takeLatest(
@@ -39,5 +44,6 @@ export default function* () {
     ),
     takeLatest(appActions.openFile.type, openFileSaga),
     takeLatest(appActions.openFolder.type, openFolderSaga),
+    takeLatest(appActions.changeWindowSize.type, changeWindowSizeSaga),
   ]);
 }

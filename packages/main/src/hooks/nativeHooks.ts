@@ -1,15 +1,31 @@
-import { ipcMain, dialog } from "electron";
+import { ipcMain, dialog, BrowserWindow } from "electron";
 
-ipcMain.handle("openFile", async (_) => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openFile"],
-  });
-  return result;
-});
+import { Sizes } from "../config";
+import { WindowType } from "../types";
 
-ipcMain.handle("openFolder", async (_) => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openDirectory"],
+export const initialize = (window: BrowserWindow) => {
+  ipcMain.handle("openFile", async (_) => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+    });
+    return result;
   });
-  return result;
-});
+
+  ipcMain.handle("openFolder", async (_) => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+    });
+    return result;
+  });
+
+  ipcMain.handle("changeWindowSize", async (_, windowType: WindowType) => {
+    switch (windowType) {
+      case "desktop":
+      case "mobile":
+        window.setSize(Sizes[windowType].width, Sizes[windowType].height, true);
+        return;
+      default:
+        return;
+    }
+  });
+};

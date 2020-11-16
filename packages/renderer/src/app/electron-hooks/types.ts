@@ -1,3 +1,5 @@
+export type WindowType = "desktop" | "mobile";
+
 export interface CoreHooks {
   login(username: string, password: string): Promise<boolean>;
   createNewUser(
@@ -12,6 +14,7 @@ export interface CoreHooks {
 export interface NativeHooks {
   openFile(): Promise<string | null>;
   openFolder(): Promise<string | null>;
+  changeWindowSize(windowType: WindowType): Promise<void>;
 }
 
 export interface ElectronHooks {

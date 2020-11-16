@@ -1,12 +1,12 @@
 import { app, BrowserWindow } from "electron";
 import isDev from "electron-is-dev";
 
-import "./hooks";
+import { initializeHooks } from "./hooks";
+import { Sizes } from "./config";
 
 const startApplication = () => {
   const window = new BrowserWindow({
-    width: 1440,
-    height: 900,
+    ...Sizes["desktop"],
     icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
     title: "ArDrive",
     webPreferences: {
@@ -22,6 +22,8 @@ const startApplication = () => {
   } else {
     window.loadFile(`${__dirname}/renderer/index.html`);
   }
+
+  initializeHooks([], [window]);
 };
 
 app.on("ready", startApplication);
