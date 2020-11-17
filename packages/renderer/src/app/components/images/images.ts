@@ -27,5 +27,8 @@ export { ReactComponent as Info } from "resources/images/info.svg";
 export { ReactComponent as MoveTo } from "resources/images/move-to.svg";
 export { ReactComponent as Share } from "resources/images/share.svg";
 export { ReactComponent as LogoWithoutText } from "resources/images/logo-without-text.svg";
+export { ReactComponent as Gear } from "resources/images/gear.svg";
+export { ReactComponent as CreateNewFolder } from "resources/images/create-new-folder.svg";
+export { ReactComponent as LockedFolder } from "resources/images/locked-folder.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

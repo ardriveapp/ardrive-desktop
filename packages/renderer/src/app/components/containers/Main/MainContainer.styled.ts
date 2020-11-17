@@ -128,4 +128,48 @@ export const LogoutButton = styled(Logout)`
 export const FooterContainer = styled.div`
   background-color: #333333;
   height: 58px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+`;
+
+export const FooterButtonText = styled.div`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #a4a4a4;
+  margin-top: 4px;
+`;
+
+export const FooterButton = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    ${FooterButtonText} {
+      color: white;
+    }
+
+    & > svg {
+      path {
+        fill: white;
+      }
+    }
+  }
+
+  & > svg {
+    g {
+      opacity: 1;
+    }
+
+    path {
+      fill: #a4a4a4;
+    }
+  }
 `;

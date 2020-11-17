@@ -22,7 +22,9 @@ export const initialize = (window: BrowserWindow) => {
     switch (windowType) {
       case "desktop":
       case "mobile":
+        window.setResizable(true);
         window.setSize(Sizes[windowType].width, Sizes[windowType].height, true);
+        window.setResizable(false);
         return;
       default:
         return;
