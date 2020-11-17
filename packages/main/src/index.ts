@@ -9,6 +9,7 @@ const startApplication = () => {
     ...Sizes["desktop"],
     icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
     title: "ArDrive",
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,

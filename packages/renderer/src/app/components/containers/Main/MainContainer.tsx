@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { SampleUserImage } from "app/components/images";
+import {
+  CreateNewFolder,
+  Gear,
+  LockedFolder,
+  SampleUserImage,
+} from "app/components/images";
 
 import {
   BottomContainer,
@@ -21,6 +26,8 @@ import {
   UserNameContainer,
   LogoutButton,
   FooterContainer,
+  FooterButton,
+  FooterButtonText,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/actions";
 
@@ -60,7 +67,18 @@ const MainContainer: React.FC = ({ children }) => {
         <ContentContainer>{children}</ContentContainer>
       </BottomContainer>
       <FooterContainer>
-
+        <FooterButton>
+          <CreateNewFolder />
+          <FooterButtonText>New</FooterButtonText>
+        </FooterButton>
+        <FooterButton>
+          <LockedFolder />
+          <FooterButtonText>Local drive</FooterButtonText>
+        </FooterButton>
+        <FooterButton>
+          <Gear />
+          <FooterButtonText>Settings</FooterButtonText>
+        </FooterButton>
       </FooterContainer>
     </Container>
   );
