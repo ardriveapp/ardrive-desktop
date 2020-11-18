@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   CreateNewFolder,
@@ -30,10 +30,12 @@ import {
   FooterButtonText,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/actions";
+import { authSelectors } from "app/redux/selectors";
 
 const MainContainer: React.FC = ({ children }) => {
   const [showUserDetails, setShowUserDetails] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector(authSelectors.getUser);
 
   return (
     <Container>
@@ -49,15 +51,13 @@ const MainContainer: React.FC = ({ children }) => {
               <CurrentUserIconWithoutBorder image={SampleUserImage} />
               <UserDetailsContainer>
                 <UserNameContainer>
-                  <UserName>Satoshi</UserName>
+                  <UserName>{user?.login}</UserName>
                   <LogoutButton
                     onClick={() => dispatch(authActions.logout())}
                   />
                 </UserNameContainer>
-                <UserAddress>
-                  S0aqWk_d8RfT0G8CVAOjg-7Dq-rfkKc68GkkicZ097w
-                </UserAddress>
-                <UserBalance>14.25 AR</UserBalance>
+                <UserAddress>{user?.address}</UserAddress>
+                <UserBalance>{user?.balance}</UserBalance>
               </UserDetailsContainer>
             </CurrentUserDetailsBar>
           </CurrentUserIcon>

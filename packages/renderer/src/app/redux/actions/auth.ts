@@ -1,5 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 
+import { AppUser } from "../types";
+
 export default {
   loginStart: createAction(
     "AUTH_LOGIN_START",
@@ -10,7 +12,11 @@ export default {
       },
     })
   ),
-  loginSuccess: createAction("AUTH_LOGIN_SUCCESS"),
+  loginSuccess: createAction("AUTH_LOGIN_SUCCESS", (user: AppUser) => ({
+    payload: {
+      user,
+    },
+  })),
   logout: createAction("AUTH_LOGOUT"),
   createUser: createAction(
     "AUTH_USER_CREATE",

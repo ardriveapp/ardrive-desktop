@@ -5,8 +5,7 @@ import { CoreHooks } from "./types";
 export default (ipcRenderer: IpcRenderer): CoreHooks => {
   return {
     login: async (username: string, password: string) => {
-      const { result } = await ipcRenderer.invoke("login", username, password);
-      return result;
+      return await ipcRenderer.invoke("login", username, password);
     },
     createNewUser: async (
       username: string,

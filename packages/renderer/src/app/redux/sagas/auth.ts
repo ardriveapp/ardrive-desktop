@@ -5,13 +5,19 @@ import { authActions } from "../actions";
 
 function* loginStartSaga(action: any) {
   const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  const result = yield call(
+  const { result, user } = yield call(
     electronHooks.core.login,
     action.payload.username,
     action.payload.password
   );
   if (result) {
-    yield put(authActions.loginSuccess());
+    yield put(
+      authActions.loginSuccess({
+        address: user.walletPublicKey,
+        login: user.login,
+        balance: user.walletBalance,
+      })
+    );
   }
 }
 
