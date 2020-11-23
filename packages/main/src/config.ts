@@ -1,5 +1,7 @@
 import { WindowSize } from "./types";
 
+export const DbName = ".ardrive-desktop.db";
+
 export const Sizes: WindowSize = {
   desktop: {
     width: 1440,

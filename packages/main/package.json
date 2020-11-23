@@ -25,13 +25,13 @@
     "babel-loader": "^8.1.0",
     "electron": "10.1.2",
     "electron-builder": "22.8.1",
+    "renderer": "*",
     "typescript": "^4.0.3",
     "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "renderer": "*"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "ardrive-core-js": "^0.2.13",
+    "ardrive-core-js": "^0.2.16",
     "electron-is-dev": "^1.2.0"
   }
 }

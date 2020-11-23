@@ -17,7 +17,7 @@ const sagaMiddleware = createSagaMiddleware({
 const persistConfig = {
   key: "root",
   storage: createElectronStorage(),
-  blacklist: ["app"],
+  blacklist: ["app", "auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

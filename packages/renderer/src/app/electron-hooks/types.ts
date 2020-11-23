@@ -8,7 +8,7 @@ export interface CoreHooks {
     syncFolderPath: string,
     walletPath: string
   ): Promise<string>;
-  setupDatabase(): Promise<void>;
+  startWatchingFolders(login: string): Promise<void>;
 }
 
 export interface NativeHooks {
