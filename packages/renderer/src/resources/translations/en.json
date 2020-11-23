@@ -82,6 +82,11 @@
                 "cancel": "Cancel",
                 "create": "Create"
             }
+        },
+        "mainContainer": {
+            "new": "New",
+            "localDrive": "Local drive",
+            "settings": "Settings"
         }
     }
 }

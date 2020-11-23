@@ -1,6 +1,6 @@
 import { IpcRenderer } from "electron";
 
-import { NativeHooks } from "./types";
+import { NativeHooks, WindowType } from "./types";
 
 export default (ipcRenderer: IpcRenderer): NativeHooks => {
   return {
@@ -18,8 +18,8 @@ export default (ipcRenderer: IpcRenderer): NativeHooks => {
       }
       return null;
     },
-    changeWindowSize: async (width: number, height: number) => {
-      await ipcRenderer.invoke("changeWindowSize", width, height);
+    changeWindowSize: async (windowType: WindowType) => {
+      await ipcRenderer.invoke("changeWindowSize", windowType);
     },
   };
 };

@@ -22,8 +22,8 @@ export default (ipcRenderer: IpcRenderer): CoreHooks => {
       );
       return result;
     },
-    setupDatabase: async () => {
-      await ipcRenderer.invoke("setupDatabase");
+    startWatchingFolders: async (login: string) => {
+      await ipcRenderer.invoke("startWatchingFolders", login);
     },
   };
 };

@@ -4,24 +4,29 @@ import {
   getUser,
   getLocalWallet,
   addNewUser,
-  setupDatabase,
   startWatchingFolders,
+  setupDrives,
+  getMyArDriveFilesFromPermaWeb,
+  downloadMyArDriveFiles,
+  getUserFromProfile,
 } from "ardrive-core-js";
 import { ArDriveUser } from "ardrive-core-js/lib/types";
 import { Path } from "typescript";
 
-const dbName = ".ardrive-desktop.db";
-
 export const initialize = () => {
-  ipcMain.handle("setupDatabase", async (_) => {
-    await setupDatabase(`./${dbName}`);
+  ipcMain.handle("startWatchingFolders", async (_, login: string) => {
+    const user = await getUserFromProfile(login);
+
+    await setupDrives(user.login, user.syncFolderPath);
+    await getMyArDriveFilesFromPermaWeb(user);
+    await downloadMyArDriveFiles(user);
+    startWatchingFolders(user);
   });
 
   ipcMain.handle("login", async (_, username: string, password: string) => {
     const passwordResult: boolean = await passwordCheck(password, username);
     if (passwordResult) {
       const user = await getUser(password, username);
-      startWatchingFolders(user);
 
       return {
         result: true,

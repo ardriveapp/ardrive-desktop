@@ -1,10 +1,13 @@
 import { app, BrowserWindow } from "electron";
 import isDev from "electron-is-dev";
+import { setupDatabase } from "ardrive-core-js";
 
 import { initializeHooks } from "./hooks";
-import { Sizes } from "./config";
+import { Sizes, DbName } from "./config";
 
-const startApplication = () => {
+const startApplication = async () => {
+  await setupDatabase(`./${DbName}`);
+  
   const window = new BrowserWindow({
     ...Sizes["desktop"],
     icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,

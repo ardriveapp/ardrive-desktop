@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import {
   CreateNewFolder,
@@ -31,11 +32,14 @@ import {
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/actions";
 import { authSelectors } from "app/redux/selectors";
+import { useTranslationAt } from "app/utils/hooks";
 
 const MainContainer: React.FC = ({ children }) => {
   const [showUserDetails, setShowUserDetails] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector(authSelectors.getUser);
+  const { t } = useTranslationAt("components.mainContainer");
+  const history = useHistory();
 
   return (
     <Container>
@@ -69,15 +73,15 @@ const MainContainer: React.FC = ({ children }) => {
       <FooterContainer>
         <FooterButton>
           <CreateNewFolder />
-          <FooterButtonText>New</FooterButtonText>
+          <FooterButtonText>{t("new")}</FooterButtonText>
         </FooterButton>
-        <FooterButton>
+        <FooterButton onClick={() => history.push("/")}>
           <LockedFolder />
-          <FooterButtonText>Local drive</FooterButtonText>
+          <FooterButtonText>{t("localDrive")}</FooterButtonText>
         </FooterButton>
         <FooterButton>
           <Gear />
-          <FooterButtonText>Settings</FooterButtonText>
+          <FooterButtonText>{t("settings")}</FooterButtonText>
         </FooterButton>
       </FooterContainer>
     </Container>
