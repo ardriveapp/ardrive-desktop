@@ -153,30 +153,35 @@ const MainContainer: React.FC = ({ children }) => {
         <AppLogo />
         <CurrentUserContainer>
           <UsersIcon />
-          <CurrentUserIcon
-            onClick={() => setShowUserDetails((prev) => !prev)}
-            image={SampleUserImage}
+          <StyledPopover
+            isOpen={showUserDetails}
+            onOuterAction={() => setShowUserDetails(false)}
+            body={
+              <CurrentUserDetailsBar>
+                <CurrentUserIconWithoutBorder image={SampleUserImage} />
+                <UserDetailsContainer>
+                  <UserNameContainer>
+                    <UserName>{user?.login}</UserName>
+                    <LogoutButton
+                      onClick={() => dispatch(authActions.logout())}
+                    />
+                  </UserNameContainer>
+                  <UserAddress>{user?.address}</UserAddress>
+                  <UserBalance>{user?.balance}</UserBalance>
+                </UserDetailsContainer>
+              </CurrentUserDetailsBar>
+            }
           >
-            <CurrentUserDetailsBar show={showUserDetails}>
-              <CurrentUserIconWithoutBorder image={SampleUserImage} />
-              <UserDetailsContainer>
-                <UserNameContainer>
-                  <UserName>{user?.login}</UserName>
-                  <LogoutButton
-                    onClick={() => dispatch(authActions.logout())}
-                  />
-                </UserNameContainer>
-                <UserAddress>{user?.address}</UserAddress>
-                <UserBalance>{user?.balance}</UserBalance>
-              </UserDetailsContainer>
-            </CurrentUserDetailsBar>
-          </CurrentUserIcon>
+            <CurrentUserIcon
+              onClick={() => setShowUserDetails((prev) => !prev)}
+              image={SampleUserImage}
+            />
+          </StyledPopover>
         </CurrentUserContainer>
       </Header>
       <BottomContainer>
         <ContentContainer>{children}</ContentContainer>
       </BottomContainer>
-
       <FooterContainer>
         <BottomMenu />
       </FooterContainer>

@@ -60,18 +60,13 @@ export const CurrentUserIconWithoutBorder = styled(CurrentUserIcon)`
   height: 47px;
 `;
 
-export const CurrentUserDetailsBar = styled.div<{
-  show: boolean;
-}>`
-  display: ${(props) => (props.show ? "flex" : "none")};
-  position: absolute;
+export const CurrentUserDetailsBar = styled.div`
+  display: flex;
   width: 100vw;
   height: 112px;
   background-color: white;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
   border-radius: 3px;
-  top: 60px;
-  left: 0;
   padding: 18px;
   cursor: default;
   pointer-events: none;
