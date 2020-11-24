@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Popover from "react-popover";
 
 import { LogoWithoutText, Logout, Users } from "app/components/images";
 
@@ -141,15 +142,20 @@ export const FooterButtonText = styled.div`
   line-height: 12px;
   text-align: center;
   text-transform: uppercase;
-  color: #a4a4a4;
   margin-top: 4px;
 `;
 
-export const FooterButton = styled.div`
+export const FooterButton = styled.div<{
+  isActive?: boolean;
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+
+  ${FooterButtonText} {
+    color: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
+  }
 
   &:hover {
     ${FooterButtonText} {
@@ -169,7 +175,78 @@ export const FooterButton = styled.div`
     }
 
     path {
-      fill: #a4a4a4;
+      fill: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
     }
   }
+`;
+
+export const StyledPopover = styled(Popover).attrs(() => ({
+  tipSize: 0.1,
+}))``;
+
+export const NewButtonMenuContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  width: 180px;
+  height: 88px;
+  border-radius: 3px;
+  background: #ffffff;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
+`;
+
+export const NewButtonMenuContainerItem = styled.div`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  color: #a4a4a4;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  & > svg {
+    margin-right: 24px;
+  }
+`;
+
+export const SettingsButtonMenuContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  height: 180px;
+  width: 290px;
+  border-radius: 0px;
+  background: #ffffff;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+export const SettingsButtonMenuContainerItem = styled.div`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #a4a4a4;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  & > svg {
+    width: 16px;
+    margin-right: 12px;
+  }
+`;
+
+export const SettingsButtonMenuHeader = styled.div`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: rgba(0, 6, 10, 0.87);
+  margin-bottom: 17px;
 `;

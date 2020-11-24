@@ -16,6 +16,7 @@ export default () => {
   const location = useLocation();
   const history = useHistory();
 
+  // TODO: Move to utils
   const isActiveRoute = useCallback(
     (route: string) => location.pathname === route,
     [location]

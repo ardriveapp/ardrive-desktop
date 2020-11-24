@@ -1,4 +1,4 @@
-//TODO: rename these files
+//TODO: rename these files and remove duplicates
 
 export { ReactComponent as LogoText } from "resources/images/logo-text.svg";
 export { ReactComponent as LogoTextRed } from "resources/images/logo-text-red.svg";
@@ -30,5 +30,11 @@ export { ReactComponent as LogoWithoutText } from "resources/images/logo-without
 export { ReactComponent as Gear } from "resources/images/gear.svg";
 export { ReactComponent as CreateNewFolder } from "resources/images/create-new-folder.svg";
 export { ReactComponent as LockedFolder } from "resources/images/locked-folder.svg";
+export { ReactComponent as NewDrive } from "resources/images/new-drive.svg";
+export { ReactComponent as AttachDrive } from "resources/images/attach-drive.svg";
+export { ReactComponent as Lock } from "resources/images/lock.svg";
+export { ReactComponent as SyncFolder } from "resources/images/sync-folder.svg";
+export { ReactComponent as Pause } from "resources/images/pause.svg";
+export { ReactComponent as Backup } from "resources/images/backup.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

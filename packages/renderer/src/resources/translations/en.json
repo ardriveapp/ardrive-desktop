@@ -86,7 +86,14 @@
         "mainContainer": {
             "new": "New",
             "localDrive": "Local drive",
-            "settings": "Settings"
+            "settings": "Settings",
+            "newDrive": "New Drive",
+            "attachDrive": "Attach Drive",
+            "changeLogin": "Change login & password",
+            "changeSync": "Change sync folder",
+            "pauseSync": "Pause syncing",
+            "backup": "Backup Arweave wallet",
+            "settingsHeader": "Settings"
         }
     }
 }

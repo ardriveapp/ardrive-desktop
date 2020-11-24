@@ -52,6 +52,7 @@ export const initialize = () => {
         login: username,
         dataProtectionKey: password,
         syncFolderPath: syncFolderPath,
+        autoSyncApproval: 1,
         ...wallet,
       };
       const result = await addNewUser(password, user);
