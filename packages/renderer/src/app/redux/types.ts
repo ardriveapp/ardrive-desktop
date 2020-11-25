@@ -1,4 +1,6 @@
-export interface AppState {}
+export interface AppState {
+  files: any[];
+}
 
 export interface AuthState {
   isLoggedIn: boolean;

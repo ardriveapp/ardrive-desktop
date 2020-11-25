@@ -21,4 +21,5 @@ export default {
     const path = await electronHooks.native.openFolder();
     return path;
   }),
+  fetchFiles: createAction("FILES_FETCH"),
 };

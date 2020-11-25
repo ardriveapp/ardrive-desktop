@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   DetailsSidebar,
@@ -8,7 +8,11 @@ import {
 } from "app/components";
 
 import { PageContentContainer, PageContainer } from "./PrivateDrive.styled";
+import { useDispatch, useSelector } from "react-redux";
+import { appActions } from "app/redux/actions";
+import { appSelectors } from "app/redux/selectors";
 
+// TODO: remove
 const testItems: FileListItem[] = [
   {
     name: "Test item",
@@ -28,6 +32,12 @@ export default () => {
   const [selectedItem, setSelectedItem] = useState<FileListItem | null>(null);
   const [clickedItem, setClickedItem] = useState<FileListItem | null>(null);
   const [showMoveToModal, setShowMoveToModal] = useState(false);
+  const dispatch = useDispatch();
+  const files = useSelector(appSelectors.getFiles);
+
+  useEffect(() => {
+    dispatch(appActions.fetchFiles());
+  }, []);
 
   return (
     <PageContainer>
@@ -35,7 +45,7 @@ export default () => {
         <FileList
           hideHeader
           hideOptions
-          items={testItems}
+          items={files}
           onSelect={setSelectedItem}
           onItemClick={setClickedItem}
           activeItem={clickedItem}

@@ -25,6 +25,13 @@ function* changeWindowSizeSaga(action: any) {
   yield call(electronHooks.native.changeWindowSize, action.payload.windowType);
 }
 
+function* fetchFilesSaga(action: any) {
+  const electronHooks: ElectronHooks = yield getContext("electronHooks");
+  const user = yield select(authSelectors.getUser);
+  const files = yield call(electronHooks.core.fetchFiles, user.login);
+  // TODO: Save and create type for files
+}
+
 export default function* () {
   yield all([
     takeLatest(
@@ -32,5 +39,6 @@ export default function* () {
       initializeApplicationSaga
     ),
     takeLatest(appActions.changeWindowSize.type, changeWindowSizeSaga),
+    takeLatest(appActions.fetchFiles.type, fetchFilesSaga),
   ]);
 }

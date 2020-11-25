@@ -12,6 +12,10 @@ import {
 } from "ardrive-core-js";
 import { ArDriveUser } from "ardrive-core-js/lib/types";
 import { Path } from "typescript";
+import {
+  getFilesToUploadFromSyncTable,
+  getAllUploadedFilesFromSyncTable,
+} from "ardrive-core-js/lib/db";
 
 export const initialize = () => {
   ipcMain.handle("startWatchingFolders", async (_, login: string) => {
@@ -59,4 +63,10 @@ export const initialize = () => {
       return result === "Success";
     }
   );
+
+  ipcMain.handle("fetchFiles", async (_, username: string) => {
+    const filesToUpload = await getFilesToUploadFromSyncTable(username);
+    const uploadedFiles = await getAllUploadedFilesFromSyncTable(username);
+    return filesToUpload.concat(uploadedFiles);
+  });
 };
