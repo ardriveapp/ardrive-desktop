@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import { appSelectors } from "app/redux/selectors";
 import { appActions } from "app/redux/actions";
 import { FontVariants, TranslationAt } from "app/components";
 
@@ -12,27 +11,28 @@ import {
 } from "./SecondStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
-
-export const WalletPathName = "wallet_path";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { AppDispatch } from "app/redux";
 
 const translationsPath = "pages.create_user.steps.second";
 
 const SecondStep: React.FC<{
-  onContinue(): void;
+  onContinue(walletPath: string): void;
 }> = ({ onContinue }) => {
   const { t } = useTranslationAt(translationsPath);
-  const dispatch = useDispatch();
-  const walletPath = useSelector(
-    appSelectors.getOpenedFilePath(WalletPathName)
-  );
+  const dispatch: AppDispatch = useDispatch();
+  const [walletPath, setWalletPath] = useState<string | null>(null);
 
   const openFile = useCallback(async () => {
-    dispatch(appActions.openFile(WalletPathName));
+    const result = await dispatch(appActions.openFile());
+    const walletPath = unwrapResult(result);
+
+    setWalletPath(walletPath);
   }, [dispatch]);
 
   useEffect(() => {
     if (walletPath) {
-      onContinue();
+      onContinue(walletPath);
     }
   }, [walletPath, onContinue]);
 

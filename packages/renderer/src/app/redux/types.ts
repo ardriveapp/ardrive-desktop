@@ -1,11 +1,4 @@
-export interface AppState {
-  openedFiles: {
-    [name: string]: string;
-  };
-  openedFolders: {
-    [name: string]: string;
-  };
-}
+export interface AppState {}
 
 export interface AuthState {
   isLoggedIn: boolean;
