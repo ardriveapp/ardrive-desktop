@@ -1,30 +1,24 @@
-import { createAction } from "@reduxjs/toolkit";
-import { WindowType } from "app/electron-hooks/types";
+import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { ElectronHooks, WindowType } from "app/electron-hooks/types";
 
 import { withPayloadType } from "app/utils";
 
 export default {
   initializeApplication: createAction("APP_APPLICATION_INITIALIZE"),
-  openFile: createAction("FILE_OPEN", withPayloadType<string>()),
-  openFileSuccess: createAction(
-    "APP_FILE_OPEN_SUCCESS",
-    withPayloadType<{
-      name: string;
-      path: string;
-    }>()
-  ),
-  openFolder: createAction("FOLDER_OPEN", withPayloadType<string>()),
-  openFolderSuccess: createAction(
-    "APP_FOLDER_OPEN_SUCCESS",
-    withPayloadType<{
-      name: string;
-      path: string;
-    }>()
-  ),
   changeWindowSize: createAction(
     "APP_CHANGE_WINDOW_SIZE",
     withPayloadType<{
       windowType: WindowType;
     }>()
   ),
+  openFile: createAsyncThunk("FILE_OPEN", async (_, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    const path = await electronHooks.native.openFile();
+    return path;
+  }),
+  openFolder: createAsyncThunk("FOLDER_OPEN", async (_, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    const path = await electronHooks.native.openFolder();
+    return path;
+  }),
 };

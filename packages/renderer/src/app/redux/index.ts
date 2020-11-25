@@ -8,9 +8,11 @@ import rootReducer from "./reducers";
 import rootSaga from "./sagas";
 import electronHooks from "../electron-hooks";
 
+const hooks = electronHooks(ipcRenderer);
+
 const sagaMiddleware = createSagaMiddleware({
   context: {
-    electronHooks: electronHooks(ipcRenderer),
+    electronHooks: hooks,
   },
 });
 
@@ -28,7 +30,15 @@ export const store = configureStore({
     ...defaultEnhancers,
     applyMiddleware(sagaMiddleware),
   ],
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      thunk: {
+        extraArgument: hooks,
+      },
+    }),
 });
+
+export type AppDispatch = typeof store.dispatch;
 
 export const persistor = persistStore(store);
 

@@ -1,7 +1,6 @@
-import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 
-import { appSelectors } from "app/redux/selectors";
 import { appActions } from "app/redux/actions";
 import { FontVariants, TranslationAt } from "app/components";
 
@@ -12,27 +11,28 @@ import {
 } from "./ThirdStep.styled";
 import { useTranslationAt } from "app/utils/hooks";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
-
-export const SyncFolderPathName = "sync_folder_path";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { AppDispatch } from "app/redux";
 
 const translationsPath = "pages.create_user.steps.third";
 
 const ThirdStep: React.FC<{
-  onContinue(): void;
+  onContinue(syncFolderPath: string): void;
 }> = ({ onContinue }) => {
   const { t } = useTranslationAt(translationsPath);
-  const dispatch = useDispatch();
-  const syncFolderPath = useSelector(
-    appSelectors.getOpenedFolderPath(SyncFolderPathName)
-  );
+  const dispatch: AppDispatch = useDispatch();
+  const [syncFolderPath, setSyncFolderPath] = useState<string | null>(null);
 
-  const openFile = useCallback(async () => {
-    dispatch(appActions.openFolder(SyncFolderPathName));
+  const openFolder = useCallback(async () => {
+    const result = await dispatch(appActions.openFolder());
+    const syncFolderPath = unwrapResult(result);
+
+    setSyncFolderPath(syncFolderPath);
   }, [dispatch]);
 
   const letsGo = useCallback(() => {
     if (syncFolderPath) {
-      onContinue();
+      onContinue(syncFolderPath);
     }
   }, [syncFolderPath, onContinue]);
 
@@ -54,7 +54,7 @@ const ThirdStep: React.FC<{
           components={[<FontVariants.Bold />]}
         />
       </Description>
-      <SelectSyncFolderButton onClick={openFile}>
+      <SelectSyncFolderButton onClick={openFolder}>
         {syncFolderPath || t("select_sync_folder")}
       </SelectSyncFolderButton>
       <LetsGoButton onClick={letsGo}>{t("lets_go")}</LetsGoButton>
