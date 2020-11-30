@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { authActions } from "app/redux/actions";
 import { AppTextLogo, Login, WelcomeContainer } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
 
@@ -14,6 +13,7 @@ import {
 } from "./Login.styled";
 import { ArdriveInput } from "app/components/inputs/ArdriveInput";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
+import { authActions } from "app/redux/slices/auth";
 
 export default () => {
   const { t } = useTranslationAt("pages.login");
@@ -23,7 +23,12 @@ export default () => {
   const history = useHistory();
 
   const login = useCallback(() => {
-    dispatch(authActions.loginStart(username, password));
+    dispatch(
+      authActions.loginStart({
+        login: username,
+        password,
+      })
+    );
   }, [dispatch, username, password]);
 
   const setField = useCallback((setFunction: any) => {

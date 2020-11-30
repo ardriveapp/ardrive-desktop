@@ -1,35 +1,16 @@
-import {
-  call,
-  getContext,
-  put,
-  takeLatest,
-  all,
-  select,
-} from "redux-saga/effects";
+import { put, takeLatest, all, select } from "redux-saga/effects";
 
-import { ElectronHooks } from "app/electron-hooks/types";
-
-import { appActions, authActions } from "../actions";
 import { authSelectors } from "../selectors";
+import { appActions } from "../slices/app";
+import { authActions } from "../slices/auth";
+import { AppUser } from "../types";
 
 function* initializeApplicationSaga(_: any) {
-  const user = yield select(authSelectors.getUser);
+  const user: AppUser = yield select(authSelectors.getUser);
 
-  if (user != null) {
-    yield put(authActions.loginSuccess(user));
-  }
-}
-
-function* changeWindowSizeSaga(action: any) {
-  const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  yield call(electronHooks.native.changeWindowSize, action.payload.windowType);
-}
-
-function* fetchFilesSaga(action: any) {
-  const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  const user = yield select(authSelectors.getUser);
-  const files = yield call(electronHooks.core.fetchFiles, user.login);
-  // TODO: Save and create type for files
+  // if (user != null) {
+  //   yield put(authActions.loginStart.fulfilled(user));
+  // }
 }
 
 export default function* () {
@@ -38,7 +19,5 @@ export default function* () {
       appActions.initializeApplication.type,
       initializeApplicationSaga
     ),
-    takeLatest(appActions.changeWindowSize.type, changeWindowSizeSaga),
-    takeLatest(appActions.fetchFiles.type, fetchFilesSaga),
   ]);
 }

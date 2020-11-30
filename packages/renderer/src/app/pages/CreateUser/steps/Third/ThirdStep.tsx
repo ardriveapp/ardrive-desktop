@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { appActions } from "app/redux/actions";
 import { FontVariants, TranslationAt } from "app/components";
 
 import {
@@ -13,6 +12,7 @@ import { useTranslationAt } from "app/utils/hooks";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { AppDispatch } from "app/redux";
+import { appActions } from "app/redux/slices/app";
 
 const translationsPath = "pages.create_user.steps.third";
 

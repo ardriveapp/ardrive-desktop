@@ -1,7 +1,13 @@
 export type WindowType = "desktop" | "mobile";
 
 export interface CoreHooks {
-  login(username: string, password: string): Promise<boolean>;
+  login(
+    username: string,
+    password: string
+  ): Promise<{
+    result: boolean;
+    user: any;
+  }>;
   createNewUser(
     username: string,
     password: string,

@@ -9,8 +9,8 @@ import {
 
 import { PageContentContainer, PageContainer } from "./PrivateDrive.styled";
 import { useDispatch, useSelector } from "react-redux";
-import { appActions } from "app/redux/actions";
-import { appSelectors } from "app/redux/selectors";
+import { appSelectors, authSelectors } from "app/redux/selectors";
+import { appActions } from "app/redux/slices/app";
 
 // TODO: remove
 const testItems: FileListItem[] = [
@@ -34,10 +34,13 @@ export default () => {
   const [showMoveToModal, setShowMoveToModal] = useState(false);
   const dispatch = useDispatch();
   const files = useSelector(appSelectors.getFiles);
+  const user = useSelector(authSelectors.getUser);
 
   useEffect(() => {
-    dispatch(appActions.fetchFiles());
-  }, []);
+    if (user != null) {
+      dispatch(appActions.fetchFiles(user.login));
+    }
+  }, [user]);
 
   return (
     <PageContainer>

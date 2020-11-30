@@ -14,7 +14,7 @@ import {
   LoginRoutes,
   WelcomeRoutes,
 } from "app/configuration/routes";
-import { appActions } from "app/redux/actions";
+import { appActions } from "app/redux/slices/app";
 
 const prepareRoutes = (routes: RouteProps[]) =>
   routes.map((routeProps, index) => <Route key={index} {...routeProps} />);
@@ -26,26 +26,14 @@ export const AppRoutes = () => {
 
   const routes = useMemo(() => {
     if (isFirstLaunch && !isLoggedIn) {
-      dispatch(
-        appActions.changeWindowSize({
-          windowType: "desktop",
-        })
-      );
+      dispatch(appActions.changeWindowSize("desktop"));
       return prepareRoutes(WelcomeRoutes);
     }
     if (!isLoggedIn) {
-      dispatch(
-        appActions.changeWindowSize({
-          windowType: "desktop",
-        })
-      );
+      dispatch(appActions.changeWindowSize("desktop"));
       return prepareRoutes(LoginRoutes);
     }
-    dispatch(
-      appActions.changeWindowSize({
-        windowType: "mobile",
-      })
-    );
+    dispatch(appActions.changeWindowSize("mobile"));
     return prepareRoutes(HomeRoutes);
   }, [isLoggedIn, isFirstLaunch]);
 
