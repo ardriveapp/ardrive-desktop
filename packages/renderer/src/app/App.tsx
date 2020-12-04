@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Provider, useDispatch } from "react-redux";
+import React from "react";
+import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { ThemeProvider } from "styled-components";
 
@@ -9,17 +9,6 @@ import { AppRoutes } from "./components";
 
 import "./configuration/i18n";
 import { MainTheme } from "./configuration/themes";
-import { appActions } from "./redux/slices/app";
-
-const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(appActions.initializeApplication());
-  }, [dispatch]);
-
-  return <AppRoutes />;
-};
 
 export default () => {
   return (
@@ -28,7 +17,7 @@ export default () => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ThemeProvider theme={MainTheme}>
-            <App />
+            <AppRoutes />
           </ThemeProvider>
         </PersistGate>
       </Provider>

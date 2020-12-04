@@ -1,4 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { persistReducer } from "redux-persist";
+import createElectronStorage from "redux-persist-electron-storage";
 
 import { ElectronHooks } from "app/electron-hooks/types";
 
@@ -65,22 +67,25 @@ export const authActions = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    logout(state) {
-      state.isLoggedIn = false;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(authActions.loginStart.fulfilled, (state, action) => {
       state.user = action.payload;
       state.isLoggedIn = true;
       state.isFirstLaunch = false;
     });
-    builder.addCase(authActions.logout, (state, action) => {
+    builder.addCase(authActions.logout, (state, _) => {
       state.isLoggedIn = false;
+      state.user = null;
     });
   },
 });
 
 export const actions = authSlice.actions;
-export const reducer = authSlice.reducer;
+export const reducer = persistReducer(
+  {
+    key: "auth",
+    storage: createElectronStorage(),
+  },
+  authSlice.reducer
+);

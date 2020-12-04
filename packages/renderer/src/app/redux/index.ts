@@ -40,6 +40,6 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 
-export const persistor = persistStore(store);
-
-sagaMiddleware.run(rootSaga);
+export const persistor = persistStore(store, null, () =>
+  sagaMiddleware.run(rootSaga)
+);

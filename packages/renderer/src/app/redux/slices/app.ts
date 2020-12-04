@@ -1,4 +1,4 @@
-import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ElectronHooks, WindowType } from "app/electron-hooks/types";
 import { AppState } from "../types";
 
@@ -7,7 +7,6 @@ const initialState: AppState = {
 };
 
 export const appActions = {
-  initializeApplication: createAction("app/initializeApplication"),
   openFile: createAsyncThunk("app/openFile", async (_, thunkAPI) => {
     const electronHooks = thunkAPI.extra as ElectronHooks;
     const path = await electronHooks.native.openFile();
