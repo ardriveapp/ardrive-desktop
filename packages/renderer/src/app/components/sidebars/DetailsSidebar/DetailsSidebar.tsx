@@ -1,6 +1,5 @@
 import React from "react";
 
-import { FileListItem } from "app/components/tables";
 import { ArdriveSlider } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
 
@@ -11,10 +10,11 @@ import {
   ItemName,
   TopItemsContainer,
 } from "./DetailsSidebar.styled";
+import { ArDriveFile } from "app/redux/types";
 
 const DetailsSidebar: React.FC<{
   onClose(): void;
-  item: FileListItem | null;
+  item: ArDriveFile | null;
 }> = ({ onClose, item }) => {
   const { t } = useTranslationAt("components.detailsSidebar");
 

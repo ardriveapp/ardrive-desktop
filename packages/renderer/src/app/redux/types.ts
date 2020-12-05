@@ -1,5 +1,14 @@
 export interface AppState {
-  files: any[];
+  files: ArDriveFile[];
+}
+
+export interface ArDriveFile {
+  image?: string;
+  name: string;
+  modifiedDate: Date;
+  size: number;
+  type: "folder" | "file";
+  fileImage?: string;
 }
 
 export interface AuthState {

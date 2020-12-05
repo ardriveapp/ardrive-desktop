@@ -1,36 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  DetailsSidebar,
-  FileList,
-  FileListItem,
-  MoveToModal,
-} from "app/components";
+import { DetailsSidebar, FileList, MoveToModal } from "app/components";
 
 import { PageContentContainer, PageContainer } from "./PrivateDrive.styled";
 import { useDispatch, useSelector } from "react-redux";
 import { appSelectors, authSelectors } from "app/redux/selectors";
 import { appActions } from "app/redux/slices/app";
-
-// TODO: remove
-const testItems: FileListItem[] = [
-  {
-    name: "Test item",
-    modifiedDate: new Date(),
-    size: 1,
-    type: "folder",
-  },
-  {
-    name: "Test item 2",
-    modifiedDate: new Date("01.10.2010"),
-    size: 1,
-    type: "file",
-  },
-];
+import { ArDriveFile } from "app/redux/types";
 
 export default () => {
-  const [selectedItem, setSelectedItem] = useState<FileListItem | null>(null);
-  const [clickedItem, setClickedItem] = useState<FileListItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ArDriveFile | null>(null);
+  const [clickedItem, setClickedItem] = useState<ArDriveFile | null>(null);
   const [showMoveToModal, setShowMoveToModal] = useState(false);
   const dispatch = useDispatch();
   const files = useSelector(appSelectors.getFiles);

@@ -40,7 +40,12 @@ const appSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(appActions.fetchFiles.fulfilled, (state, action) => {
-      state.files = action.payload;
+      state.files = action.payload.map((file) => ({
+        name: file.fileName,
+        type: file.type === "folder" ? "folder" : "file",
+        modifiedDate: new Date(file.lastModifiedDate),
+        size: file.fileSize,
+      }));
     });
   },
 });
