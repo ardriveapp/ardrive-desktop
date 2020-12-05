@@ -1,4 +1,15 @@
-export interface AppState {}
+export interface AppState {
+  files: ArDriveFile[];
+}
+
+export interface ArDriveFile {
+  image?: string;
+  name: string;
+  modifiedDate: Date;
+  size: number;
+  type: "folder" | "file";
+  fileImage?: string;
+}
 
 export interface AuthState {
   isLoggedIn: boolean;

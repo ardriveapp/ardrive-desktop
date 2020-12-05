@@ -1,14 +1,21 @@
 export type WindowType = "desktop" | "mobile";
 
 export interface CoreHooks {
-  login(username: string, password: string): Promise<boolean>;
+  login(
+    username: string,
+    password: string
+  ): Promise<{
+    result: boolean;
+    user: any;
+  }>;
   createNewUser(
     username: string,
     password: string,
     syncFolderPath: string,
     walletPath: string
   ): Promise<string>;
-  startWatchingFolders(login: string): Promise<void>;
+  startWatchingFolders(username: string): Promise<void>;
+  fetchFiles(username: string): Promise<any[]>;
 }
 
 export interface NativeHooks {

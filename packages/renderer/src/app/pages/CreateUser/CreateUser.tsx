@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { authActions } from "app/redux/actions";
-
 import { CreateUser, Sync, Wallet, WelcomeContainer } from "app/components";
 
 import { FirstStep, SecondStep, ThirdStep } from "./steps";
+import { authActions } from "app/redux/slices/auth";
 
 export default () => {
   const [step, setStep] = useState(0);
@@ -36,7 +35,12 @@ export default () => {
     (syncFolderPath: string) => {
       if (username && password && walletPath && syncFolderPath) {
         dispatch(
-          authActions.createUser(username, password, syncFolderPath, walletPath)
+          authActions.createUser({
+            username,
+            password,
+            syncFolderPath,
+            walletPath,
+          })
         );
       }
     },

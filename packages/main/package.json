@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "build": "webpack && electron-builder",
-    "start": "webpack && electron ./build/index.js"
+    "start": "webpack && electron ./build/index.js",
+    "postinstall": "electron-rebuild && electron-builder install-app-deps"
   },
   "author": {
     "name": "ArDrive DevTeam",
@@ -25,13 +26,14 @@
     "babel-loader": "^8.1.0",
     "electron": "10.1.2",
     "electron-builder": "22.8.1",
+    "electron-rebuild": "^2.3.4",
     "renderer": "*",
     "typescript": "^4.0.3",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "ardrive-core-js": "^0.2.17",
+    "ardrive-core-js": "^0.2.20",
     "electron-is-dev": "^1.2.0"
   }
 }

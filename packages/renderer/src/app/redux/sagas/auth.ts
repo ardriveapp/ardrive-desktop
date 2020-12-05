@@ -1,53 +1,28 @@
-import { all, call, getContext, put, takeLatest } from "redux-saga/effects";
+import { all, call, getContext, select, takeLatest } from "redux-saga/effects";
 
 import { ElectronHooks } from "app/electron-hooks/types";
-import { authActions } from "../actions";
 import { AppUser } from "../types";
+import { authActions } from "../slices/auth";
+import { authSelectors } from "../selectors";
 
-function* loginStartSaga(action: any) {
-  const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  const { result, user } = yield call(
-    electronHooks.core.login,
-    action.payload.username,
-    action.payload.password
-  );
-  if (result) {
-    yield put(
-      authActions.loginSuccess({
-        address: user.walletPublicKey,
-        login: user.login,
-        balance: user.walletBalance,
-      })
-    );
+function* startWatchingSaga(user: AppUser | null = null) {
+  if (user == null) {
+    user = yield select(authSelectors.getUser);
   }
-}
-
-function* createUserSaga(action: any) {
-  const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  const { username, password, syncFolderPath, walletPath } = action.payload;
-  const result = yield call(
-    electronHooks.core.createNewUser,
-    username,
-    password,
-    syncFolderPath,
-    walletPath
-  );
-  if (result) {
-    yield put(authActions.loginStart(username, password));
+  if (user != null) {
+    const electronHooks: ElectronHooks = yield getContext("electronHooks");
+    yield call(electronHooks.core.startWatchingFolders, user.login);
   }
 }
 
 function* loginSuccessSaga(action: any) {
-  const electronHooks: ElectronHooks = yield getContext("electronHooks");
-  const user: AppUser = action.payload.user;
-
-  yield call(electronHooks.core.startWatchingFolders, user.login);
+  const user: AppUser = action.payload;
+  yield call(startWatchingSaga, user);
 }
 
 export default function* () {
   yield all([
-    takeLatest(authActions.loginStart.type, loginStartSaga),
-    takeLatest(authActions.createUser.type, createUserSaga),
-    takeLatest(authActions.loginSuccess.type, loginSuccessSaga),
+    call(startWatchingSaga),
+    takeLatest(authActions.loginStart.fulfilled.type, loginSuccessSaga),
   ]);
 }

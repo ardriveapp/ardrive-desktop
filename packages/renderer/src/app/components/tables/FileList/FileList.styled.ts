@@ -53,9 +53,11 @@ export const FileListTableBody = styled.tbody``;
 
 export const EmptyContentContainer = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 136px;
+  height: 100%;
   background-color: white;
   padding-left: 40px;
   padding-right: 40px;
@@ -64,7 +66,6 @@ export const EmptyContentContainer = styled.div`
 export const AddContentImage = styled(AddContent)`
   height: 52px;
   width: 52px;
-  margin-right: 32px;
 `;
 
 export const AddContentDescription = styled.div`
@@ -73,7 +74,9 @@ export const AddContentDescription = styled.div`
   font-weight: normal;
   font-size: 18px;
   line-height: 24px;
+  text-align: center;
   color: rgba(0, 6, 10, 0.6);
+  margin-top: 16px;
 `;
 
 export const FolderImage = styled(Folder)`

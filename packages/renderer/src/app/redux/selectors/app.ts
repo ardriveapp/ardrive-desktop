@@ -1,5 +1,9 @@
+import { createSelector } from "@reduxjs/toolkit";
+
 import { RootState } from "../types";
 
 const getAppState = (state: RootState) => state.app;
 
-export default { getAppState };
+const getFiles = createSelector(getAppState, (app) => app.files);
+
+export default { getAppState, getFiles };

@@ -4,7 +4,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import createElectronStorage from "redux-persist-electron-storage";
 import { ipcRenderer } from "electron";
 
-import rootReducer from "./reducers";
+import rootReducer from "./slices";
 import rootSaga from "./sagas";
 import electronHooks from "../electron-hooks";
 
@@ -40,6 +40,6 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 
-export const persistor = persistStore(store);
-
-sagaMiddleware.run(rootSaga);
+export const persistor = persistStore(store, null, () =>
+  sagaMiddleware.run(rootSaga)
+);

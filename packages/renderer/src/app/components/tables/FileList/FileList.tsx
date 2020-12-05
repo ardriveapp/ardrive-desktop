@@ -15,17 +15,9 @@ import {
   ItemContent,
   OptionsImage,
 } from "./FileList.styled";
+import { ArDriveFile } from "app/redux/types";
 
-export interface FileListItem {
-  image?: string;
-  name: string;
-  modifiedDate: Date;
-  size: number;
-  type: "folder" | "file";
-  fileImage?: string;
-}
-
-const getFileImage = (item: FileListItem) => {
+const getFileImage = (item: ArDriveFile) => {
   switch (item.type) {
     case "folder":
       return <FolderImage />;
@@ -40,10 +32,10 @@ const getFileImage = (item: FileListItem) => {
 const FileList: React.FC<{
   hideHeader?: boolean;
   hideOptions?: boolean;
-  items: FileListItem[] | null;
-  onSelect(listItem: FileListItem): void;
-  onItemClick(listItem: FileListItem): void;
-  activeItem: FileListItem | null;
+  items: ArDriveFile[] | null;
+  onSelect(listItem: ArDriveFile): void;
+  onItemClick(listItem: ArDriveFile): void;
+  activeItem: ArDriveFile | null;
 }> = ({
   items,
   onSelect,
@@ -57,7 +49,7 @@ const FileList: React.FC<{
   const getFileSizeCaption = useCallback(
     (size) => {
       // TODO: Adjust for megabytes, gigabytes etc...
-      return t("mb", {
+      return t("bytes", {
         size: size,
       });
     },
@@ -103,7 +95,9 @@ const FileList: React.FC<{
                     date: moment(item.modifiedDate).fromNow(),
                   })}
                 </span>
-                <span>{getFileSizeCaption(item.size)}</span>
+                {item.type == "file" && (
+                  <span>{getFileSizeCaption(item.size)}</span>
+                )}
               </ItemContent>
             </td>
             {!hideOptions && (

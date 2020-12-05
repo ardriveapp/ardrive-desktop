@@ -14,7 +14,6 @@ import {
   SampleUserImage,
   SyncFolder,
 } from "app/components/images";
-import { authActions } from "app/redux/actions";
 import { authSelectors } from "app/redux/selectors";
 import { useTranslationAt } from "app/utils/hooks";
 
@@ -45,6 +44,7 @@ import {
   SettingsButtonMenuContainerItem,
   SettingsButtonMenuHeader,
 } from "./MainContainer.styled";
+import { authActions } from "app/redux/slices/auth";
 
 const NewButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");

@@ -9,9 +9,15 @@ import {
   getMyArDriveFilesFromPermaWeb,
   downloadMyArDriveFiles,
   getUserFromProfile,
+  getAllMyPublicArDriveIds,
+  getAllMyPrivateArDriveIds,
 } from "ardrive-core-js";
 import { ArDriveUser } from "ardrive-core-js/lib/types";
 import { Path } from "typescript";
+import {
+  addDriveToDriveTable,
+  getAllFilesByLoginFromSyncTable,
+} from "ardrive-core-js/lib/db";
 
 export const initialize = () => {
   ipcMain.handle("startWatchingFolders", async (_, login: string) => {
@@ -52,11 +58,42 @@ export const initialize = () => {
         login: username,
         dataProtectionKey: password,
         syncFolderPath: syncFolderPath,
-        autoSyncApproval: 1,
+        autoSyncApproval: 0,
         ...wallet,
       };
       const result = await addNewUser(password, user);
-      return result === "Success";
+
+      if (result === "Success") {
+        await synchronizeDrives(user);
+        return true;
+      }
+
+      return false;
     }
   );
+
+  ipcMain.handle("fetchFiles", async (_, username: string) => {
+    const allFiles = await getAllFilesByLoginFromSyncTable(username);
+    return allFiles;
+  });
+};
+
+const synchronizeDrives = async (user: ArDriveUser) => {
+  const publicDrives = await getAllMyPublicArDriveIds(user.walletPublicKey);
+
+  for (const publicDrive of publicDrives) {
+    await addDriveToDriveTable({
+      ...publicDrive,
+      login: user.login,
+    });
+  }
+
+  const privateDrives = await getAllMyPrivateArDriveIds(user);
+
+  for (const privateDrive of privateDrives) {
+    await addDriveToDriveTable({
+      ...privateDrive,
+      login: user.login,
+    });
+  }
 };

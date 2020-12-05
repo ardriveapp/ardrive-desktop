@@ -22,8 +22,12 @@ export default (ipcRenderer: IpcRenderer): CoreHooks => {
       );
       return result;
     },
-    startWatchingFolders: async (login: string) => {
-      await ipcRenderer.invoke("startWatchingFolders", login);
+    startWatchingFolders: async (username: string) => {
+      await ipcRenderer.invoke("startWatchingFolders", username);
+    },
+    fetchFiles: async (username: string) => {
+      const files = await ipcRenderer.invoke("fetchFiles", username);
+      return files;
     },
   };
 };
