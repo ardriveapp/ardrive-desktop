@@ -82,12 +82,18 @@ const synchronizeDrives = async (user: ArDriveUser) => {
   const publicDrives = await getAllMyPublicArDriveIds(user.walletPublicKey);
 
   for (const publicDrive of publicDrives) {
-    await addDriveToDriveTable(publicDrive);
+    await addDriveToDriveTable({
+      ...publicDrive,
+      login: user.login,
+    });
   }
 
   const privateDrives = await getAllMyPrivateArDriveIds(user);
 
   for (const privateDrive of privateDrives) {
-    await addDriveToDriveTable(privateDrive);
+    await addDriveToDriveTable({
+      ...privateDrive,
+      login: user.login,
+    });
   }
 };
