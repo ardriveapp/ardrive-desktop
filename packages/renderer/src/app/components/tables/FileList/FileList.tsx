@@ -1,6 +1,7 @@
 import { useTranslationAt } from "app/utils/hooks";
-import React, { useCallback } from "react";
+import React from "react";
 import moment from "moment";
+import prettyBytes from "pretty-bytes";
 
 import {
   AddContentDescription,
@@ -46,16 +47,6 @@ const FileList: React.FC<{
 }) => {
   const { t } = useTranslationAt("components.fileList");
 
-  const getFileSizeCaption = useCallback(
-    (size) => {
-      // TODO: Adjust for megabytes, gigabytes etc...
-      return t("bytes", {
-        size: size,
-      });
-    },
-    [t]
-  );
-
   if (items == null || items.length === 0) {
     return (
       <EmptyContentContainer>
@@ -83,7 +74,7 @@ const FileList: React.FC<{
           <FileListTableRow
             key={index}
             onClick={() => onItemClick(item)}
-            active={activeItem == item}
+            active={activeItem === item}
           >
             <td>{getFileImage(item)}</td>
             <td>
@@ -95,8 +86,8 @@ const FileList: React.FC<{
                     date: moment(item.modifiedDate).fromNow(),
                   })}
                 </span>
-                {item.type == "file" && (
-                  <span>{getFileSizeCaption(item.size)}</span>
+                {item.type === "file" && (
+                  <span>{prettyBytes(item.size || 0)}</span>
                 )}
               </ItemContent>
             </td>

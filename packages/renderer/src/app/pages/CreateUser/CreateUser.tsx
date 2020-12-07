@@ -22,14 +22,17 @@ export default () => {
     []
   );
 
-  const secondtStepCompleted = useCallback((walletPath: string) => {
-    setWalletPath(walletPath);
-    goNextStep();
-  }, []);
-
   const goNextStep = useCallback(() => {
     setStep((prev) => prev + 1);
   }, []);
+
+  const secondtStepCompleted = useCallback(
+    (walletPath: string) => {
+      setWalletPath(walletPath);
+      goNextStep();
+    },
+    [goNextStep]
+  );
 
   const completeRegistration = useCallback(
     (syncFolderPath: string) => {
@@ -58,7 +61,7 @@ export default () => {
       default:
         return React.Fragment;
     }
-  }, [step, goNextStep, completeRegistration, firstStepCompleted]);
+  }, [step, completeRegistration, firstStepCompleted, secondtStepCompleted]);
 
   const CurrentImage = useMemo(() => {
     switch (step) {

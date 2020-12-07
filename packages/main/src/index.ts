@@ -7,7 +7,7 @@ import { Sizes, DbName } from "./config";
 
 const startApplication = async () => {
   await setupDatabase(`./${DbName}`);
-  
+
   const window = new BrowserWindow({
     ...Sizes["desktop"],
     icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
@@ -27,7 +27,7 @@ const startApplication = async () => {
     window.loadFile(`${__dirname}/renderer/index.html`);
   }
 
-  initializeHooks([], [window]);
+  initializeHooks([window], [window]);
 };
 
 app.on("ready", startApplication);

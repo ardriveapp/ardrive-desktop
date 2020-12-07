@@ -2,14 +2,12 @@ import { applyMiddleware, configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import { persistStore, persistReducer } from "redux-persist";
 import createElectronStorage from "redux-persist-electron-storage";
-import { ipcRenderer } from "electron";
 
 import rootReducer from "./slices";
 import rootSaga from "./sagas";
 import electronHooks from "../electron-hooks";
 
-const hooks = electronHooks(ipcRenderer);
-
+const hooks = electronHooks();
 const sagaMiddleware = createSagaMiddleware({
   context: {
     electronHooks: hooks,
@@ -29,6 +27,7 @@ export const store = configureStore({
   enhancers: (defaultEnhancers) => [
     ...defaultEnhancers,
     applyMiddleware(sagaMiddleware),
+    applyMiddleware(hooks.middleware),
   ],
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

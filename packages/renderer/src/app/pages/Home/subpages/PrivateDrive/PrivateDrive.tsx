@@ -19,7 +19,7 @@ export default () => {
     if (user != null) {
       dispatch(appActions.fetchFiles(user.login));
     }
-  }, [user]);
+  }, [user, dispatch]);
 
   return (
     <PageContainer>

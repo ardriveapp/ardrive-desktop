@@ -61,8 +61,6 @@
         },
         "fileList": {
             "emptyDescription": " This place looks empty... Upload some files with the \"Create New\" button",
-            "mb": "{{size}} Mb",
-            "bytes": "{{size}} Bytes",
             "fileName": "File Name",
             "lastModified": "Last Modified Date",
             "fileSize": "File Size",
