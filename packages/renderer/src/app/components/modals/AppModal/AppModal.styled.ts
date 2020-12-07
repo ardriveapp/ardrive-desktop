@@ -15,13 +15,15 @@ export const AppModalContainer = styled.div<{
   justify-content: center;
   align-items: center;
   background-color: rgba(248, 248, 248, 0.2);
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 export const AppModalWindowContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 424px;
+  max-width: 100%;
   min-height: 247px;
   background-color: white;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);

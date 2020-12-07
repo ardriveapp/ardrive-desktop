@@ -45,13 +45,16 @@ import {
   SettingsButtonMenuHeader,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/slices/auth";
+import { useModal } from "app/components/modals/utils";
+import { withModal } from "app/components/modals/hooks";
 
 const NewButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
+  const { showModal } = useModal();
 
   return (
     <NewButtonMenuContainer>
-      <NewButtonMenuContainerItem>
+      <NewButtonMenuContainerItem onClick={() => showModal("new_folder")}>
         <NewDrive />
         {t("newDrive")}
       </NewButtonMenuContainerItem>
@@ -102,6 +105,7 @@ const BottomMenu = () => {
     (route: string) => location.pathname === route,
     [location]
   );
+
   return (
     <>
       <StyledPopover
@@ -111,7 +115,9 @@ const BottomMenu = () => {
       >
         <FooterButton
           isActive={showNewButtonMenu}
-          onClick={() => setShowNewButtonMenu((p) => !p)}
+          onClick={() => {
+            setShowNewButtonMenu((p) => !p);
+          }}
         >
           <CreateNewFolder />
           <FooterButtonText>{t("new")}</FooterButtonText>
@@ -189,4 +195,4 @@ const MainContainer: React.FC = ({ children }) => {
   );
 };
 
-export default MainContainer;
+export default withModal(MainContainer);
