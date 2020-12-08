@@ -23,11 +23,14 @@ export const BottomContainer = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 export const ContentContainer = styled.div`
-  height: 100%;
   width: 100%;
+  height: 100%;
 `;
 
 export const AppLogo = styled(LogoWithoutText)`
@@ -244,4 +247,26 @@ export const SettingsButtonMenuHeader = styled.div`
   line-height: 24px;
   color: rgba(0, 6, 10, 0.87);
   margin-bottom: 17px;
+`;
+
+export const UploadNotificationContainer = styled.div`
+  width: 100%;
+  background-color: white;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  align-items: center;
+  padding-top: 28px;
+  padding-bottom: 28px;
+`;
+
+export const UploadText = styled.div`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  margin-left: 18px;
+
+  color: rgba(0, 6, 10, 0.6);
 `;

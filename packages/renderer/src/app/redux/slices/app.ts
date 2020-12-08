@@ -1,6 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import { ElectronHooks, WindowType } from "app/electron-hooks/types";
-import { AppState } from "../types";
+import { withPayloadType } from "app/utils";
+import { AppState, UploadNotification } from "../types";
 
 const initialState: AppState = {
   files: [],
@@ -32,6 +34,17 @@ export const appActions = {
       await electronHooks.native.changeWindowSize(windowType);
     }
   ),
+  processUpdateFromMainProcess: createAction(
+    "app/processUpdateFromMainProcess",
+    withPayloadType<{
+      actionName: string;
+      payload: any;
+    }>()
+  ),
+  addUploadNotification: createAction(
+    "app/addUploadNotification",
+    withPayloadType<UploadNotification>()
+  ),
 };
 
 const appSlice = createSlice({
@@ -42,13 +55,15 @@ const appSlice = createSlice({
     builder.addCase(appActions.fetchFiles.fulfilled, (state, action) => {
       state.files = action.payload.map((file) => ({
         name: file.fileName,
-        type: file.type === "folder" ? "folder" : "file",
+        type: file.entityType === "folder" ? "folder" : "file",
         modifiedDate: new Date(file.lastModifiedDate),
         size: file.fileSize,
       }));
     });
+    builder.addCase(appActions.addUploadNotification, (state, action) => {
+      state.uploadNotification = action.payload;
+    });
   },
 });
 
-export const actions = appSlice.actions;
 export const reducer = appSlice.reducer;

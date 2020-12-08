@@ -6,4 +6,9 @@ const getAppState = (state: RootState) => state.app;
 
 const getFiles = createSelector(getAppState, (app) => app.files);
 
-export default { getAppState, getFiles };
+const getUploadNotification = createSelector(
+  getAppState,
+  (app) => app.uploadNotification
+);
+
+export default { getAppState, getFiles, getUploadNotification };

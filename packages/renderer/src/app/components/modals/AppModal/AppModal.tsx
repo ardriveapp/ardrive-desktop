@@ -1,4 +1,5 @@
 import React from "react";
+import { useModal } from "../utils";
 
 import {
   AppModalContainer,
@@ -9,13 +10,14 @@ import {
   AppModalWindowHeaderText,
   CloseButton,
 } from "./AppModal.styled";
+import { MoveToModal, NewFolderModal } from "./Variants";
 
-const AppModal: React.FC<{
+export const AppModalBase: React.FC<{
   visible: boolean;
   title: string;
   body: React.ReactNode;
   footer: React.ReactNode;
-  onClose(): void;
+  onClose?(): void;
 }> = ({ visible, title, body, footer, onClose }) => {
   return (
     <AppModalContainer visible={visible}>
@@ -31,4 +33,15 @@ const AppModal: React.FC<{
   );
 };
 
-export default AppModal;
+export default () => {
+  const { modalType, modalVisible, hideModal } = useModal();
+
+  switch (modalType) {
+    case "move_to":
+      return <MoveToModal visible={modalVisible} onClose={hideModal} />;
+    case "new_folder":
+      return <NewFolderModal visible={modalVisible} onClose={hideModal} />;
+  }
+
+  return null;
+};

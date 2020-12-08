@@ -11,7 +11,7 @@ import {
 
 type ButtonIcon = "folder" | "upload" | "private" | "public" | "share" | "help";
 
-const getImage = (image: ButtonIcon) => {
+const getImage = (image?: ButtonIcon) => {
   switch (image) {
     case "folder":
       return <Folder />;

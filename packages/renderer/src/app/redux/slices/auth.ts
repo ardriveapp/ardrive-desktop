@@ -81,7 +81,6 @@ const authSlice = createSlice({
   },
 });
 
-export const actions = authSlice.actions;
 export const reducer = persistReducer(
   {
     key: "auth",

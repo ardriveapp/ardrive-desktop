@@ -61,8 +61,6 @@
         },
         "fileList": {
             "emptyDescription": " This place looks empty... Upload some files with the \"Create New\" button",
-            "mb": "{{size}} Mb",
-            "bytes": "{{size}} Bytes",
             "fileName": "File Name",
             "lastModified": "Last Modified Date",
             "fileSize": "File Size",
@@ -94,7 +92,8 @@
             "changeSync": "Change sync folder",
             "pauseSync": "Pause syncing",
             "backup": "Backup Arweave wallet",
-            "settingsHeader": "Settings"
+            "settingsHeader": "Settings",
+            "uploadNotification": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}}</0>"
         }
     }
 }

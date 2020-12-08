@@ -1,5 +1,12 @@
+export interface UploadNotification {
+  filesCount: number;
+  totalPrice: number;
+  totalSize: number;
+}
+
 export interface AppState {
   files: ArDriveFile[];
+  uploadNotification?: UploadNotification;
 }
 
 export interface ArDriveFile {

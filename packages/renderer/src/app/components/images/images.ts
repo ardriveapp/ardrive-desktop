@@ -36,5 +36,6 @@ export { ReactComponent as Lock } from "resources/images/lock.svg";
 export { ReactComponent as SyncFolder } from "resources/images/sync-folder.svg";
 export { ReactComponent as Pause } from "resources/images/pause.svg";
 export { ReactComponent as Backup } from "resources/images/backup.svg";
+export { ReactComponent as UploadInfo } from "resources/images/upload-info.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

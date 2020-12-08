@@ -6,3 +6,15 @@ export type WindowSize = {
     width: number;
   };
 };
+
+export class CancellationToken {
+  isCancelled: boolean;
+
+  constructor() {
+    this.isCancelled = false;
+  }
+
+  cancel() {
+    this.isCancelled = true;
+  }
+}

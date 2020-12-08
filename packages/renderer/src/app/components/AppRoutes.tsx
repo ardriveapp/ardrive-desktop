@@ -35,7 +35,7 @@ export const AppRoutes = () => {
     }
     dispatch(appActions.changeWindowSize("mobile"));
     return prepareRoutes(HomeRoutes);
-  }, [isLoggedIn, isFirstLaunch]);
+  }, [isLoggedIn, isFirstLaunch, dispatch]);
 
   return (
     <HashRouter>

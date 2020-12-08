@@ -2,11 +2,11 @@ import React from "react";
 
 import { useTranslationAt } from "app/utils/hooks";
 
-import { AppModal } from "../AppModal";
 import { ButtonWithIcon, RoundedButton } from "app/components/buttons";
+import { AppModalBase } from "../AppModal";
 
 interface ModalProps {
-  onClose(): void;
+  onClose?(): void;
   visible: boolean;
 }
 
@@ -14,7 +14,7 @@ export const MoveToModal: React.FC<ModalProps> = ({ visible, onClose }) => {
   const { t } = useTranslationAt("components.modals.moveTo");
 
   return (
-    <AppModal
+    <AppModalBase
       onClose={onClose}
       title={t("header")}
       visible={visible}
@@ -33,13 +33,13 @@ export const NewFolderModal: React.FC<ModalProps> = ({ visible, onClose }) => {
   const { t } = useTranslationAt("components.modals.newFolder");
 
   return (
-    <AppModal
+    <AppModalBase
       onClose={onClose}
       title={t("header")}
       visible={visible}
       body={null}
       footer={[
-        <ButtonWithIcon active transparent>
+        <ButtonWithIcon active transparent onClick={onClose}>
           {t("cancel")}
         </ButtonWithIcon>,
         <RoundedButton>{t("create")}</RoundedButton>,

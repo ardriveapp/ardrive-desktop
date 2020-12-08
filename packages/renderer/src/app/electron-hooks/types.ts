@@ -1,3 +1,5 @@
+import { Middleware } from "@reduxjs/toolkit";
+
 export type WindowType = "desktop" | "mobile";
 
 export interface CoreHooks {
@@ -27,4 +29,5 @@ export interface NativeHooks {
 export interface ElectronHooks {
   core: CoreHooks;
   native: NativeHooks;
+  middleware: Middleware;
 }
