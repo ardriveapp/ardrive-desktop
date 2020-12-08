@@ -116,7 +116,11 @@ const startMainWatcherLoop = async (
   await downloadMyArDriveFiles(user);
   startWatchingFolders(user);
 
-  while (!token.isCancelled) {
+  const intervalId = setInterval(async () => {
+    if (token.isCancelled) {
+      clearInterval(intervalId);
+      return;
+    }
     await getMyArDriveFilesFromPermaWeb(user);
     await downloadMyArDriveFiles(user);
     await checkUploadStatus(user.login);
@@ -124,8 +128,7 @@ const startMainWatcherLoop = async (
     const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(
       user.login
     );
-    if (uploadBatch.totalArDrivePrice > 0) {
-      window.webContents.send("notifyUploadStatus", uploadBatch);
-    }
-  }
+    window.webContents.send("notifyUploadStatus", uploadBatch);
+
+  }, 10000);
 };

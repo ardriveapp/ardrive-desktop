@@ -8,7 +8,11 @@ export type WindowSize = {
 };
 
 export class CancellationToken {
-  isCancelled: boolean = false;
+  isCancelled: boolean;
+
+  constructor() {
+    this.isCancelled = false;
+  }
 
   cancel() {
     this.isCancelled = true;

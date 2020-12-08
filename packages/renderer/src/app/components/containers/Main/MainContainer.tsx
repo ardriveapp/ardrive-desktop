@@ -13,8 +13,9 @@ import {
   Pause,
   SampleUserImage,
   SyncFolder,
+  UploadInfo,
 } from "app/components/images";
-import { authSelectors } from "app/redux/selectors";
+import { appSelectors, authSelectors } from "app/redux/selectors";
 import { useTranslationAt } from "app/utils/hooks";
 
 import {
@@ -43,10 +44,14 @@ import {
   SettingsButtonMenuContainer,
   SettingsButtonMenuContainerItem,
   SettingsButtonMenuHeader,
+  UploadNotificationContainer,
+  UploadText,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/slices/auth";
 import { useModal } from "app/components/modals/utils";
 import { withModal } from "app/components/modals/hooks";
+import { TranslationAt } from "app/components/TranslationAt";
+import { FontVariants } from "app/components/typography";
 
 const NewButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
@@ -147,6 +152,28 @@ const BottomMenu = () => {
   );
 };
 
+const UploadNotification = () => {
+  const notification = useSelector(appSelectors.getUploadNotification);
+
+  if (notification == null || notification.filesCount === 0) {
+    return null;
+  }
+
+  return (
+    <UploadNotificationContainer>
+      <UploadInfo />
+      <UploadText>
+        <TranslationAt
+          atPath="components.mainContainer"
+          i18nKey="uploadNotification"
+          components={[<FontVariants.Bold />]}
+          values={notification}
+        />
+      </UploadText>
+    </UploadNotificationContainer>
+  );
+};
+
 const MainContainer: React.FC = ({ children }) => {
   const [showUserDetails, setShowUserDetails] = useState(false);
 
@@ -186,6 +213,7 @@ const MainContainer: React.FC = ({ children }) => {
         </CurrentUserContainer>
       </Header>
       <BottomContainer>
+        <UploadNotification />
         <ContentContainer>{children}</ContentContainer>
       </BottomContainer>
       <FooterContainer>

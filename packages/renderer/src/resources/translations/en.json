@@ -92,7 +92,8 @@
             "changeSync": "Change sync folder",
             "pauseSync": "Pause syncing",
             "backup": "Backup Arweave wallet",
-            "settingsHeader": "Settings"
+            "settingsHeader": "Settings",
+            "uploadNotification": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}}</0>"
         }
     }
 }

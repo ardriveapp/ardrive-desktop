@@ -26,8 +26,8 @@ export const store = configureStore({
   reducer: persistedReducer,
   enhancers: (defaultEnhancers) => [
     ...defaultEnhancers,
-    applyMiddleware(sagaMiddleware),
     applyMiddleware(hooks.middleware),
+    applyMiddleware(sagaMiddleware),
   ],
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

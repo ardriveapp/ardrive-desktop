@@ -9,11 +9,16 @@ export default (): ElectronHooks => {
   return {
     core: CoreHooks(ipcRenderer),
     native: NativeHooks(ipcRenderer),
-    middleware: (store) => (next) => (action) => {
+    middleware: (store) => {
       ipcRenderer.on("notifyUploadStatus", (_, uploadBatch: any) => {
-        store.dispatch(appActions.processUpdateFromMainProcess(uploadBatch));
+        store.dispatch(
+          appActions.processUpdateFromMainProcess({
+            actionName: "notifyUploadStatus",
+            payload: uploadBatch,
+          })
+        );
       });
-      return next(action);
+      return (next) => (action) => next(action);
     },
   };
 };

@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { ElectronHooks, WindowType } from "app/electron-hooks/types";
 import { withPayloadType } from "app/utils";
-import { AppState } from "../types";
+import { AppState, UploadNotification } from "../types";
 
 const initialState: AppState = {
   files: [],
@@ -36,7 +36,14 @@ export const appActions = {
   ),
   processUpdateFromMainProcess: createAction(
     "app/processUpdateFromMainProcess",
-    withPayloadType<any>()
+    withPayloadType<{
+      actionName: string;
+      payload: any;
+    }>()
+  ),
+  addUploadNotification: createAction(
+    "app/addUploadNotification",
+    withPayloadType<UploadNotification>()
   ),
 };
 
@@ -53,8 +60,10 @@ const appSlice = createSlice({
         size: file.fileSize,
       }));
     });
+    builder.addCase(appActions.addUploadNotification, (state, action) => {
+      state.uploadNotification = action.payload;
+    });
   },
 });
 
-export const actions = appSlice.actions;
 export const reducer = appSlice.reducer;
