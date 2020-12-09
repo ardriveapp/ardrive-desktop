@@ -18,6 +18,7 @@ export interface CoreHooks {
   ): Promise<string>;
   startWatchingFolders(username: string): Promise<void>;
   fetchFiles(username: string): Promise<any[]>;
+  logout(): Promise<void>;
 }
 
 export interface NativeHooks {

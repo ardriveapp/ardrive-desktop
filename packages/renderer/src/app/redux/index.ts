@@ -34,6 +34,9 @@ export const store = configureStore({
       thunk: {
         extraArgument: hooks,
       },
+      serializableCheck: {
+        ignoredActions: ["persist/PERSIST"],
+      },
     }),
 });
 

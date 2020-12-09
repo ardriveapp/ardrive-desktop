@@ -5,6 +5,7 @@ import createElectronStorage from "redux-persist-electron-storage";
 import { ElectronHooks } from "app/electron-hooks/types";
 
 import { AppUser, AuthState } from "../types";
+import { withPayloadType } from "app/utils";
 
 const initialState: AuthState = {
   isLoggedIn: false,
@@ -34,13 +35,14 @@ export const authActions = {
         payload.password
       );
       if (result) {
+        thunkAPI.dispatch(authActions.startWatching(user));
         return {
           address: user.walletPublicKey,
           login: user.login,
           balance: user.walletBalance,
         };
       }
-      return null;
+      throw new Error("User does not exist!");
     }
   ),
   createUser: createAsyncThunk<void, CreateUserArgs>(
@@ -61,7 +63,11 @@ export const authActions = {
       }
     }
   ),
-  logout: createAction("auth/logout"),
+  logout: createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.logout();
+  }),
+  startWatching: createAction("auth/startWatching", withPayloadType<AppUser>()),
 };
 
 const authSlice = createSlice({
@@ -74,7 +80,7 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       state.isFirstLaunch = false;
     });
-    builder.addCase(authActions.logout, (state, _) => {
+    builder.addCase(authActions.logout.fulfilled, (state, _) => {
       state.isLoggedIn = false;
       state.user = null;
     });

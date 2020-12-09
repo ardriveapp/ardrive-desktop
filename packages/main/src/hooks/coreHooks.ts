@@ -25,10 +25,15 @@ import {
 import { CancellationToken } from "../types";
 
 export const initialize = (window: BrowserWindow) => {
-  const cancellationToken = new CancellationToken();
+  let cancellationToken: CancellationToken;
 
   ipcMain.handle("startWatchingFolders", async (_, login: string) => {
     const user = await getUserFromProfile(login);
+
+    if (cancellationToken != null) {
+      cancellationToken.cancel();
+    }
+    cancellationToken = new CancellationToken();
     await startMainWatcherLoop(window, user, cancellationToken);
   });
 
@@ -45,6 +50,10 @@ export const initialize = (window: BrowserWindow) => {
     return {
       result: false,
     };
+  });
+
+  ipcMain.handle("logout", (_) => {
+    cancellationToken.cancel();
   });
 
   ipcMain.handle(
@@ -129,6 +138,5 @@ const startMainWatcherLoop = async (
       user.login
     );
     window.webContents.send("notifyUploadStatus", uploadBatch);
-
   }, 10000);
 };

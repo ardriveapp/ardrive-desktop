@@ -34,7 +34,7 @@ export const FileListTableRow = styled.tr<{
   }
 
   &:hover {
-    background-color: transparent;
+    background-color: #fafafa;
 
     td {
       color: ${(props) => props.theme.colors.red} !important;
