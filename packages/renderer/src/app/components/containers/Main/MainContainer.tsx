@@ -167,6 +167,7 @@ const UploadNotification = () => {
           atPath="components.mainContainer"
           i18nKey="uploadNotification"
           components={[<FontVariants.Bold />]}
+          count={notification.filesCount}
           values={notification}
         />
       </UploadText>
