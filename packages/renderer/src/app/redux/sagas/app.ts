@@ -1,5 +1,7 @@
-import { all, put, takeLatest } from "redux-saga/effects";
+import { all, put, select, takeLatest } from "redux-saga/effects";
+import { authSelectors } from "../selectors";
 import { appActions } from "../slices/app";
+import { AppUser } from "../types";
 
 function* processUpdateFromMainProcessSaga(action: any) {
   const { actionName, payload } = action.payload;
@@ -13,6 +15,10 @@ function* processUpdateFromMainProcessSaga(action: any) {
           totalSize: payload.totalSize,
         })
       );
+      const user: AppUser = yield select(authSelectors.getUser);
+      if (user != null) {
+        // yield put(appActions.fetchFiles(user.login) as any);
+      }
       return;
   }
 }

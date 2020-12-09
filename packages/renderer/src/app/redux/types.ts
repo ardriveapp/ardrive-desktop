@@ -12,7 +12,7 @@ export interface AppState {
 export interface ArDriveFile {
   image?: string;
   name: string;
-  modifiedDate: Date;
+  modifiedDate: string;
   size: number;
   type: "folder" | "file";
   fileImage?: string;

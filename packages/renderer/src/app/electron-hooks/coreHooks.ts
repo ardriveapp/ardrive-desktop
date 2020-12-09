@@ -2,32 +2,40 @@ import { IpcRenderer } from "electron";
 
 import { CoreHooks } from "./types";
 
-export default (ipcRenderer: IpcRenderer): CoreHooks => {
-  return {
-    login: async (username: string, password: string) => {
-      return await ipcRenderer.invoke("login", username, password);
-    },
-    createNewUser: async (
-      username: string,
-      password: string,
-      syncFolderPath: string,
-      walletPath: string
-    ) => {
-      const result = await ipcRenderer.invoke(
-        "createNewUser",
-        username,
-        password,
-        syncFolderPath,
-        walletPath
-      );
-      return result;
-    },
-    startWatchingFolders: async (username: string) => {
-      await ipcRenderer.invoke("startWatchingFolders", username);
-    },
-    fetchFiles: async (username: string) => {
-      const files = await ipcRenderer.invoke("fetchFiles", username);
-      return files;
-    },
-  };
-};
+class CoreHooksImplementation implements CoreHooks {
+  ipcRenderer: IpcRenderer;
+
+  constructor(ipcRenderer: IpcRenderer) {
+    this.ipcRenderer = ipcRenderer;
+  }
+
+  async login(username: string, password: string) {
+    return await this.ipcRenderer.invoke("login", username, password);
+  }
+
+  async createNewUser(
+    username: string,
+    password: string,
+    syncFolderPath: string,
+    walletPath: string
+  ) {
+    return await this.ipcRenderer.invoke(
+      "createNewUser",
+      username,
+      password,
+      syncFolderPath,
+      walletPath
+    );
+  }
+  async startWatchingFolders(username: string) {
+    await this.ipcRenderer.invoke("startWatchingFolders", username);
+  }
+  async fetchFiles(username: string): Promise<any[]> {
+    return await this.ipcRenderer.invoke("fetchFiles", username);
+  }
+  async logout() {
+    await this.ipcRenderer.invoke("logout");
+  }
+}
+
+export default CoreHooksImplementation;

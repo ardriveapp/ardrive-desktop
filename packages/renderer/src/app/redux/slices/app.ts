@@ -56,7 +56,7 @@ const appSlice = createSlice({
       state.files = action.payload.map((file) => ({
         name: file.fileName,
         type: file.entityType === "folder" ? "folder" : "file",
-        modifiedDate: new Date(file.lastModifiedDate),
+        modifiedDate: file.lastModifiedDate,
         size: file.fileSize,
       }));
     });

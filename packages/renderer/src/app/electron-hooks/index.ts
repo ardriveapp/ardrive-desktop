@@ -7,8 +7,8 @@ import { ElectronHooks } from "./types";
 
 export default (): ElectronHooks => {
   return {
-    core: CoreHooks(ipcRenderer),
-    native: NativeHooks(ipcRenderer),
+    core: new CoreHooks(ipcRenderer),
+    native: new NativeHooks(ipcRenderer),
     middleware: (store) => {
       ipcRenderer.on("notifyUploadStatus", (_, uploadBatch: any) => {
         store.dispatch(
