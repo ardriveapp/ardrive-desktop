@@ -58,6 +58,7 @@ const appSlice = createSlice({
         type: file.entityType === "folder" ? "folder" : "file",
         modifiedDate: file.lastModifiedDate,
         size: file.fileSize,
+        driveName: file.drive?.driveName,
       }));
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {

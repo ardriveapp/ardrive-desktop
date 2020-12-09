@@ -16,6 +16,7 @@ export interface ArDriveFile {
   size: number;
   type: "folder" | "file";
   fileImage?: string;
+  driveName?: string;
 }
 
 export interface AuthState {

@@ -70,34 +70,36 @@ const FileList: React.FC<{
         </FileListTableHead>
       )}
       <FileListTableBody>
-        {items.map((item, index) => (
-          <FileListTableRow
-            key={index}
-            onClick={() => onItemClick(item)}
-            active={activeItem === item}
-          >
-            <td>{getFileImage(item)}</td>
-            <td>
-              <ItemContent>
-                <span> {item.name}</span>
-                <span>
-                  {t("uploadedFrom", {
-                    from: "TestName",
-                    date: moment(item.modifiedDate).fromNow(),
-                  })}
-                </span>
-                {item.type === "file" && (
-                  <span>{prettyBytes(item.size || 0)}</span>
-                )}
-              </ItemContent>
-            </td>
-            {!hideOptions && (
+        {items
+          .filter((item) => item.type !== "folder")
+          .map((item, index) => (
+            <FileListTableRow
+              key={index}
+              onClick={() => onItemClick(item)}
+              active={activeItem === item}
+            >
+              <td>{getFileImage(item)}</td>
               <td>
-                <OptionsImage onClick={() => onSelect(item)} />
+                <ItemContent>
+                  <span> {item.name}</span>
+                  <span>
+                    {t("uploadedFrom", {
+                      from: item.driveName,
+                      date: moment(item.modifiedDate).fromNow(),
+                    })}
+                  </span>
+                  {item.type === "file" && (
+                    <span>{prettyBytes(item.size || 0)}</span>
+                  )}
+                </ItemContent>
               </td>
-            )}
-          </FileListTableRow>
-        ))}
+              {!hideOptions && (
+                <td>
+                  <OptionsImage onClick={() => onSelect(item)} />
+                </td>
+              )}
+            </FileListTableRow>
+          ))}
       </FileListTableBody>
     </FileListTable>
   );
