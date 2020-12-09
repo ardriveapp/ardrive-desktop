@@ -83,10 +83,16 @@ const FileList: React.FC<{
                 <ItemContent>
                   <span> {item.name}</span>
                   <span>
-                    {t("uploadedFrom", {
-                      from: item.driveName,
-                      date: moment(item.modifiedDate).fromNow(),
-                    })}
+                    {item.syncStatus === "downloaded" &&
+                      t("downloadedFrom", {
+                        from: item.driveName,
+                        date: moment(item.modifiedDate).fromNow(),
+                      })}
+                    {item.syncStatus === "uploaded" &&
+                      t("uploadedFrom", {
+                        from: item.driveName,
+                        date: moment(item.modifiedDate).fromNow(),
+                      })}
                   </span>
                   {item.type === "file" && (
                     <span>{prettyBytes(item.size || 0)}</span>

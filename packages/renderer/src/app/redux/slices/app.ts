@@ -59,6 +59,7 @@ const appSlice = createSlice({
         modifiedDate: file.lastModifiedDate,
         size: file.fileSize,
         driveName: file.drive?.driveName,
+        syncStatus: +file.fileDataSyncStatus === 3 ? "uploaded" : "downloaded",
       }));
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {

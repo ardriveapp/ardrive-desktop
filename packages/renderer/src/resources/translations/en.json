@@ -64,7 +64,8 @@
             "fileName": "File Name",
             "lastModified": "Last Modified Date",
             "fileSize": "File Size",
-            "uploadedFrom": "Uploaded from {{from}} {{date}}"
+            "uploadedFrom": "Uploaded from {{from}} {{date}}",
+            "downloadedFrom": "Downloaded to {{from}} {{date}}"
         },
         "detailsSidebar": {
             "details": "Details",
