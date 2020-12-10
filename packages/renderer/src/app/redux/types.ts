@@ -39,3 +39,15 @@ export interface AppUser {
   address: string;
   balance: number;
 }
+
+export type LoginStartArgs = {
+  login: string;
+  password: string;
+};
+
+export type CreateUserArgs = {
+  username: string;
+  password: string;
+  syncFolderPath: string;
+  walletPath: string;
+};

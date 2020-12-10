@@ -47,7 +47,7 @@ const SecondStep: React.FC<{
         />
       </Description>
       <ButtonsContainer>
-        <ImportWalletButton>{t("create_new")}</ImportWalletButton>
+        <ImportWalletButton disabled>{t("create_new")}</ImportWalletButton>
         <ImportWalletButton onClick={openFile}>
           {t("import_existing")}
         </ImportWalletButton>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, RouteProps, Switch } from "react-router-dom";
+import { Redirect, Route, RouteProps, Switch } from "react-router-dom";
 
 export const withSubroutes = (
   Component: React.ComponentType<{
@@ -14,6 +14,7 @@ export const withSubroutes = (
           {subroutes.map((routeProps, index) => (
             <Route key={index} {...routeProps} />
           ))}
+          <Redirect from="*" to="/" />
         </Switch>
       }
     />
