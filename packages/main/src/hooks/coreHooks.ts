@@ -15,6 +15,7 @@ import {
   checkUploadStatus,
   getPriceOfNextUploadBatch,
   uploadArDriveFiles,
+  getWalletBalance,
 } from "ardrive-core-js";
 import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
@@ -46,10 +47,15 @@ export const initialize = (window: BrowserWindow) => {
     const passwordResult: boolean = await passwordCheck(password, username);
     if (passwordResult) {
       const user = await getUser(password, username);
+      const balance = await getWalletBalance(user.walletPublicKey);
 
       return {
         result: true,
-        user: user,
+        user: {
+          login: user.login,
+          walletPublicKey: user.walletPublicKey,
+          walletBalance: balance,
+        },
       };
     }
     return {
