@@ -64,7 +64,12 @@
             "fileName": "File Name",
             "lastModified": "Last Modified Date",
             "fileSize": "File Size",
-            "uploadedFrom": "Uploaded from {{from}} {{date}}"
+            "uploadedFrom": "Uploaded from {{from}} {{date}}",
+            "downloadedFrom": "Downloaded to {{from}} {{date}}",
+            "id": "ID",
+            "owner": "Owner",
+            "location": "Location",
+            "modified": "Modified"
         },
         "detailsSidebar": {
             "details": "Details",
@@ -93,7 +98,8 @@
             "pauseSync": "Pause syncing",
             "backup": "Backup Arweave wallet",
             "settingsHeader": "Settings",
-            "uploadNotification": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}}</0>"
+            "uploadNotification": "{{filesCount}} file ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
+            "uploadNotification_plural": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>"
         }
     }
 }

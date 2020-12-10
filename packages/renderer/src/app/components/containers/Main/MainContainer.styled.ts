@@ -24,8 +24,18 @@ export const BottomContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    width: 4px;
+    background: #c5c4c6;
+  }
 `;
 
 export const ContentContainer = styled.div`

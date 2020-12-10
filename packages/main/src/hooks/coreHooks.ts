@@ -20,6 +20,7 @@ import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
   addDriveToDriveTable,
   getAllFilesByLoginFromSyncTable,
+  getDriveFromDriveTable,
 } from "ardrive-core-js/lib/db";
 
 import { CancellationToken } from "../types";
@@ -86,6 +87,9 @@ export const initialize = (window: BrowserWindow) => {
 
   ipcMain.handle("fetchFiles", async (_, username: string) => {
     const allFiles = await getAllFilesByLoginFromSyncTable(username);
+    for (const file of allFiles) {
+      file.drive = await getDriveFromDriveTable(file.driveId);
+    }
     return allFiles;
   });
 

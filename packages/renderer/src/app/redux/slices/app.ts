@@ -54,10 +54,15 @@ const appSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(appActions.fetchFiles.fulfilled, (state, action) => {
       state.files = action.payload.map((file) => ({
+        id: file.id,
         name: file.fileName,
         type: file.entityType === "folder" ? "folder" : "file",
         modifiedDate: file.lastModifiedDate,
+        owner: file.login,
+        location: file.filePath,
         size: file.fileSize,
+        driveName: file.drive?.driveName,
+        syncStatus: +file.fileDataSyncStatus === 3 ? "uploaded" : "downloaded",
       }));
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {
