@@ -31,6 +31,10 @@ export const initialize = (window: BrowserWindow) => {
   ipcMain.handle("startWatchingFolders", async (_, login: string) => {
     const user = await getUserFromProfile(login);
 
+    if (user == null) {
+      return;
+    }
+
     if (cancellationToken != null) {
       cancellationToken.cancel();
     }
@@ -54,7 +58,7 @@ export const initialize = (window: BrowserWindow) => {
   });
 
   ipcMain.handle("logout", (_) => {
-    cancellationToken.cancel();
+    cancellationToken?.cancel();
   });
 
   ipcMain.handle(

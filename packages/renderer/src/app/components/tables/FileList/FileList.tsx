@@ -141,7 +141,7 @@ const FileList: React.FC<{
               </StyledPopover>
               <td>
                 <ItemContent>
-                  <span> {item.name}</span>
+                  <span>{item.name}</span>
                   <span>
                     {item.syncStatus === "downloaded" &&
                       t("downloadedFrom", {
