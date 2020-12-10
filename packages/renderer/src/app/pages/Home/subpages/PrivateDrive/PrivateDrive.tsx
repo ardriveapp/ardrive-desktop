@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { DetailsSidebar, FileList } from "app/components";
+import { FileList } from "app/components";
 
 import { PageContentContainer, PageContainer } from "./PrivateDrive.styled";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,6 @@ import { appActions } from "app/redux/slices/app";
 import { ArDriveFile } from "app/redux/types";
 
 export default () => {
-  const [selectedItem, setSelectedItem] = useState<ArDriveFile | null>(null);
   const [clickedItem, setClickedItem] = useState<ArDriveFile | null>(null);
   const dispatch = useDispatch();
   const files = useSelector(appSelectors.getFiles);
@@ -26,17 +25,11 @@ export default () => {
       <PageContentContainer>
         <FileList
           hideHeader
-          hideOptions
           items={files}
-          onSelect={setSelectedItem}
           onItemClick={setClickedItem}
           activeItem={clickedItem}
         />
       </PageContentContainer>
-      <DetailsSidebar
-        item={selectedItem}
-        onClose={() => setSelectedItem(null)}
-      />
     </PageContainer>
   );
 };

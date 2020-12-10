@@ -10,11 +10,14 @@ export interface AppState {
 }
 
 export interface ArDriveFile {
-  image?: string;
-  name: string;
+  id: string;
+  owner: string;
+  location: string;
   modifiedDate: string;
-  size: number;
   type: "folder" | "file";
+  name: string;
+  size: number;
+  image?: string;
   fileImage?: string;
   driveName?: string;
   syncStatus?: "downloaded" | "uploaded";

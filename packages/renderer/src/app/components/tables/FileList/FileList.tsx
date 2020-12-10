@@ -1,5 +1,5 @@
 import { useTranslationAt } from "app/utils/hooks";
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import prettyBytes from "pretty-bytes";
 
@@ -7,6 +7,13 @@ import {
   AddContentDescription,
   AddContentImage,
   EmptyContentContainer,
+  FileDetailsContainer,
+  FileDetailsFeature,
+  FileDetailsFeatureContainer,
+  FileDetailsFeatureValue,
+  FileDetailsFeatureName,
+  FileDetailsFileName,
+  FileDetailsMenuBar,
   FileImage,
   FileListTable,
   FileListTableBody,
@@ -15,8 +22,10 @@ import {
   FolderImage,
   ItemContent,
   OptionsImage,
+  StyledPopover,
 } from "./FileList.styled";
 import { ArDriveFile } from "app/redux/types";
+import { Cloud, Share, Lock, PublicUrl } from "app/components/images";
 
 const getFileImage = (item: ArDriveFile) => {
   switch (item.type) {
@@ -30,22 +39,57 @@ const getFileImage = (item: ArDriveFile) => {
   }
 };
 
+const FileDetails: React.FC<{
+  file: ArDriveFile | null;
+}> = ({ file }) => {
+  const { t } = useTranslationAt("components.fileList");
+
+  if (file == null) {
+    return null;
+  }
+
+  return (
+    <FileDetailsContainer>
+      <FileDetailsFileName>{file.name}</FileDetailsFileName>
+      <FileDetailsMenuBar>
+        <Lock />
+        <PublicUrl />
+        <Cloud />
+        <Share />
+      </FileDetailsMenuBar>
+      <FileDetailsFeatureContainer>
+        <FileDetailsFeature>
+          <FileDetailsFeatureName>{t("id")}</FileDetailsFeatureName>
+          <FileDetailsFeatureValue>{file.id}</FileDetailsFeatureValue>
+        </FileDetailsFeature>
+        <FileDetailsFeature>
+          <FileDetailsFeatureName>{t("owner")}</FileDetailsFeatureName>
+          <FileDetailsFeatureValue>{file.owner}</FileDetailsFeatureValue>
+        </FileDetailsFeature>
+        <FileDetailsFeature>
+          <FileDetailsFeatureName>{t("location")}</FileDetailsFeatureName>
+          <FileDetailsFeatureValue>{file.location}</FileDetailsFeatureValue>
+        </FileDetailsFeature>
+        <FileDetailsFeature>
+          <FileDetailsFeatureName>{t("modified")}</FileDetailsFeatureName>
+          <FileDetailsFeatureValue>
+            {moment(file.modifiedDate).format("MMM DD, YYYY")}
+          </FileDetailsFeatureValue>
+        </FileDetailsFeature>
+      </FileDetailsFeatureContainer>
+    </FileDetailsContainer>
+  );
+};
+
 const FileList: React.FC<{
   hideHeader?: boolean;
   hideOptions?: boolean;
   items: ArDriveFile[] | null;
-  onSelect(listItem: ArDriveFile): void;
   onItemClick(listItem: ArDriveFile): void;
   activeItem: ArDriveFile | null;
-}> = ({
-  items,
-  onSelect,
-  onItemClick,
-  activeItem,
-  hideHeader,
-  hideOptions,
-}) => {
+}> = ({ items, onItemClick, activeItem, hideHeader, hideOptions }) => {
   const { t } = useTranslationAt("components.fileList");
+  const [selectedItem, setSelectedItem] = useState<ArDriveFile | null>(null);
 
   if (items == null || items.length === 0) {
     return (
@@ -69,6 +113,7 @@ const FileList: React.FC<{
           </tr>
         </FileListTableHead>
       )}
+
       <FileListTableBody>
         {items
           .filter((item) => item.type !== "folder")
@@ -78,7 +123,13 @@ const FileList: React.FC<{
               onClick={() => onItemClick(item)}
               active={activeItem === item}
             >
-              <td>{getFileImage(item)}</td>
+              <StyledPopover
+                isOpen={selectedItem === item}
+                onOuterAction={() => setSelectedItem(null)}
+                body={<FileDetails file={selectedItem} />}
+              >
+                <td>{getFileImage(item)}</td>
+              </StyledPopover>
               <td>
                 <ItemContent>
                   <span> {item.name}</span>
@@ -101,7 +152,7 @@ const FileList: React.FC<{
               </td>
               {!hideOptions && (
                 <td>
-                  <OptionsImage onClick={() => onSelect(item)} />
+                  <OptionsImage onClick={() => setSelectedItem(item)} />
                 </td>
               )}
             </FileListTableRow>

@@ -37,5 +37,7 @@ export { ReactComponent as SyncFolder } from "resources/images/sync-folder.svg";
 export { ReactComponent as Pause } from "resources/images/pause.svg";
 export { ReactComponent as Backup } from "resources/images/backup.svg";
 export { ReactComponent as UploadInfo } from "resources/images/upload-info.svg";
+export { ReactComponent as Cloud } from "resources/images/cloud.svg";
+export { ReactComponent as PublicUrl } from "resources/images/public-url.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";
