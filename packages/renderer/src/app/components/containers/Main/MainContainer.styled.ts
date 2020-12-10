@@ -266,6 +266,7 @@ export const UploadNotificationContainer = styled.div`
   padding-right: 16px;
   display: flex;
   align-items: center;
+  flex-direction: column;
   padding-top: 28px;
   padding-bottom: 28px;
 `;
@@ -279,4 +280,31 @@ export const UploadText = styled.div`
   margin-left: 18px;
 
   color: rgba(0, 6, 10, 0.6);
+`;
+
+export const NotificationInfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;
+
+export const NotificationButtonsContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 16px;
+`;
+
+export const NotificationButton = styled.div`
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #700327;
+  margin-left: 35px;
+  cursor: pointer;
 `;

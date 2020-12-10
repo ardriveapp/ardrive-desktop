@@ -38,6 +38,7 @@ export interface AppUser {
   login: string;
   address: string;
   balance: number;
+  password: string; // TODO: Do not store sensitive info at storage
 }
 
 export type LoginStartArgs = {

@@ -28,6 +28,7 @@ export const authActions = {
           address: user.walletPublicKey,
           login: user.login,
           balance: user.walletBalance,
+          password: payload.password, // TODO: Temp solution. Do not store password!
         };
       }
       throw new Error("User does not exist!");

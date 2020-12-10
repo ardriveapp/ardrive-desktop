@@ -99,7 +99,9 @@
             "backup": "Backup Arweave wallet",
             "settingsHeader": "Settings",
             "uploadNotification": "{{filesCount}} file ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
-            "uploadNotification_plural": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>"
+            "uploadNotification_plural": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
+            "yes": "Yes",
+            "no": "No"
         }
     }
 }

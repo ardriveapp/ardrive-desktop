@@ -47,6 +47,16 @@ export const appActions = {
     "app/addUploadNotification",
     withPayloadType<UploadNotification>()
   ),
+  uploadFiles: createAsyncThunk<
+    void,
+    {
+      login: string;
+      password: string;
+    }
+  >("app/uploadFiles", async (payload, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.uploadFiles(payload.login, payload.password);
+  }),
 };
 
 const appSlice = createSlice({
