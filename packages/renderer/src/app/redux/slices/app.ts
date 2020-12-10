@@ -3,9 +3,11 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ElectronHooks, WindowType } from "app/electron-hooks/types";
 import { withPayloadType } from "app/utils";
 import { AppState, UploadNotification } from "../types";
+import { authActions } from "./auth";
 
 const initialState: AppState = {
   files: [],
+  uploadNotification: undefined,
 };
 
 export const appActions = {
@@ -45,6 +47,16 @@ export const appActions = {
     "app/addUploadNotification",
     withPayloadType<UploadNotification>()
   ),
+  uploadFiles: createAsyncThunk<
+    void,
+    {
+      login: string;
+      password: string;
+    }
+  >("app/uploadFiles", async (payload, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.uploadFiles(payload.login, payload.password);
+  }),
 };
 
 const appSlice = createSlice({
@@ -67,6 +79,10 @@ const appSlice = createSlice({
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {
       state.uploadNotification = action.payload;
+    });
+    builder.addCase(authActions.logout.fulfilled, (state, _) => {
+      state.uploadNotification = undefined;
+      state.files = [];
     });
   },
 });

@@ -23,6 +23,7 @@ export const RoundedButton = styled.button`
 
   &:disabled {
     cursor: default;
+    background-color: #a4a4a4;
   }
 `;
 

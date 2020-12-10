@@ -24,7 +24,7 @@ export default () => {
 
   const login = useCallback(() => {
     dispatch(
-      authActions.loginStart({
+      authActions.login({
         login: username,
         password,
       })

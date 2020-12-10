@@ -31,6 +31,10 @@ export const initialize = (window: BrowserWindow) => {
   ipcMain.handle("startWatchingFolders", async (_, login: string) => {
     const user = await getUserFromProfile(login);
 
+    if (user == null) {
+      return;
+    }
+
     if (cancellationToken != null) {
       cancellationToken.cancel();
     }
@@ -54,7 +58,7 @@ export const initialize = (window: BrowserWindow) => {
   });
 
   ipcMain.handle("logout", (_) => {
-    cancellationToken.cancel();
+    cancellationToken?.cancel();
   });
 
   ipcMain.handle(
@@ -67,12 +71,14 @@ export const initialize = (window: BrowserWindow) => {
       walletPath: string
     ) => {
       const wallet = await getLocalWallet(walletPath as Path);
+
       const user: ArDriveUser = {
         login: username,
         dataProtectionKey: password,
         syncFolderPath: syncFolderPath,
         autoSyncApproval: 0,
-        ...wallet,
+        walletPrivateKey: JSON.stringify(wallet.walletPrivateKey),
+        walletPublicKey: wallet.walletPublicKey,
       };
       const result = await addNewUser(password, user);
 
@@ -93,8 +99,8 @@ export const initialize = (window: BrowserWindow) => {
     return allFiles;
   });
 
-  ipcMain.handle("uploadFiles", async (_, login: string) => {
-    const user = await getUserFromProfile(login);
+  ipcMain.handle("uploadFiles", async (_, login: string, password: string) => {
+    const user: ArDriveUser = await getUser(password, login);
     await uploadArDriveFiles(user);
   });
 };

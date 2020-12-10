@@ -1,5 +1,4 @@
-import { useTranslationAt } from "app/utils/hooks";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import moment from "moment";
 import prettyBytes from "pretty-bytes";
 
@@ -26,6 +25,7 @@ import {
 } from "./FileList.styled";
 import { ArDriveFile } from "app/redux/types";
 import { Cloud, Share, Lock, PublicUrl } from "app/components/images";
+import { useTranslationAt } from "app/utils/hooks";
 
 const getFileImage = (item: ArDriveFile) => {
   switch (item.type) {
@@ -91,6 +91,16 @@ const FileList: React.FC<{
   const { t } = useTranslationAt("components.fileList");
   const [selectedItem, setSelectedItem] = useState<ArDriveFile | null>(null);
 
+  const selectItemHandler = useCallback(
+    (item) => {
+      if (item === selectedItem) {
+        return;
+      }
+      setSelectedItem(item);
+    },
+    [selectedItem]
+  );
+
   if (items == null || items.length === 0) {
     return (
       <EmptyContentContainer>
@@ -125,14 +135,13 @@ const FileList: React.FC<{
             >
               <StyledPopover
                 isOpen={selectedItem === item}
-                onOuterAction={() => setSelectedItem(null)}
                 body={<FileDetails file={selectedItem} />}
               >
                 <td>{getFileImage(item)}</td>
               </StyledPopover>
               <td>
                 <ItemContent>
-                  <span> {item.name}</span>
+                  <span>{item.name}</span>
                   <span>
                     {item.syncStatus === "downloaded" &&
                       t("downloadedFrom", {
@@ -152,7 +161,7 @@ const FileList: React.FC<{
               </td>
               {!hideOptions && (
                 <td>
-                  <OptionsImage onClick={() => setSelectedItem(item)} />
+                  <OptionsImage onClick={() => selectItemHandler(item)} />
                 </td>
               )}
             </FileListTableRow>

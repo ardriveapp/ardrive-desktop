@@ -46,12 +46,16 @@ import {
   SettingsButtonMenuHeader,
   UploadNotificationContainer,
   UploadText,
+  NotificationButtonsContainer,
+  NotificationButton,
+  NotificationInfoContainer,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/slices/auth";
 import { useModal } from "app/components/modals/utils";
 import { withModal } from "app/components/modals/hooks";
 import { TranslationAt } from "app/components/TranslationAt";
 import { FontVariants } from "app/components/typography";
+import { appActions } from "app/redux/slices/app";
 
 const NewButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
@@ -154,6 +158,9 @@ const BottomMenu = () => {
 
 const UploadNotification = () => {
   const notification = useSelector(appSelectors.getUploadNotification);
+  const { t } = useTranslationAt("components.mainContainer");
+  const dispatch = useDispatch();
+  const user = useSelector(authSelectors.getUser);
 
   if (notification == null || notification.filesCount === 0) {
     return null;
@@ -161,16 +168,30 @@ const UploadNotification = () => {
 
   return (
     <UploadNotificationContainer>
-      <UploadInfo />
-      <UploadText>
-        <TranslationAt
-          atPath="components.mainContainer"
-          i18nKey="uploadNotification"
-          components={[<FontVariants.Bold />]}
-          count={notification.filesCount}
-          values={notification}
-        />
-      </UploadText>
+      <NotificationInfoContainer>
+        <UploadInfo />
+        <UploadText>
+          <TranslationAt
+            atPath="components.mainContainer"
+            i18nKey="uploadNotification"
+            components={[<FontVariants.Bold />]}
+            count={notification.filesCount}
+            values={notification}
+          />
+        </UploadText>
+      </NotificationInfoContainer>
+      <NotificationButtonsContainer>
+        <NotificationButton
+          onClick={() => {
+            if (user != null) {
+              dispatch(appActions.uploadFiles(user));
+            }
+          }}
+        >
+          {t("yes")}
+        </NotificationButton>
+        <NotificationButton>{t("no")}</NotificationButton>
+      </NotificationButtonsContainer>
     </UploadNotificationContainer>
   );
 };

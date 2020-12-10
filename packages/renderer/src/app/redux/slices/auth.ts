@@ -4,7 +4,7 @@ import createElectronStorage from "redux-persist-electron-storage";
 
 import { ElectronHooks } from "app/electron-hooks/types";
 
-import { AppUser, AuthState } from "../types";
+import { AppUser, AuthState, CreateUserArgs, LoginStartArgs } from "../types";
 import { withPayloadType } from "app/utils";
 
 const initialState: AuthState = {
@@ -13,21 +13,10 @@ const initialState: AuthState = {
   user: null,
 };
 
-type LoginStartArgs = {
-  login: string;
-  password: string;
-};
-
-type CreateUserArgs = {
-  username: string;
-  password: string;
-  syncFolderPath: string;
-  walletPath: string;
-};
-
 export const authActions = {
-  loginStart: createAsyncThunk<AppUser | null, LoginStartArgs>(
-    "auth/login",
+  login: createAction("auth/login", withPayloadType<LoginStartArgs>()),
+  loginThunk: createAsyncThunk<AppUser | null, LoginStartArgs>(
+    "auth/loginThunk",
     async (payload, thunkAPI) => {
       const electronHooks = thunkAPI.extra as ElectronHooks;
       const { result, user } = await electronHooks.core.login(
@@ -35,39 +24,37 @@ export const authActions = {
         payload.password
       );
       if (result) {
-        thunkAPI.dispatch(authActions.startWatching(user));
         return {
           address: user.walletPublicKey,
           login: user.login,
           balance: user.walletBalance,
+          password: payload.password, // TODO: Temp solution. Do not store password!
         };
       }
       throw new Error("User does not exist!");
     }
   ),
-  createUser: createAsyncThunk<void, CreateUserArgs>(
+  createUser: createAction(
     "auth/createUser",
+    withPayloadType<CreateUserArgs>()
+  ),
+  createUserThunk: createAsyncThunk<void, CreateUserArgs>(
+    "auth/createUserThunk",
     async (payload, thunkAPI) => {
       const electronHooks = thunkAPI.extra as ElectronHooks;
       const { username, password, syncFolderPath, walletPath } = payload;
-      const result = await electronHooks.core.createNewUser(
+      await electronHooks.core.createNewUser(
         username,
         password,
         syncFolderPath,
         walletPath
       );
-      if (result) {
-        thunkAPI.dispatch(
-          authActions.loginStart({ login: username, password })
-        );
-      }
     }
   ),
   logout: createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     const electronHooks = thunkAPI.extra as ElectronHooks;
     await electronHooks.core.logout();
   }),
-  startWatching: createAction("auth/startWatching", withPayloadType<AppUser>()),
 };
 
 const authSlice = createSlice({
@@ -75,10 +62,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(authActions.loginStart.fulfilled, (state, action) => {
-      state.user = action.payload;
-      state.isLoggedIn = true;
-      state.isFirstLaunch = false;
+    builder.addCase(authActions.loginThunk.fulfilled, (state, action) => {
+      if (action.payload != null) {
+        state.user = action.payload;
+        state.isLoggedIn = true;
+        state.isFirstLaunch = false;
+      }
     });
     builder.addCase(authActions.logout.fulfilled, (state, _) => {
       state.isLoggedIn = false;

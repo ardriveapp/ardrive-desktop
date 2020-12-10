@@ -36,6 +36,9 @@ class CoreHooksImplementation implements CoreHooks {
   async logout() {
     await this.ipcRenderer.invoke("logout");
   }
+  async uploadFiles(login: string, password: string) {
+    await this.ipcRenderer.invoke("uploadFiles", login, password);
+  }
 }
 
 export default CoreHooksImplementation;

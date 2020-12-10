@@ -25,9 +25,9 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   enhancers: (defaultEnhancers) => [
-    ...defaultEnhancers,
     applyMiddleware(hooks.middleware),
     applyMiddleware(sagaMiddleware),
+    ...defaultEnhancers,
   ],
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

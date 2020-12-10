@@ -110,7 +110,9 @@ export const ItemContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100px;
+  min-height: 100px;
+  padding-bottom: 10px;
+  padding-top: 10px;
 
   & > span:nth-child(1) {
     font-family: "Open Sans";
@@ -119,6 +121,9 @@ export const ItemContent = styled.div`
     font-size: 16px;
     line-height: 24px;
     color: rgba(0, 6, 10, 0.87);
+    max-width: 230px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   & > span:nth-child(2) {
