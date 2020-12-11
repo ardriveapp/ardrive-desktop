@@ -59,6 +59,18 @@ export const appActions = {
   }),
 };
 
+const getFileStatus = (fileDataSyncStatus: number) => {
+  if (fileDataSyncStatus === 1) {
+    return "downloaded";
+  }
+  if (fileDataSyncStatus === 2) {
+    return "syncing";
+  }
+  if (fileDataSyncStatus === 3) {
+    return "uploaded";
+  }
+};
+
 const appSlice = createSlice({
   name: "app",
   initialState,
@@ -74,7 +86,7 @@ const appSlice = createSlice({
         location: file.filePath,
         size: file.fileSize,
         driveName: file.drive?.driveName,
-        syncStatus: +file.fileDataSyncStatus === 3 ? "uploaded" : "downloaded",
+        syncStatus: getFileStatus(+file.fileDataSyncStatus),
       }));
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {

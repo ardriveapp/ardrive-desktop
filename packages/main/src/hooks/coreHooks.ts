@@ -139,7 +139,7 @@ const startMainWatcherLoop = async (
   await setupDrives(user.login, user.syncFolderPath);
   await getMyArDriveFilesFromPermaWeb(user);
   await downloadMyArDriveFiles(user);
-  startWatchingFolders(user);
+  startWatchingFolders(user); // TODO: stop watcher at logout
 
   const intervalId = setInterval(async () => {
     if (token.isCancelled) {
