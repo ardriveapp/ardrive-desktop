@@ -81,6 +81,7 @@ const NewButtonMenu = () => {
 const SettingsButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
   const dispatch = useDispatch();
+  const user = useSelector(authSelectors.getUser);
 
   return (
     <SettingsButtonMenuContainer>
@@ -99,7 +100,13 @@ const SettingsButtonMenu = () => {
         <Pause />
         {t("pauseSync")}
       </SettingsButtonMenuContainerItem>
-      <SettingsButtonMenuContainerItem>
+      <SettingsButtonMenuContainerItem
+        onClick={() => {
+          if (user != null) {
+            dispatch(authActions.backupWallet(user));
+          }
+        }}
+      >
         <Backup />
         {t("backup")}
       </SettingsButtonMenuContainerItem>

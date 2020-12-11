@@ -67,6 +67,16 @@ export const authActions = {
     const electronHooks = thunkAPI.extra as ElectronHooks;
     await electronHooks.core.stopWatchingFolders();
   }),
+  backupWallet: createAsyncThunk<
+    void,
+    {
+      login: string;
+      password: string;
+    }
+  >("app/backupWallet", async (payload, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.backupWallet(payload.login, payload.password);
+  }),
 };
 
 const authSlice = createSlice({

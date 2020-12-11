@@ -21,6 +21,7 @@ export interface CoreHooks {
   fetchFiles(username: string): Promise<any[]>;
   stopWatchingFolders(): Promise<void>;
   uploadFiles(login: string, password: string): Promise<void>;
+  backupWallet(login: string, password: string): Promise<void>;
 }
 
 export interface NativeHooks {

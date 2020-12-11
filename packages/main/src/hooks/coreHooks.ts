@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, dialog } from "electron";
 import { Path } from "typescript";
 import {
   passwordCheck,
@@ -16,6 +16,7 @@ import {
   getPriceOfNextUploadBatch,
   uploadArDriveFiles,
   getWalletBalance,
+  backupWallet,
 } from "ardrive-core-js";
 import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
@@ -133,6 +134,20 @@ export const initialize = (window: BrowserWindow) => {
         ...drive,
         login: user.login,
       });
+    }
+  });
+
+  ipcMain.handle("backupWallet", async (_, login: string, password: string) => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+    });
+    if (!result.canceled && result.filePaths.length > 0) {
+      const user: ArDriveUser = await getUser(password, login);
+      const wallet = {
+        walletPrivateKey: JSON.parse(user.walletPrivateKey),
+        walletPublicKey: user.walletPublicKey,
+      };
+      await backupWallet(result.filePaths[0], wallet, login);
     }
   });
 };
