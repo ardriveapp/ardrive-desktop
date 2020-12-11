@@ -27,7 +27,7 @@ const SecondStep: React.FC<{
     const walletPath = unwrapResult(result);
 
     onContinue(false, walletPath);
-  }, [dispatch]);
+  }, [dispatch, onContinue]);
 
   return (
     <>
