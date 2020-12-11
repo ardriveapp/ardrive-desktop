@@ -20,7 +20,7 @@ export interface ArDriveFile {
   image?: string;
   fileImage?: string;
   driveName?: string;
-  syncStatus?: "downloaded" | "uploaded";
+  syncStatus?: "downloaded" | "uploaded" | "syncing";
 }
 
 export interface AuthState {

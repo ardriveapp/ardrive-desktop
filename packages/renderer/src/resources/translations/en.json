@@ -66,6 +66,7 @@
             "fileSize": "File Size",
             "uploadedFrom": "Uploaded from {{from}} {{date}}",
             "downloadedFrom": "Downloaded to {{from}} {{date}}",
+            "syncing": "Syncing with {{from}} {{date}}",
             "id": "ID",
             "owner": "Owner",
             "location": "Location",
