@@ -13,14 +13,12 @@ class NativeHooksImplementation implements NativeHooks {
     if (!canceled) {
       return filePaths[0];
     }
-    return null;
   }
   async openFolder() {
     const { filePaths, canceled } = await this.ipcRenderer.invoke("openFolder");
     if (!canceled) {
       return filePaths[0];
     }
-    return null;
   }
   async changeWindowSize(windowType: WindowType) {
     await this.ipcRenderer.invoke("changeWindowSize", windowType);

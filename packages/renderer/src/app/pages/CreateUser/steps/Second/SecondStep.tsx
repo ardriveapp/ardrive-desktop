@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { FontVariants, TranslationAt } from "app/components";
@@ -17,24 +17,17 @@ import { appActions } from "app/redux/slices/app";
 const translationsPath = "pages.create_user.steps.second";
 
 const SecondStep: React.FC<{
-  onContinue(walletPath: string): void;
+  onContinue(createNew: boolean, walletPath?: string): void;
 }> = ({ onContinue }) => {
   const { t } = useTranslationAt(translationsPath);
   const dispatch: AppDispatch = useDispatch();
-  const [walletPath, setWalletPath] = useState<string | null>(null);
 
   const openFile = useCallback(async () => {
     const result = await dispatch(appActions.openFile());
     const walletPath = unwrapResult(result);
 
-    setWalletPath(walletPath);
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (walletPath) {
-      onContinue(walletPath);
-    }
-  }, [walletPath, onContinue]);
+    onContinue(false, walletPath);
+  }, [dispatch, onContinue]);
 
   return (
     <>
@@ -47,7 +40,9 @@ const SecondStep: React.FC<{
         />
       </Description>
       <ButtonsContainer>
-        <ImportWalletButton disabled>{t("create_new")}</ImportWalletButton>
+        <ImportWalletButton onClick={() => onContinue(true)}>
+          {t("create_new")}
+        </ImportWalletButton>
         <ImportWalletButton onClick={openFile}>
           {t("import_existing")}
         </ImportWalletButton>

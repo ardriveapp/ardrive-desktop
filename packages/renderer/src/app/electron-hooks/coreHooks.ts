@@ -17,13 +17,15 @@ class CoreHooksImplementation implements CoreHooks {
     username: string,
     password: string,
     syncFolderPath: string,
-    walletPath: string
+    createNew: boolean,
+    walletPath?: string
   ) {
     return await this.ipcRenderer.invoke(
       "createNewUser",
       username,
       password,
       syncFolderPath,
+      createNew,
       walletPath
     );
   }
@@ -33,11 +35,14 @@ class CoreHooksImplementation implements CoreHooks {
   async fetchFiles(username: string): Promise<any[]> {
     return await this.ipcRenderer.invoke("fetchFiles", username);
   }
-  async logout() {
-    await this.ipcRenderer.invoke("logout");
+  async stopWatchingFolders() {
+    await this.ipcRenderer.invoke("stopWatchingFolders");
   }
   async uploadFiles(login: string, password: string) {
     await this.ipcRenderer.invoke("uploadFiles", login, password);
+  }
+  async backupWallet(login: string, password: string) {
+    await this.ipcRenderer.invoke("backupWallet", login, password);
   }
 }
 

@@ -308,3 +308,22 @@ export const NotificationButton = styled.div`
   margin-left: 35px;
   cursor: pointer;
 `;
+
+export const SyncingStatusContainer = styled.div`
+  width: 100vw;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  background-color: #700327;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const SyncingText = styled.div`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+`;

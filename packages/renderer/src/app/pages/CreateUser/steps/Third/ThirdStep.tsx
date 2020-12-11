@@ -21,7 +21,7 @@ const ThirdStep: React.FC<{
 }> = ({ onContinue }) => {
   const { t } = useTranslationAt(translationsPath);
   const dispatch: AppDispatch = useDispatch();
-  const [syncFolderPath, setSyncFolderPath] = useState<string | null>(null);
+  const [syncFolderPath, setSyncFolderPath] = useState<string | undefined>();
 
   const openFolder = useCallback(async () => {
     const result = await dispatch(appActions.openFolder());

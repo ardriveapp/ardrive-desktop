@@ -13,8 +13,11 @@ const getIsFirstLaunch = createSelector(
 
 const getUser = createSelector(getAuthState, (auth) => auth.user);
 
+const getIsSyncing = createSelector(getAuthState, (auth) => auth.isSyncing);
+
 export default {
   getIsLoggedIn,
   getIsFirstLaunch,
   getUser,
+  getIsSyncing,
 };

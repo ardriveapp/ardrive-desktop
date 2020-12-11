@@ -13,6 +13,7 @@ import {
   Pause,
   SampleUserImage,
   SyncFolder,
+  Syncing,
   UploadInfo,
 } from "app/components/images";
 import { appSelectors, authSelectors } from "app/redux/selectors";
@@ -49,6 +50,8 @@ import {
   NotificationButtonsContainer,
   NotificationButton,
   NotificationInfoContainer,
+  SyncingStatusContainer,
+  SyncingText,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/slices/auth";
 import { useModal } from "app/components/modals/utils";
@@ -77,6 +80,8 @@ const NewButtonMenu = () => {
 
 const SettingsButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
+  const dispatch = useDispatch();
+  const user = useSelector(authSelectors.getUser);
 
   return (
     <SettingsButtonMenuContainer>
@@ -89,11 +94,19 @@ const SettingsButtonMenu = () => {
         <SyncFolder />
         {t("changeSync")}
       </SettingsButtonMenuContainerItem>
-      <SettingsButtonMenuContainerItem>
+      <SettingsButtonMenuContainerItem
+        onClick={() => dispatch(authActions.pauseSyncing())}
+      >
         <Pause />
         {t("pauseSync")}
       </SettingsButtonMenuContainerItem>
-      <SettingsButtonMenuContainerItem>
+      <SettingsButtonMenuContainerItem
+        onClick={() => {
+          if (user != null) {
+            dispatch(authActions.backupWallet(user));
+          }
+        }}
+      >
         <Backup />
         {t("backup")}
       </SettingsButtonMenuContainerItem>
@@ -198,9 +211,11 @@ const UploadNotification = () => {
 
 const MainContainer: React.FC = ({ children }) => {
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const { t } = useTranslationAt("components.mainContainer");
 
   const dispatch = useDispatch();
   const user = useSelector(authSelectors.getUser);
+  const isSyncing = useSelector(authSelectors.getIsSyncing);
 
   return (
     <Container>
@@ -235,6 +250,12 @@ const MainContainer: React.FC = ({ children }) => {
         </CurrentUserContainer>
       </Header>
       <BottomContainer>
+        {!isSyncing && (
+          <SyncingStatusContainer>
+            <Syncing />
+            <SyncingText>{t("syncingText")}</SyncingText>
+          </SyncingStatusContainer>
+        )}
         <UploadNotification />
         <ContentContainer>{children}</ContentContainer>
       </BottomContainer>

@@ -14,17 +14,19 @@ export interface CoreHooks {
     username: string,
     password: string,
     syncFolderPath: string,
-    walletPath: string
+    createNew: boolean,
+    walletPath?: string
   ): Promise<string>;
   startWatchingFolders(username: string): Promise<void>;
   fetchFiles(username: string): Promise<any[]>;
-  logout(): Promise<void>;
+  stopWatchingFolders(): Promise<void>;
   uploadFiles(login: string, password: string): Promise<void>;
+  backupWallet(login: string, password: string): Promise<void>;
 }
 
 export interface NativeHooks {
-  openFile(): Promise<string | null>;
-  openFolder(): Promise<string | null>;
+  openFile(): Promise<string | undefined>;
+  openFolder(): Promise<string | undefined>;
   changeWindowSize(windowType: WindowType): Promise<void>;
 }
 

@@ -27,6 +27,7 @@ export interface AuthState {
   isLoggedIn: boolean;
   isFirstLaunch: boolean;
   user: AppUser | null;
+  isSyncing: boolean;
 }
 
 export interface RootState {
@@ -50,5 +51,6 @@ export type CreateUserArgs = {
   username: string;
   password: string;
   syncFolderPath: string;
-  walletPath: string;
+  createNew: boolean;
+  walletPath?: string;
 };
