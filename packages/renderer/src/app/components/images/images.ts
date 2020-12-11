@@ -39,5 +39,6 @@ export { ReactComponent as Backup } from "resources/images/backup.svg";
 export { ReactComponent as UploadInfo } from "resources/images/upload-info.svg";
 export { ReactComponent as Cloud } from "resources/images/cloud.svg";
 export { ReactComponent as PublicUrl } from "resources/images/public-url.svg";
+export { ReactComponent as Syncing } from "resources/images/syncing.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

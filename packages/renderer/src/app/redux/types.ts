@@ -27,6 +27,7 @@ export interface AuthState {
   isLoggedIn: boolean;
   isFirstLaunch: boolean;
   user: AppUser | null;
+  isSyncing: boolean;
 }
 
 export interface RootState {

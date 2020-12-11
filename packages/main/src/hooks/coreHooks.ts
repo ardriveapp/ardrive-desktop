@@ -63,7 +63,7 @@ export const initialize = (window: BrowserWindow) => {
     };
   });
 
-  ipcMain.handle("logout", (_) => {
+  ipcMain.handle("stopWatchingFolders", (_) => {
     cancellationToken?.cancel();
   });
 
@@ -88,12 +88,7 @@ export const initialize = (window: BrowserWindow) => {
       };
       const result = await addNewUser(password, user);
 
-      if (result === "Success") {
-        await synchronizeDrives(user);
-        return true;
-      }
-
-      return false;
+      return result === "Success";
     }
   );
 
@@ -109,26 +104,38 @@ export const initialize = (window: BrowserWindow) => {
     const user: ArDriveUser = await getUser(password, login);
     await uploadArDriveFiles(user);
   });
+
+  ipcMain.handle(
+    "getDrives",
+    async (_, login: string, driveType: "public" | "private") => {
+      const user = await getUserFromProfile(login);
+
+      switch (driveType) {
+        case "private":
+          return await getAllMyPrivateArDriveIds(user);
+        case "public":
+          return await getAllMyPublicArDriveIds(user.walletPublicKey);
+      }
+    }
+  );
+
+  ipcMain.handle("attachDrive", async (_, login: string, driveId: string) => {
+    const user = await getUserFromProfile(login);
+    const allDrives = await getAllDrives(user);
+    const drive = allDrives.find((drive) => drive.driveId === driveId);
+    if (drive != null) {
+      await addDriveToDriveTable({
+        ...drive,
+        login: user.login,
+      });
+    }
+  });
 };
 
-const synchronizeDrives = async (user: ArDriveUser) => {
-  // TODO: add these drives from ui
+const getAllDrives = async (user: ArDriveUser) => {
   const publicDrives = await getAllMyPublicArDriveIds(user.walletPublicKey);
-  for (const publicDrive of publicDrives) {
-    await addDriveToDriveTable({
-      ...publicDrive,
-      login: user.login,
-    });
-  }
-
-  // TODO: add these drives from ui
   const privateDrives = await getAllMyPrivateArDriveIds(user);
-  for (const privateDrive of privateDrives) {
-    await addDriveToDriveTable({
-      ...privateDrive,
-      login: user.login,
-    });
-  }
+  return publicDrives.concat(privateDrives);
 };
 
 const startMainWatcherLoop = async (

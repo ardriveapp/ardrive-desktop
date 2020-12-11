@@ -11,6 +11,7 @@ const initialState: AuthState = {
   isLoggedIn: false,
   isFirstLaunch: true,
   user: null,
+  isSyncing: true,
 };
 
 export const authActions = {
@@ -53,7 +54,11 @@ export const authActions = {
   ),
   logout: createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     const electronHooks = thunkAPI.extra as ElectronHooks;
-    await electronHooks.core.logout();
+    await electronHooks.core.stopWatchingFolders();
+  }),
+  pauseSyncing: createAsyncThunk("auth/pauseSyncing", async (_, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.stopWatchingFolders();
   }),
 };
 
@@ -73,6 +78,9 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
     });
+    builder.addCase(authActions.pauseSyncing.fulfilled, (state, _) => {
+      state.isSyncing = false;
+    });
   },
 });
 
@@ -80,6 +88,7 @@ export const reducer = persistReducer(
   {
     key: "auth",
     storage: createElectronStorage(),
+    blacklist: ["isSyncing"], // TODO: discuss flow
   },
   authSlice.reducer
 );

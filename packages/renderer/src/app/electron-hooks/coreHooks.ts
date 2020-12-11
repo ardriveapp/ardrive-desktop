@@ -33,8 +33,8 @@ class CoreHooksImplementation implements CoreHooks {
   async fetchFiles(username: string): Promise<any[]> {
     return await this.ipcRenderer.invoke("fetchFiles", username);
   }
-  async logout() {
-    await this.ipcRenderer.invoke("logout");
+  async stopWatchingFolders() {
+    await this.ipcRenderer.invoke("stopWatchingFolders");
   }
   async uploadFiles(login: string, password: string) {
     await this.ipcRenderer.invoke("uploadFiles", login, password);
