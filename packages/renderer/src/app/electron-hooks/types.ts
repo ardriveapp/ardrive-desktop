@@ -14,7 +14,8 @@ export interface CoreHooks {
     username: string,
     password: string,
     syncFolderPath: string,
-    walletPath: string
+    createNew: boolean,
+    walletPath?: string
   ): Promise<string>;
   startWatchingFolders(username: string): Promise<void>;
   fetchFiles(username: string): Promise<any[]>;
@@ -23,8 +24,8 @@ export interface CoreHooks {
 }
 
 export interface NativeHooks {
-  openFile(): Promise<string | null>;
-  openFolder(): Promise<string | null>;
+  openFile(): Promise<string | undefined>;
+  openFolder(): Promise<string | undefined>;
   changeWindowSize(windowType: WindowType): Promise<void>;
 }
 

@@ -10,7 +10,8 @@ export default () => {
   const [step, setStep] = useState(0);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [walletPath, setWalletPath] = useState<string | null>(null);
+  const [walletPath, setWalletPath] = useState<string | undefined>();
+  const [createNew, setCreateNew] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const firstStepCompleted = useCallback(
@@ -27,7 +28,8 @@ export default () => {
   }, []);
 
   const secondtStepCompleted = useCallback(
-    (walletPath: string) => {
+    (createNew: boolean, walletPath?: string) => {
+      setCreateNew(createNew);
       setWalletPath(walletPath);
       goNextStep();
     },
@@ -36,18 +38,19 @@ export default () => {
 
   const completeRegistration = useCallback(
     (syncFolderPath: string) => {
-      if (username && password && walletPath && syncFolderPath) {
+      if (username && password && syncFolderPath) {
         dispatch(
           authActions.createUser({
             username,
             password,
             syncFolderPath,
+            createNew,
             walletPath,
           })
         );
       }
     },
-    [dispatch, username, password, walletPath]
+    [dispatch, username, password, createNew, walletPath]
   );
 
   const CurrentStep = useMemo(() => {

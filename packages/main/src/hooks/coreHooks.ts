@@ -25,6 +25,7 @@ import {
 } from "ardrive-core-js/lib/db";
 
 import { CancellationToken } from "../types";
+import { generateWallet } from "ardrive-core-js/lib/arweave";
 
 export const initialize = (window: BrowserWindow) => {
   let cancellationToken: CancellationToken;
@@ -74,13 +75,17 @@ export const initialize = (window: BrowserWindow) => {
       username: string,
       password: string,
       syncFolderPath: string,
-      walletPath: string
+      createNew: boolean,
+      walletPath?: string
     ) => {
-      const wallet = await getLocalWallet(walletPath as Path);
+      const wallet =
+        createNew || walletPath == null
+          ? await generateWallet()
+          : await getLocalWallet(walletPath as Path);
 
       const user: ArDriveUser = {
         login: username,
-        dataProtectionKey: password,
+        dataProtectionKey: password, // TODO: Pass separate value from user
         syncFolderPath: syncFolderPath,
         autoSyncApproval: 0,
         walletPrivateKey: JSON.stringify(wallet.walletPrivateKey),

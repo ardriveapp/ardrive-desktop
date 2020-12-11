@@ -17,13 +17,15 @@ class CoreHooksImplementation implements CoreHooks {
     username: string,
     password: string,
     syncFolderPath: string,
-    walletPath: string
+    createNew: boolean,
+    walletPath?: string
   ) {
     return await this.ipcRenderer.invoke(
       "createNewUser",
       username,
       password,
       syncFolderPath,
+      createNew,
       walletPath
     );
   }

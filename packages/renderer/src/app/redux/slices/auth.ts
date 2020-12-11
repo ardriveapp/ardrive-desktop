@@ -43,11 +43,18 @@ export const authActions = {
     "auth/createUserThunk",
     async (payload, thunkAPI) => {
       const electronHooks = thunkAPI.extra as ElectronHooks;
-      const { username, password, syncFolderPath, walletPath } = payload;
+      const {
+        username,
+        password,
+        syncFolderPath,
+        createNew,
+        walletPath,
+      } = payload;
       await electronHooks.core.createNewUser(
         username,
         password,
         syncFolderPath,
+        createNew,
         walletPath
       );
     }
