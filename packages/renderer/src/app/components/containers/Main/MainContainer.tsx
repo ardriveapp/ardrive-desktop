@@ -70,7 +70,7 @@ const NewButtonMenu = () => {
         <NewDrive />
         {t("newDrive")}
       </NewButtonMenuContainerItem>
-      <NewButtonMenuContainerItem>
+      <NewButtonMenuContainerItem onClick={() => showModal("attach_drive")}>
         <AttachDrive />
         {t("attachDrive")}
       </NewButtonMenuContainerItem>

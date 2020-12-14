@@ -187,6 +187,7 @@ export const initialize = (window: BrowserWindow) => {
         await addDriveToDriveTable(newPublicDrive);
       }
       await setupDrives(user.login, user.syncFolderPath);
+      // TODO: watch folder after creation
     }
   );
 };

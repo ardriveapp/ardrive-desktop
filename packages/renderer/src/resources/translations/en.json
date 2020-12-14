@@ -85,6 +85,13 @@
                 "driveType": "Drive type",
                 "public": "Public",
                 "private": "Private"
+            },
+            "attachDrive": {
+                "header": "Attach Drive",
+                "cancel": "Cancel",
+                "attach": "Attach",
+                "driveAddress": "Drive address",
+                "drive": "Drive"
             }
         },
         "mainContainer": {
