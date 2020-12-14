@@ -10,7 +10,7 @@ import {
   AppModalWindowHeaderText,
   CloseButton,
 } from "./AppModal.styled";
-import { MoveToModal, NewFolderModal } from "./Variants";
+import { NewDriveModal } from "./Variants";
 
 export const AppModalBase: React.FC<{
   visible: boolean;
@@ -37,10 +37,8 @@ export default () => {
   const { modalType, modalVisible, hideModal } = useModal();
 
   switch (modalType) {
-    case "move_to":
-      return <MoveToModal visible={modalVisible} onClose={hideModal} />;
-    case "new_folder":
-      return <NewFolderModal visible={modalVisible} onClose={hideModal} />;
+    case "new_drive":
+      return <NewDriveModal visible={modalVisible} onClose={hideModal} />;
   }
 
   return null;

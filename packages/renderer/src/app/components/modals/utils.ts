@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-export type ModalType = "new_folder" | "move_to";
+export type ModalType = "new_drive";
 
 interface ModalContext {
   modalVisible: boolean;

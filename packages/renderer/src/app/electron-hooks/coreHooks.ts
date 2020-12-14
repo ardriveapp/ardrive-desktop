@@ -47,6 +47,18 @@ class CoreHooksImplementation implements CoreHooks {
   async openSyncFolder(login: string) {
     await this.ipcRenderer.invoke("openSyncFolder", login);
   }
+  async createNewDrive(
+    login: string,
+    driveName: string,
+    isPrivate: boolean = true
+  ) {
+    await this.ipcRenderer.invoke(
+      "createNewDrive",
+      login,
+      driveName,
+      isPrivate
+    );
+  }
 }
 
 export default CoreHooksImplementation;

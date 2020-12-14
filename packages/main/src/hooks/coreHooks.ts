@@ -17,6 +17,8 @@ import {
   uploadArDriveFiles,
   getWalletBalance,
   backupWallet,
+  createNewPrivateDrive,
+  createNewPublicDrive,
 } from "ardrive-core-js";
 import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
@@ -166,6 +168,27 @@ export const initialize = (window: BrowserWindow) => {
     const user: ArDriveUser = await getUserFromProfile(login);
     await shell.openPath(user.syncFolderPath);
   });
+
+  ipcMain.handle(
+    "createNewDrive",
+    async (_, login: string, driveName: string, isPrivate: boolean = true) => {
+      const user: ArDriveUser = await getUserFromProfile(login);
+      if (isPrivate) {
+        const newPrivateDrive = await createNewPrivateDrive(
+          user.login,
+          driveName
+        );
+        await addDriveToDriveTable(newPrivateDrive);
+      } else {
+        const newPublicDrive = await createNewPublicDrive(
+          user.login,
+          driveName
+        );
+        await addDriveToDriveTable(newPublicDrive);
+      }
+      await setupDrives(user.login, user.syncFolderPath);
+    }
+  );
 };
 
 const getAllDrives = async (user: ArDriveUser) => {

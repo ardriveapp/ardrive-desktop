@@ -77,15 +77,14 @@
             "activity": "Activity"
         },
         "modals": {
-            "moveTo": {
-                "header": "Move to ...",
-                "createFolder": "Create folder",
-                "moveFile": "Move File"
-            },
-            "newFolder": {
-                "header": "New Folder",
+            "newDrive": {
+                "header": "New Drive",
                 "cancel": "Cancel",
-                "create": "Create"
+                "create": "Create",
+                "driveName": "Drive name",
+                "driveType": "Drive type",
+                "public": "Public",
+                "private": "Private"
             }
         },
         "mainContainer": {

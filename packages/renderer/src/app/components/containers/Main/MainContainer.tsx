@@ -66,7 +66,7 @@ const NewButtonMenu = () => {
 
   return (
     <NewButtonMenuContainer>
-      <NewButtonMenuContainerItem onClick={() => showModal("new_folder")}>
+      <NewButtonMenuContainerItem onClick={() => showModal("new_drive")}>
         <NewDrive />
         {t("newDrive")}
       </NewButtonMenuContainerItem>

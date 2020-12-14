@@ -17,6 +17,7 @@ export const AppModalContainer = styled.div<{
   background-color: rgba(248, 248, 248, 0.2);
   padding-left: 20px;
   padding-right: 20px;
+  z-index: 10;
 `;
 
 export const AppModalWindowContainer = styled.div`
@@ -88,6 +89,5 @@ export const AppModalWindowFooter = styled.div`
 `;
 
 export const AppModalWindowBody = styled.div`
-  padding-left: 26px;
-  padding-right: 26px;
+  padding: 26px;
 `;
