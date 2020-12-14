@@ -117,16 +117,9 @@ const SettingsButtonMenu = () => {
 //  TODO: Extract bottom menu to separate component and make it more usable and univeral
 const BottomMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
-  const history = useHistory();
-  const location = useLocation();
   const [showNewButtonMenu, setShowNewButtonMenu] = useState(false);
   const [showSettingsButtonMenu, setSettingsNewButtonMenu] = useState(false);
-
-  // TODO: Move to utils
-  const isActiveRoute = useCallback(
-    (route: string) => location.pathname === route,
-    [location]
-  );
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -145,10 +138,7 @@ const BottomMenu = () => {
           <FooterButtonText>{t("new")}</FooterButtonText>
         </FooterButton>
       </StyledPopover>
-      <FooterButton
-        isActive={isActiveRoute("/")}
-        onClick={() => history.push("/")}
-      >
+      <FooterButton onClick={() => dispatch(appActions.openSyncFolder())}>
         <LockedFolder />
         <FooterButtonText>{t("localDrive")}</FooterButtonText>
       </FooterButton>

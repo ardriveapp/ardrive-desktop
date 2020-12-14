@@ -57,6 +57,7 @@ export const appActions = {
     const electronHooks = thunkAPI.extra as ElectronHooks;
     await electronHooks.core.uploadFiles(payload.login, payload.password);
   }),
+  openSyncFolder: createAction("app/openSyncFolder"),
 };
 
 const getFileStatus = (fileDataSyncStatus: number) => {

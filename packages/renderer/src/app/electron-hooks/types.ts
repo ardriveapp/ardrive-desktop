@@ -22,6 +22,7 @@ export interface CoreHooks {
   stopWatchingFolders(): Promise<void>;
   uploadFiles(login: string, password: string): Promise<void>;
   backupWallet(login: string, password: string): Promise<void>;
+  openSyncFolder(login: string): Promise<void>;
 }
 
 export interface NativeHooks {

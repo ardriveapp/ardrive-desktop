@@ -44,6 +44,9 @@ class CoreHooksImplementation implements CoreHooks {
   async backupWallet(login: string, password: string) {
     await this.ipcRenderer.invoke("backupWallet", login, password);
   }
+  async openSyncFolder(login: string) {
+    await this.ipcRenderer.invoke("openSyncFolder", login);
+  }
 }
 
 export default CoreHooksImplementation;
