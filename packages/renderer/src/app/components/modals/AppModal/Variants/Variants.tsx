@@ -24,7 +24,7 @@ enum DriveType {
 export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
   const { t } = useTranslationAt("components.modals.newDrive");
   const [driveName, setDriveName] = useState("");
-  const [driveType, setDriveType] = useState(DriveType.Public);
+  const [driveType, setDriveType] = useState(DriveType.Private);
   const isFilled = useMemo(() => !!driveName, [driveName]);
   const user = useSelector(authSelectors.getUser);
   const dispatch = useDispatch();
@@ -77,6 +77,61 @@ export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
           disabled={!isFilled}
         >
           {t("create")}
+        </RoundedButton>,
+      ]}
+    />
+  );
+};
+
+export const AttachDriveModal: React.FC<ModalProps> = ({
+  visible,
+  onClose,
+}) => {
+  const { t } = useTranslationAt("components.modals.attachDrive");
+  const [driveAddress, setDriveAddress] = useState("");
+  const [drive, setDrive] = useState(0);
+  const isFilled = useMemo(() => !!driveAddress, [driveAddress]);
+  const user = useSelector(authSelectors.getUser);
+  const dispatch = useDispatch();
+
+  const attachDriveHanlder = useCallback(async () => {
+    if (isFilled && user != null) {
+      if (onClose != null) {
+        onClose();
+      }
+    }
+  }, [isFilled, driveAddress, user, onClose]);
+
+  return (
+    <AppModalBase
+      onClose={onClose}
+      title={t("header")}
+      visible={visible}
+      body={[
+        <ArdriveInput
+          key="driveAddress"
+          value={driveAddress}
+          onChange={(e) => setDriveAddress(e.currentTarget.value)}
+          hideIcon
+          placeholder={t("driveAddress")}
+        />,
+        <ArdriveSelect
+          key="drive"
+          placeholder={t("drive")}
+          value={drive}
+          onChange={(e) => setDrive(+e.currentTarget.value)}
+        ></ArdriveSelect>,
+      ]}
+      footer={[
+        <ButtonWithIcon key="cancel" active transparent onClick={onClose}>
+          {t("cancel")}
+        </ButtonWithIcon>,
+        <RoundedButton
+          key="create"
+          onClick={attachDriveHanlder}
+          disabled={!isFilled}
+        >
+          {t("attach")}
         </RoundedButton>,
       ]}
     />

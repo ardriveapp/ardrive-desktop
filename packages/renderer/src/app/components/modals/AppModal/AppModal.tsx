@@ -10,7 +10,7 @@ import {
   AppModalWindowHeaderText,
   CloseButton,
 } from "./AppModal.styled";
-import { NewDriveModal } from "./Variants";
+import { NewDriveModal, AttachDriveModal } from "./Variants";
 
 export const AppModalBase: React.FC<{
   visible: boolean;
@@ -39,6 +39,8 @@ export default () => {
   switch (modalType) {
     case "new_drive":
       return <NewDriveModal visible={modalVisible} onClose={hideModal} />;
+    case "attach_drive":
+      return <AttachDriveModal visible={modalVisible} onClose={hideModal} />;
   }
 
   return null;
