@@ -57,6 +57,22 @@ export const appActions = {
     const electronHooks = thunkAPI.extra as ElectronHooks;
     await electronHooks.core.uploadFiles(payload.login, payload.password);
   }),
+  openSyncFolder: createAction("app/openSyncFolder"),
+  createNewDrive: createAsyncThunk<
+    void,
+    {
+      login: string;
+      driveName: string;
+      isPrivate: boolean;
+    }
+  >("app/createNewDrive", async (payload, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.createNewDrive(
+      payload.login,
+      payload.driveName,
+      payload.isPrivate
+    );
+  }),
 };
 
 const getFileStatus = (fileDataSyncStatus: number) => {

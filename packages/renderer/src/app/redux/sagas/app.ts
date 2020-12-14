@@ -1,4 +1,13 @@
-import { all, put, putResolve, select, takeLatest } from "redux-saga/effects";
+import { ElectronHooks } from "app/electron-hooks/types";
+import {
+  all,
+  call,
+  getContext,
+  put,
+  putResolve,
+  select,
+  takeLatest,
+} from "redux-saga/effects";
 import { authSelectors } from "../selectors";
 import { appActions } from "../slices/app";
 import { AppUser } from "../types";
@@ -23,11 +32,20 @@ function* processUpdateFromMainProcessSaga(action: any) {
   }
 }
 
+function* openSyncFolderSaga() {
+  const user = yield select(authSelectors.getUser);
+  if (user != null) {
+    const electronHooks: ElectronHooks = yield getContext("electronHooks");
+    yield call([electronHooks.core, "openSyncFolder"], user.login);
+  }
+}
+
 export default function* () {
   yield all([
     takeLatest(
       appActions.processUpdateFromMainProcess.type,
       processUpdateFromMainProcessSaga
     ),
+    takeLatest(appActions.openSyncFolder, openSyncFolderSaga),
   ]);
 }

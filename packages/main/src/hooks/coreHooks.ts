@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, dialog } from "electron";
+import { BrowserWindow, ipcMain, dialog, shell } from "electron";
 import { Path } from "typescript";
 import {
   passwordCheck,
@@ -17,6 +17,8 @@ import {
   uploadArDriveFiles,
   getWalletBalance,
   backupWallet,
+  createNewPrivateDrive,
+  createNewPublicDrive,
 } from "ardrive-core-js";
 import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
@@ -94,7 +96,18 @@ export const initialize = (window: BrowserWindow) => {
       };
       const result = await addNewUser(password, user);
 
-      return result === "Success";
+      if (result === "Success") {
+        const allDrives = await getAllDrives(user);
+        for (const drive of allDrives) {
+          await addDriveToDriveTable({
+            ...drive,
+            login: user.login,
+          });
+        }
+        return true;
+      }
+
+      return false;
     }
   );
 
@@ -150,6 +163,32 @@ export const initialize = (window: BrowserWindow) => {
       await backupWallet(result.filePaths[0], wallet, login);
     }
   });
+
+  ipcMain.handle("openSyncFolder", async (_, login: string) => {
+    const user: ArDriveUser = await getUserFromProfile(login);
+    await shell.openPath(user.syncFolderPath);
+  });
+
+  ipcMain.handle(
+    "createNewDrive",
+    async (_, login: string, driveName: string, isPrivate: boolean = true) => {
+      const user: ArDriveUser = await getUserFromProfile(login);
+      if (isPrivate) {
+        const newPrivateDrive = await createNewPrivateDrive(
+          user.login,
+          driveName
+        );
+        await addDriveToDriveTable(newPrivateDrive);
+      } else {
+        const newPublicDrive = await createNewPublicDrive(
+          user.login,
+          driveName
+        );
+        await addDriveToDriveTable(newPublicDrive);
+      }
+      await setupDrives(user.login, user.syncFolderPath);
+    }
+  );
 };
 
 const getAllDrives = async (user: ArDriveUser) => {

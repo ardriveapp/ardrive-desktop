@@ -9,7 +9,9 @@ export const InputContainer = styled.div`
   margin-bottom: 16px;
 `;
 
-export const StyledInput = styled.input`
+export const StyledInput = styled.input<{
+  hideIcon?: boolean;
+}>`
   background: #f8f8f8;
   border-radius: 4px 4px 0px 0px;
   border: none;
@@ -21,7 +23,7 @@ export const StyledInput = styled.input`
   font-weight: normal;
   font-size: 16px;
   line-height: 20px;
-  padding-left: 52px;
+  padding-left: ${(props) => (props.hideIcon ? "20px" : "52px")};
 
   &:focus {
     border-bottom: 2px solid ${(props) => props.theme.colors.red};

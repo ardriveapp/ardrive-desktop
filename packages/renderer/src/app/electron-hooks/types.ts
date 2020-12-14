@@ -22,6 +22,12 @@ export interface CoreHooks {
   stopWatchingFolders(): Promise<void>;
   uploadFiles(login: string, password: string): Promise<void>;
   backupWallet(login: string, password: string): Promise<void>;
+  openSyncFolder(login: string): Promise<void>;
+  createNewDrive(
+    login: string,
+    driveName: string,
+    isPrivate: boolean
+  ): Promise<void>;
 }
 
 export interface NativeHooks {
