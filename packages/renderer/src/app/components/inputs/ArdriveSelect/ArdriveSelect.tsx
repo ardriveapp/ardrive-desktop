@@ -7,7 +7,7 @@ interface ArdriveSelectProps
 const ArdriveSelect: React.FC<ArdriveSelectProps> = (props) => {
   return (
     <ArdriveSelectContainer>
-      <StyledSelect {...props} />
+      <StyledSelect required {...props} />
     </ArdriveSelectContainer>
   );
 };

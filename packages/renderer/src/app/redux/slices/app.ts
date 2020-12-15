@@ -1,12 +1,13 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { ElectronHooks, WindowType } from "app/electron-hooks/types";
+import { ArDrive, ElectronHooks, WindowType } from "app/electron-hooks/types";
 import { withPayloadType } from "app/utils";
 import { AppState, UploadNotification } from "../types";
 import { authActions } from "./auth";
 
 const initialState: AppState = {
   files: [],
+  drives: [],
   uploadNotification: undefined,
 };
 
@@ -73,6 +74,36 @@ export const appActions = {
       payload.isPrivate
     );
   }),
+  getAllDrives: createAsyncThunk<
+    Array<ArDrive>,
+    {
+      login: string;
+      password: string;
+    }
+  >("app/getAllDrives", async (payload, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    return await electronHooks.core.getAllDrives(
+      payload.login,
+      payload.password
+    );
+  }),
+  attachDrive: createAsyncThunk<
+    void,
+    {
+      login: string;
+      password: string;
+      driveId: string;
+      isShared: boolean;
+    }
+  >("app/attachDrive", async (payload, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.core.attachDrive(
+      payload.login,
+      payload.password,
+      payload.driveId,
+      payload.isShared
+    );
+  }),
 };
 
 const getFileStatus = (fileDataSyncStatus: number) => {
@@ -107,6 +138,9 @@ const appSlice = createSlice({
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {
       state.uploadNotification = action.payload;
+    });
+    builder.addCase(appActions.getAllDrives.fulfilled, (state, action) => {
+      state.drives = action.payload;
     });
     builder.addCase(authActions.logout.fulfilled, (state, _) => {
       state.uploadNotification = undefined;

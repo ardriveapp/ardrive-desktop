@@ -82,7 +82,7 @@
                 "cancel": "Cancel",
                 "create": "Create",
                 "driveName": "Drive name",
-                "driveType": "Drive type",
+                "driveType": "Select drive type",
                 "public": "Public",
                 "private": "Private"
             },
@@ -90,8 +90,9 @@
                 "header": "Attach Drive",
                 "cancel": "Cancel",
                 "attach": "Attach",
-                "driveAddress": "Drive address",
-                "drive": "Drive"
+                "sharedDriveId": "Shared drive ID",
+                "personalDrive": "Select personal drive",
+                "or": "Or"
             }
         },
         "mainContainer": {

@@ -59,6 +59,23 @@ class CoreHooksImplementation implements CoreHooks {
       isPrivate
     );
   }
+  async getAllDrives(login: string, password: string) {
+    return await this.ipcRenderer.invoke("getAllDrives", login, password);
+  }
+  async attachDrive(
+    login: string,
+    password: string,
+    driveId: string,
+    isShared: boolean = false
+  ) {
+    await this.ipcRenderer.invoke(
+      "attachDrive",
+      login,
+      password,
+      driveId,
+      isShared
+    );
+  }
 }
 
 export default CoreHooksImplementation;
