@@ -24,4 +24,17 @@ export const StyledSelect = styled.select`
   &:focus {
     border-bottom: 2px solid ${(props) => props.theme.colors.red};
   }
+
+  &:invalid {
+    color: #a9a9a9;
+  }
+
+  & > option {
+    color: initial;
+
+    &:disabled {
+      color: #a9a9a9;
+      display: none;
+    }
+  }
 `;

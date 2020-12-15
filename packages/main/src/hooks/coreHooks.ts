@@ -19,6 +19,7 @@ import {
   backupWallet,
   createNewPrivateDrive,
   createNewPublicDrive,
+  addSharedPublicDrive,
 } from "ardrive-core-js";
 import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
@@ -138,8 +139,30 @@ export const initialize = (window: BrowserWindow) => {
     }
   );
 
-  ipcMain.handle("attachDrive", async (_, login: string, driveId: string) => {
-    const user = await getUserFromProfile(login);
+  ipcMain.handle("getAllDrives", async (_, login: string, password: string) => {
+    const user: ArDriveUser = await getUser(password, login);
+    const drives = await getAllDrives(user);
+    return drives.map((drive) => ({
+      id: drive.id,
+      driveId: drive.driveId,
+      name: drive.driveName,
+    }));
+  });
+
+  ipcMain.handle(
+    "attachDrive",
+    async (
+      _,
+      login: string,
+      password: string,
+      driveId: string,
+      isShared: boolean = false
+    ) => {
+      const user = await getUser(password, login);
+      if (isShared) {
+        await addSharedPublicDrive(user, driveId);
+        return;
+      }
     const allDrives = await getAllDrives(user);
     const drive = allDrives.find((drive) => drive.driveId === driveId);
     if (drive != null) {
@@ -148,7 +171,8 @@ export const initialize = (window: BrowserWindow) => {
         login: user.login,
       });
     }
-  });
+    }
+  );
 
   ipcMain.handle("backupWallet", async (_, login: string, password: string) => {
     const result = await dialog.showOpenDialog({

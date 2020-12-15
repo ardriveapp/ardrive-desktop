@@ -28,6 +28,10 @@ export const StyledInput = styled.input<{
   &:focus {
     border-bottom: 2px solid ${(props) => props.theme.colors.red};
   }
+
+  &::placeholder {
+    color: #a9a9a9;
+  }
 `;
 
 export const ImageContainer = styled.div`

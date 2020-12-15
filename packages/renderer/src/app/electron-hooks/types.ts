@@ -2,6 +2,12 @@ import { Middleware } from "@reduxjs/toolkit";
 
 export type WindowType = "desktop" | "mobile";
 
+export interface ArDrive {
+  id: string;
+  driveId: string;
+  name: string;
+}
+
 export interface CoreHooks {
   login(
     username: string,
@@ -27,6 +33,13 @@ export interface CoreHooks {
     login: string,
     driveName: string,
     isPrivate: boolean
+  ): Promise<void>;
+  getAllDrives(login: string, password: string): Promise<Array<ArDrive>>;
+  attachDrive(
+    login: string,
+    password: string,
+    driveId: string,
+    isShared: boolean
   ): Promise<void>;
 }
 

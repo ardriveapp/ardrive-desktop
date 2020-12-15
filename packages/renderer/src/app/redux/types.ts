@@ -1,3 +1,5 @@
+import { ArDrive } from "app/electron-hooks/types";
+
 export interface UploadNotification {
   filesCount: number;
   totalPrice: number;
@@ -6,6 +8,7 @@ export interface UploadNotification {
 
 export interface AppState {
   files: ArDriveFile[];
+  drives: ArDrive[];
   uploadNotification?: UploadNotification;
 }
 

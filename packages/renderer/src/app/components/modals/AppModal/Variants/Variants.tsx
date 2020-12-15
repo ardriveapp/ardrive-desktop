@@ -8,8 +8,10 @@ import { ArdriveInput } from "app/components/inputs";
 import { ArdriveSelect } from "app/components/inputs/ArdriveSelect";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { authSelectors } from "app/redux/selectors";
+import { appSelectors, authSelectors } from "app/redux/selectors";
 import { appActions } from "app/redux/slices/app";
+import { TextLabel } from "./Variants.styled";
+import { useEffect } from "react";
 
 interface ModalProps {
   onClose?(): void;
@@ -23,14 +25,17 @@ enum DriveType {
 
 export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
   const { t } = useTranslationAt("components.modals.newDrive");
-  const [driveName, setDriveName] = useState("");
-  const [driveType, setDriveType] = useState(DriveType.Private);
-  const isFilled = useMemo(() => !!driveName, [driveName]);
+  const [driveName, setDriveName] = useState<string>();
+  const [driveType, setDriveType] = useState<DriveType>();
+  const isFilled = useMemo(() => driveName != null && driveType != null, [
+    driveName,
+    driveType,
+  ]);
   const user = useSelector(authSelectors.getUser);
   const dispatch = useDispatch();
 
   const createDriveHanlder = useCallback(async () => {
-    if (isFilled && user != null) {
+    if (isFilled && user != null && driveName != null && driveType != null) {
       await dispatch(
         appActions.createNewDrive({
           login: user.login,
@@ -59,10 +64,12 @@ export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
         />,
         <ArdriveSelect
           key="driveType"
-          placeholder={t("driveType")}
           value={driveType}
           onChange={(e) => setDriveType(+e.currentTarget.value)}
         >
+          <option value="" disabled selected>
+            {t("driveType")}
+          </option>
           <option value={DriveType.Public}>{t("public")}</option>
           <option value={DriveType.Private}>{t("private")}</option>
         </ArdriveSelect>,
@@ -88,19 +95,47 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslationAt("components.modals.attachDrive");
-  const [driveAddress, setDriveAddress] = useState("");
-  const [drive, setDrive] = useState(0);
-  const isFilled = useMemo(() => !!driveAddress, [driveAddress]);
+  const [sharedDriveId, setSharedDriveId] = useState<string>();
+  const [personalDriveId, setPersonalDriveId] = useState<string>();
+  const isFilled = useMemo(
+    () => sharedDriveId != null || personalDriveId != null,
+    [sharedDriveId, personalDriveId]
+  );
   const user = useSelector(authSelectors.getUser);
+  const drives = useSelector(appSelectors.getAllDrives);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user != null) {
+      dispatch(appActions.getAllDrives(user));
+    }
+  }, [user]);
 
   const attachDriveHanlder = useCallback(async () => {
     if (isFilled && user != null) {
+      if (sharedDriveId != null) {
+        await dispatch(
+          appActions.attachDrive({
+            ...user,
+            driveId: sharedDriveId,
+            isShared: true,
+          })
+        );
+      } else if (personalDriveId != null) {
+        await dispatch(
+          appActions.attachDrive({
+            ...user,
+            driveId: personalDriveId,
+            isShared: false,
+          })
+        );
+      }
+
       if (onClose != null) {
         onClose();
       }
     }
-  }, [isFilled, driveAddress, user, onClose]);
+  }, [isFilled, sharedDriveId, personalDriveId, user, onClose]);
 
   return (
     <AppModalBase
@@ -109,18 +144,33 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
       visible={visible}
       body={[
         <ArdriveInput
-          key="driveAddress"
-          value={driveAddress}
-          onChange={(e) => setDriveAddress(e.currentTarget.value)}
+          disabled={personalDriveId != null}
+          key="sharedDriveId"
+          value={sharedDriveId}
+          onChange={(e) => setSharedDriveId(e.currentTarget.value || undefined)}
           hideIcon
-          placeholder={t("driveAddress")}
+          placeholder={t("sharedDriveId")}
         />,
+        <TextLabel key="or">{t("or")}</TextLabel>,
         <ArdriveSelect
-          key="drive"
-          placeholder={t("drive")}
-          value={drive}
-          onChange={(e) => setDrive(+e.currentTarget.value)}
-        ></ArdriveSelect>,
+          disabled={sharedDriveId != null}
+          key="personalDrive"
+          value={personalDriveId}
+          onChange={(e) =>
+            setPersonalDriveId(e.currentTarget.value || undefined)
+          }
+        >
+          <option value="" selected>
+            {t("personalDrive")}
+          </option>
+          {drives.map((drive) => {
+            return (
+              <option key={drive.driveId} value={drive.driveId}>
+                {drive.name}
+              </option>
+            );
+          })}
+        </ArdriveSelect>,
       ]}
       footer={[
         <ButtonWithIcon key="cancel" active transparent onClick={onClose}>
