@@ -47,7 +47,7 @@ export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
         onClose();
       }
     }
-  }, [isFilled, driveName, driveType, user, onClose]);
+  }, [dispatch, isFilled, driveName, driveType, user, onClose]);
 
   return (
     <AppModalBase
@@ -109,7 +109,7 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
     if (user != null) {
       dispatch(appActions.getAllDrives(user));
     }
-  }, [user]);
+  }, [dispatch, user]);
 
   const attachDriveHanlder = useCallback(async () => {
     if (isFilled && user != null) {
@@ -135,7 +135,7 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
         onClose();
       }
     }
-  }, [isFilled, sharedDriveId, personalDriveId, user, onClose]);
+  }, [dispatch, isFilled, sharedDriveId, personalDriveId, user, onClose]);
 
   return (
     <AppModalBase
