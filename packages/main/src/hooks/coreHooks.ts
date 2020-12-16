@@ -34,6 +34,43 @@ import { generateWallet } from "ardrive-core-js/lib/arweave";
 export const initialize = (window: BrowserWindow) => {
   let cancellationToken: CancellationToken;
 
+  async function startWatcher(user: any) {
+    if (cancellationToken != null) {
+      cancellationToken.cancel();
+    }
+    cancellationToken = new CancellationToken();
+    await startMainWatcherLoop(user);
+  }
+
+  async function startMainWatcherLoop(user: ArDriveUser) {
+    await setupDrives(user.login, user.syncFolderPath);
+    await getMyArDriveFilesFromPermaWeb(user);
+    await downloadMyArDriveFiles(user);
+    const stopFunction = await startWatchingFolders(user); // TODO: stop watcher at logout
+
+    const intervalId = setInterval(async () => {
+      if (cancellationToken.isCancelled) {
+        clearInterval(intervalId);
+        await stopFunction();
+        return;
+      }
+      await getMyArDriveFilesFromPermaWeb(user);
+      await downloadMyArDriveFiles(user);
+      await checkUploadStatus(user.login);
+
+      const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(
+        user.login
+      );
+      window.webContents.send("notifyUploadStatus", uploadBatch);
+    }, 10000);
+  }
+
+  async function getAllDrives(user: ArDriveUser) {
+    const publicDrives = await getAllMyPublicArDriveIds(user.walletPublicKey);
+    const privateDrives = await getAllMyPrivateArDriveIds(user);
+    return publicDrives.concat(privateDrives);
+  }
+
   ipcMain.handle("startWatchingFolders", async (_, login: string) => {
     const user = await getUserFromProfile(login);
 
@@ -41,11 +78,7 @@ export const initialize = (window: BrowserWindow) => {
       return;
     }
 
-    if (cancellationToken != null) {
-      cancellationToken.cancel();
-    }
-    cancellationToken = new CancellationToken();
-    await startMainWatcherLoop(window, user, cancellationToken);
+    await startWatcher(user);
   });
 
   ipcMain.handle("login", async (_, username: string, password: string) => {
@@ -114,10 +147,22 @@ export const initialize = (window: BrowserWindow) => {
 
   ipcMain.handle("fetchFiles", async (_, username: string) => {
     const allFiles = await getAllFilesByLoginFromSyncTable(username);
-    for (const file of allFiles) {
+    const currentDate = new Date();
+    const minimumDate = new Date(currentDate);
+    minimumDate.setDate(currentDate.getDate() - 3);
+
+    // TODO: Move all that stuff to database query
+    const filteredByDate = allFiles.filter(
+      (file) => +file.lastModifiedDate >= minimumDate.getTime()
+    );
+    const orderedByDate = filteredByDate.sort(
+      (f, s) => +s.lastModifiedDate - +f.lastModifiedDate
+    );
+
+    for (const file of orderedByDate) {
       file.drive = await getDriveFromDriveTable(file.driveId);
     }
-    return allFiles;
+    return orderedByDate;
   });
 
   ipcMain.handle("uploadFiles", async (_, login: string, password: string) => {
@@ -163,14 +208,15 @@ export const initialize = (window: BrowserWindow) => {
         await addSharedPublicDrive(user, driveId);
         return;
       }
-    const allDrives = await getAllDrives(user);
-    const drive = allDrives.find((drive) => drive.driveId === driveId);
-    if (drive != null) {
-      await addDriveToDriveTable({
-        ...drive,
-        login: user.login,
-      });
-    }
+      const allDrives = await getAllDrives(user);
+      const drive = allDrives.find((drive) => drive.driveId === driveId);
+      if (drive != null) {
+        await addDriveToDriveTable({
+          ...drive,
+          login: user.login,
+        });
+        await startWatcher(user);
+      }
     }
   );
 
@@ -211,39 +257,7 @@ export const initialize = (window: BrowserWindow) => {
         await addDriveToDriveTable(newPublicDrive);
       }
       await setupDrives(user.login, user.syncFolderPath);
-      // TODO: watch folder after creation
+      await startWatcher(user);
     }
   );
-};
-
-const getAllDrives = async (user: ArDriveUser) => {
-  const publicDrives = await getAllMyPublicArDriveIds(user.walletPublicKey);
-  const privateDrives = await getAllMyPrivateArDriveIds(user);
-  return publicDrives.concat(privateDrives);
-};
-
-const startMainWatcherLoop = async (
-  window: BrowserWindow,
-  user: ArDriveUser,
-  token: CancellationToken
-) => {
-  await setupDrives(user.login, user.syncFolderPath);
-  await getMyArDriveFilesFromPermaWeb(user);
-  await downloadMyArDriveFiles(user);
-  startWatchingFolders(user); // TODO: stop watcher at logout
-
-  const intervalId = setInterval(async () => {
-    if (token.isCancelled) {
-      clearInterval(intervalId);
-      return;
-    }
-    await getMyArDriveFilesFromPermaWeb(user);
-    await downloadMyArDriveFiles(user);
-    await checkUploadStatus(user.login);
-
-    const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(
-      user.login
-    );
-    window.webContents.send("notifyUploadStatus", uploadBatch);
-  }, 10000);
 };
