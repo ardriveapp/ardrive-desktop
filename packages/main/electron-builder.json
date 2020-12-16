@@ -48,11 +48,5 @@
             "AppImage"
         ],
         "category": "Development"
-    },
-    "publish": {
-        "provider": "github",
-        "owner": "ardrive",
-        "repo": "ardrive-desktop",
-        "private": false
     }
 }
