@@ -20,8 +20,8 @@ jobs:
         with:
           node-version: 12
 
-      - name: Installs all dependencies
+      - name: Install all dependencies
         run: yarn
 
-      - name: Builds application
+      - name: Build application
         run: yarn build
