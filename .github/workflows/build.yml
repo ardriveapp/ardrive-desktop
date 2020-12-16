@@ -1,9 +1,12 @@
-name: build
+name:
 
-on: push
+on:
+  push:
+    branches:
+      - master
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -18,3 +21,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+
+      - name: Installs all dependencies
+        run: yarn
+
+      - name: Builds application
+        run: yarn build
