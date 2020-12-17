@@ -7,7 +7,6 @@ export { ReactComponent as Corder } from "resources/images/corder.svg";
 export { ReactComponent as CorderTop } from "resources/images/corder-top.svg";
 export { ReactComponent as LogoWithText } from "resources/images/logo-with-text.svg";
 export { ReactComponent as FirstWelcomeStep } from "resources/images/first-welcome-step.svg";
-export { ReactComponent as SecondWelcomeStep } from "resources/images/second-welcome-step.svg";
 export { ReactComponent as Login } from "resources/images/login.svg";
 export { ReactComponent as CreateUser } from "resources/images/create-user.svg";
 export { ReactComponent as User } from "resources/images/user.svg";
@@ -41,5 +40,10 @@ export { ReactComponent as Cloud } from "resources/images/cloud.svg";
 export { ReactComponent as PublicUrl } from "resources/images/public-url.svg";
 export { ReactComponent as Syncing } from "resources/images/syncing.svg";
 export { ReactComponent as Help } from "resources/images/help.svg";
+export { ReactComponent as NeverDeletedStep } from "resources/images/never-deleted-step.svg";
+export { ReactComponent as PayPerFileStep } from "resources/images/pay-per-file-step.svg";
+export { ReactComponent as SecondsFromForewerStep } from "resources/images/seconds-from-forewer-step.svg";
+export { ReactComponent as TotalPrivacyStep } from "resources/images/total-privacy-step.svg";
+export { ReactComponent as WelcomeToPermawebStep } from "resources/images/welcome-to-permaweb-step.svg";
 
 export { default as SampleUserImage } from "resources/images/sample-user-image.png";

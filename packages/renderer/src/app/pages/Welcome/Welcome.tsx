@@ -3,8 +3,12 @@ import { useHistory } from "react-router-dom";
 
 import {
   FirstWelcomeStep,
-  SecondWelcomeStep,
+  NeverDeletedStep,
+  PayPerFileStep,
+  SecondsFromForewerStep,
+  TotalPrivacyStep,
   WelcomeContainer,
+  WelcomeToPermawebStep,
 } from "app/components";
 import { FirstStep, SecondStep } from "./steps";
 import { useTranslationAt } from "app/utils/hooks";
@@ -19,9 +23,16 @@ export default () => {
     setStep(1);
   }, []);
 
+  const continueHandler = useCallback(() => {
+    history.push("/create-user");
+  }, [history]);
+
   const goNext = useCallback(() => {
+    if (subStep === 4) {
+      continueHandler();
+    }
     setSubStep((prev) => prev + 1);
-  }, []);
+  }, [subStep, continueHandler]);
 
   const goBack = useCallback(() => {
     if (subStep === 0) {
@@ -30,10 +41,6 @@ export default () => {
     }
     setSubStep((prev) => prev - 1);
   }, [subStep]);
-
-  const continueHandler = useCallback(() => {
-    history.push("/create-user");
-  }, [history]);
 
   const CurrentStep = useMemo(() => {
     switch (step) {
@@ -51,21 +58,34 @@ export default () => {
       default:
         return React.Fragment;
     }
-  }, [step, subStep, goNext, goBack, continueHandler]);
+  }, [step, subStep, goNext, goBack, t, jumpIn]);
 
   const CurrentImage = useMemo(() => {
     switch (step) {
       case 0:
         return <FirstWelcomeStep />;
       case 1:
-        return <SecondWelcomeStep />;
+        switch (subStep) {
+          case 0:
+            return <WelcomeToPermawebStep />;
+          case 1:
+            return <PayPerFileStep />;
+          case 2:
+            return <SecondsFromForewerStep />;
+          case 3:
+            return <TotalPrivacyStep />;
+          case 4:
+            return <NeverDeletedStep />;
+          default:
+            return React.Fragment;
+        }
       default:
         return React.Fragment;
     }
-  }, [step]);
+  }, [step, subStep]);
 
   return (
-    <WelcomeContainer rightImage={CurrentImage}>
+    <WelcomeContainer useLogoWithText={step > 0} rightImage={CurrentImage}>
       <CurrentStep />
     </WelcomeContainer>
   );

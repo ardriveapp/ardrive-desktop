@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { LogoWithText } from "app/components/images";
+import { LogoWithoutText, LogoWithText } from "app/components/images";
 
 export const WelcomeContainer = styled.div`
   height: 100%;
@@ -42,7 +42,12 @@ export const LogoContainer = styled.div`
   padding-top: 60px;
 `;
 
-export const AppLogo = styled(LogoWithText)`
-  height: 86px;
-  width: 156px;
+export const AppLogo = styled(LogoWithoutText)`
+  height: 128px;
+  width: 176px;
+`;
+
+export const AppLogoWithText = styled(LogoWithText)`
+  height: 180px;
+  width: 340px;
 `;
