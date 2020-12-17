@@ -51,6 +51,7 @@ import {
   NotificationInfoContainer,
   SyncingStatusContainer,
   SyncingText,
+  HelpIcon,
 } from "./MainContainer.styled";
 import { authActions } from "app/redux/slices/auth";
 import { useModal } from "app/components/modals/utils";
@@ -211,7 +212,8 @@ const MainContainer: React.FC = ({ children }) => {
       <Header>
         <AppLogo />
         <CurrentUserContainer>
-          <UsersIcon />
+          <HelpIcon onClick={() => dispatch(appActions.openHelpLink())} />
+          <UsersIcon onClick={() => dispatch(appActions.openCommunityLink())} />
           <StyledPopover
             isOpen={showUserDetails}
             onOuterAction={() => setShowUserDetails(false)}

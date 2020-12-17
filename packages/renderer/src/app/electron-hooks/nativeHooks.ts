@@ -23,6 +23,12 @@ class NativeHooksImplementation implements NativeHooks {
   async changeWindowSize(windowType: WindowType) {
     await this.ipcRenderer.invoke("changeWindowSize", windowType);
   }
+  async openCommunityLink() {
+    await this.ipcRenderer.invoke("openCommunityLink");
+  }
+  async openHelpLink() {
+    await this.ipcRenderer.invoke("openHelpLink");
+  }
 }
 
 export default NativeHooksImplementation;

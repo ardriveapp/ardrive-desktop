@@ -104,6 +104,17 @@ export const appActions = {
       payload.isShared
     );
   }),
+  openCommunityLink: createAsyncThunk(
+    "app/openCommunityLink",
+    async (_, thunkAPI) => {
+      const electronHooks = thunkAPI.extra as ElectronHooks;
+      await electronHooks.native.openCommunityLink();
+    }
+  ),
+  openHelpLink: createAsyncThunk("app/openHelpLink", async (_, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.native.openHelpLink();
+  }),
 };
 
 const getFileStatus = (fileDataSyncStatus: number) => {
