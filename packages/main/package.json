@@ -34,7 +34,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "ardrive-core-js": "https://github.com/ardriveapp/ardrive-core-js#feat/stop-watching",
+    "ardrive-core-js": "^0.2.25",
     "electron-is-dev": "^1.2.0"
   }
 }
