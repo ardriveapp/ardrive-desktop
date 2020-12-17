@@ -105,7 +105,7 @@ export const reducer = persistReducer(
   {
     key: "auth",
     storage: createElectronStorage(),
-    blacklist: ["isSyncing"], // TODO: discuss flow
+    blacklist: ["isSyncing", "isLoggedIn", "user"], // TODO: discuss flow
   },
   authSlice.reducer
 );

@@ -3600,10 +3600,10 @@ aproba@^2.0.0:
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-2.0.0.tgz#52520b8ae5b569215b354efc0caa3fe1e45a8adc"
   integrity sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==
 
-ardrive-core-js@^0.2.24:
-  version "0.2.24"
-  resolved "https://registry.yarnpkg.com/ardrive-core-js/-/ardrive-core-js-0.2.24.tgz#f9405108d88376c2a0188f2fc67522115eebaf36"
-  integrity sha512-WUY7hJZ1EWxRW0McmYVQSgdlYb7oDZXHCLE4YI5vjg38SNE9D/WqIyfDT5kaIS0O7JECsl4cLkMydI1dQKpmlQ==
+ardrive-core-js@^0.2.25:
+  version "0.2.25"
+  resolved "https://registry.yarnpkg.com/ardrive-core-js/-/ardrive-core-js-0.2.25.tgz#30a97b7423c67273677553f57a3590d7ea29019d"
+  integrity sha512-/GFaIoAHx7X4mq/qP1KUbpEjVoWNC7KFJnb7q4OiUJp900/d2Fr5Hft0hMFklIW8o8eqRuqoP5MJ6y+mu+qIQQ==
   dependencies:
     "@types/node" "^14.11.2"
     "@types/node-fetch" "^2.5.7"
