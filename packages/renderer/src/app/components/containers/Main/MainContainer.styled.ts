@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Popover from "react-popover";
 
-import { LogoWithoutText, Logout, Users } from "app/components/images";
+import { LogoWithoutText, Logout, Users, Help } from "app/components/images";
 
 export const Container = styled.div`
   height: 100%;
@@ -125,6 +125,14 @@ export const UsersIcon = styled(Users)`
   width: 20px;
   height: 20px;
   margin-right: 18px;
+  cursor: pointer;
+`;
+
+export const HelpIcon = styled(Help)`
+  width: 20px;
+  height: 20px;
+  margin-right: 18px;
+  cursor: pointer;
 `;
 
 export const LogoutButton = styled(Logout)`

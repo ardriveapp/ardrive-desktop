@@ -90,6 +90,7 @@ const FileList: React.FC<{
 }> = ({ items, onItemClick, activeItem, hideHeader, hideOptions }) => {
   const { t } = useTranslationAt("components.fileList");
   const [selectedItem, setSelectedItem] = useState<ArDriveFile | null>(null);
+  const [showFileDetails, setShowFileDetails] = useState(false);
 
   const selectItemHandler = useCallback(
     (item) => {
@@ -97,6 +98,7 @@ const FileList: React.FC<{
         return;
       }
       setSelectedItem(item);
+      setShowFileDetails(true);
     },
     [selectedItem]
   );
@@ -123,7 +125,6 @@ const FileList: React.FC<{
           </tr>
         </FileListTableHead>
       )}
-
       <FileListTableBody>
         {items
           .filter((item) => item.type !== "folder")
@@ -133,12 +134,8 @@ const FileList: React.FC<{
               onClick={() => onItemClick(item)}
               active={activeItem === item}
             >
-              <StyledPopover
-                isOpen={selectedItem === item}
-                body={<FileDetails file={selectedItem} />}
-              >
-                <td>{getFileImage(item)}</td>
-              </StyledPopover>
+              <td>{getFileImage(item)}</td>
+
               <td>
                 <ItemContent>
                   <span>{item.name}</span>
@@ -172,6 +169,14 @@ const FileList: React.FC<{
             </FileListTableRow>
           ))}
       </FileListTableBody>
+      <StyledPopover
+        isOpen={showFileDetails}
+        onOuterAction={() => setShowFileDetails(false)}
+        body={<FileDetails file={selectedItem} />}
+        preferPlace="below"
+      >
+        <div></div>
+      </StyledPopover>
     </FileListTable>
   );
 };

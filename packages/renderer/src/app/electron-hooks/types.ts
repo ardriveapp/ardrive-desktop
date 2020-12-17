@@ -47,6 +47,8 @@ export interface NativeHooks {
   openFile(): Promise<string | undefined>;
   openFolder(): Promise<string | undefined>;
   changeWindowSize(windowType: WindowType): Promise<void>;
+  openCommunityLink(): Promise<void>;
+  openHelpLink(): Promise<void>;
 }
 
 export interface ElectronHooks {
