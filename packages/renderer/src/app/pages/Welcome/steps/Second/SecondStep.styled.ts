@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { RoundedButton } from "app/components";
 
 export const WelcomeText = styled.span`
+  margin-bottom: 24px;
+  font-family: "Montserrat";
   font-style: normal;
   font-weight: 600;
   font-size: 28px;
@@ -10,22 +12,32 @@ export const WelcomeText = styled.span`
   text-align: center;
   letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  color: #700327;
 `;
 
 export const DesciptionText = styled.span`
   width: 500px;
-  text-align: left;
   font-family: "Open Sans";
   font-style: normal;
   font-weight: normal;
-  font-size: 16px;
-  line-height: 160%;
+  font-size: 20px;
+  line-height: 32px;
+  text-align: center;
+  color: #00060a;
 `;
 
-export const ContinueButton = styled(RoundedButton)`
-  width: 215px;
+export const StepButton = styled(RoundedButton)`
+  width: 160px;
+  height: 55px;
+`;
+
+export const ButtonsContainer = styled.div`
   bottom: 0;
   position: absolute;
   margin-bottom: 62px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 76px;
+  padding-right: 76px;
 `;

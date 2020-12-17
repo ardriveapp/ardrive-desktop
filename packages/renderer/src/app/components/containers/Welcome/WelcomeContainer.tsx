@@ -7,17 +7,19 @@ import {
   WelcomeContainer,
   AppLogo,
   LogoContainer,
+  AppLogoWithText,
 } from "./WelcomeContainer.styled";
 
 const Container: React.FC<{
   rightImage?: React.ReactNode;
-}> = ({ rightImage, children }) => {
+  useLogoWithText?: boolean;
+}> = ({ rightImage, useLogoWithText, children }) => {
   return (
     <WelcomeContainer>
       <LeftContainer>{rightImage}</LeftContainer>
       <RightContainer>
         <LogoContainer>
-          <AppLogo />
+          {useLogoWithText ? <AppLogoWithText /> : <AppLogo />}
         </LogoContainer>
         <ContentContainer>{children}</ContentContainer>
       </RightContainer>

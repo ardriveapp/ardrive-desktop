@@ -1,32 +1,32 @@
 import React from "react";
 
-import { FontVariants, TranslationAt } from "app/components";
 import { useTranslationAt } from "app/utils/hooks";
 
 import {
-  ContinueButton,
+  StepButton,
   DesciptionText,
   WelcomeText,
+  ButtonsContainer,
 } from "./SecondStep.styled";
 
 const translationsPath = "pages.welcome.steps.second";
 
 const SecondStep: React.FC<{
   onContinue(): void;
-}> = ({ onContinue }) => {
+  onBack(): void;
+  title: string;
+  description: string;
+}> = ({ onContinue, onBack, title, description }) => {
   const { t } = useTranslationAt(translationsPath);
 
   return (
     <>
-      <WelcomeText>{t("how_does_it_work")}</WelcomeText>
-      <DesciptionText>
-        <TranslationAt
-          atPath={translationsPath}
-          i18nKey="how_it_work_description"
-          components={[<FontVariants.Bold />]}
-        />
-      </DesciptionText>
-      <ContinueButton onClick={onContinue}>{t("continue")}</ContinueButton>
+      <WelcomeText>{title}</WelcomeText>
+      <DesciptionText>{description}</DesciptionText>
+      <ButtonsContainer>
+        <StepButton onClick={onBack}>{t("back")}</StepButton>
+        <StepButton onClick={onContinue}>{t("next")}</StepButton>
+      </ButtonsContainer>
     </>
   );
 };
