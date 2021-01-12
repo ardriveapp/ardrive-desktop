@@ -39,6 +39,8 @@ jobs:
         run: yarn build
 
   publish:
+    runs-on: ubuntu-latest
+    
     steps:
       - name: Increase minor version
         run: lerna version minor --force-publish
