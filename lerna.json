@@ -6,6 +6,9 @@
   "command": {
     "run": {
       "npmClient": "yarn"
+    },
+    "version": {
+      "allowBranch": "master"
     }
   },
   "useWorkspaces": true
