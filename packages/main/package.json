@@ -3,7 +3,7 @@
   "homepage": "https://github.com/ardriveapp/ardrive-desktop",
   "productName": "ArDrive",
   "description": "ArDrive - Secure, Permenant Storage",
-  "version": "0.1",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "build": "webpack && electron-builder",
