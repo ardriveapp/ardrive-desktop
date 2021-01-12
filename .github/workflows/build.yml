@@ -40,7 +40,13 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    
+    needs: build
+
     steps:
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
       - name: Increase minor version
-        run: lerna version minor --force-publish
+        run: npx lerna version minor --force-publish
