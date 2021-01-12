@@ -26,6 +26,8 @@ import {
 import { ArDriveFile } from "app/redux/types";
 import { Cloud, Share, Lock, PublicUrl } from "app/components/images";
 import { useTranslationAt } from "app/utils/hooks";
+import { useDispatch } from "react-redux";
+import { appActions } from "app/redux/slices/app";
 
 const getFileImage = (item: ArDriveFile) => {
   switch (item.type) {
@@ -43,6 +45,7 @@ const FileDetails: React.FC<{
   file: ArDriveFile | null;
 }> = ({ file }) => {
   const { t } = useTranslationAt("components.fileList");
+  const dispatch = useDispatch();
 
   if (file == null) {
     return null;
@@ -53,7 +56,9 @@ const FileDetails: React.FC<{
       <FileDetailsFileName>{file.name}</FileDetailsFileName>
       <FileDetailsMenuBar>
         <Lock />
-        <PublicUrl />
+        <PublicUrl
+          onClick={() => dispatch(appActions.openCustomLink(file?.webLink))}
+        />
         <Cloud />
         <Share />
       </FileDetailsMenuBar>
@@ -171,7 +176,10 @@ const FileList: React.FC<{
       </FileListTableBody>
       <StyledPopover
         isOpen={showFileDetails}
-        onOuterAction={() => setShowFileDetails(false)}
+        onOuterAction={() => {
+          setShowFileDetails(false);
+          setSelectedItem(null);
+        }}
         body={<FileDetails file={selectedItem} />}
         preferPlace="below"
       >

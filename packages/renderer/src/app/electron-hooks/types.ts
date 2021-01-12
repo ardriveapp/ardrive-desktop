@@ -49,6 +49,7 @@ export interface NativeHooks {
   changeWindowSize(windowType: WindowType): Promise<void>;
   openCommunityLink(): Promise<void>;
   openHelpLink(): Promise<void>;
+  openCustomLink(link?: string): Promise<void>;
 }
 
 export interface ElectronHooks {

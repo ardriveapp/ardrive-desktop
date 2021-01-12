@@ -29,6 +29,9 @@ class NativeHooksImplementation implements NativeHooks {
   async openHelpLink() {
     await this.ipcRenderer.invoke("openHelpLink");
   }
+  async openCustomLink(link?: string) {
+    await this.ipcRenderer.invoke("openCustomLink", link);
+  }
 }
 
 export default NativeHooksImplementation;
