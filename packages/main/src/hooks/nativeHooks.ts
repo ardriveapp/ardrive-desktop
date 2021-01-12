@@ -38,4 +38,10 @@ export const initialize = (window: BrowserWindow) => {
   ipcMain.handle("openHelpLink", async (_) => {
     await shell.openExternal(HelpLink);
   });
+
+  ipcMain.handle("openCustomLink", async (_, link: string) => {
+    if (link) {
+      await shell.openExternal(link);
+    }
+  });
 };

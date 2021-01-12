@@ -24,6 +24,7 @@ export interface ArDriveFile {
   fileImage?: string;
   driveName?: string;
   syncStatus?: "downloaded" | "uploaded" | "syncing";
+  webLink?: string;
 }
 
 export interface AuthState {
