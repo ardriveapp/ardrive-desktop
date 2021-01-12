@@ -115,6 +115,13 @@ export const appActions = {
     const electronHooks = thunkAPI.extra as ElectronHooks;
     await electronHooks.native.openHelpLink();
   }),
+  openCustomLink: createAsyncThunk(
+    "app/openCustomLink",
+    async (link: string | undefined, thunkAPI) => {
+      const electronHooks = thunkAPI.extra as ElectronHooks;
+      await electronHooks.native.openCustomLink(link);
+    }
+  ),
 };
 
 const getFileStatus = (fileDataSyncStatus: number) => {
@@ -145,6 +152,7 @@ const appSlice = createSlice({
         size: file.fileSize,
         driveName: file.drive?.driveName,
         syncStatus: getFileStatus(+file.fileDataSyncStatus),
+        webLink: file.permaWebLink,
       }));
     });
     builder.addCase(appActions.addUploadNotification, (state, action) => {
