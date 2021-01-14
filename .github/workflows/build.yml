@@ -41,7 +41,7 @@ jobs:
       - name: Archive production artifacts for ${{ matrix.os }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.os }}-
+          name: ${{ matrix.os }}
           path: |
             packages/main/dist/*.exe
             packages/main/dist/*.dmg
