@@ -41,7 +41,7 @@ jobs:
       - name: Archive production artifacts for ${{ matrix.os }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.os }}-dist
+          name: ${{ matrix.os }}-
           path: |
             packages/main/dist/*.exe
             packages/main/dist/*.dmg
@@ -60,3 +60,24 @@ jobs:
 
       - name: List all files and folders
         run: ls artifacts
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: App release of ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: artifacts/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
