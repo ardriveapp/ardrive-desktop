@@ -41,5 +41,22 @@ jobs:
       - name: Archive production artifacts for ${{ matrix.os }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.os }}-dist
-          path: packages/main/dist
+          name: build-artifacts
+          path: |
+             packages/main/dist/**/*.exe
+             packages/main/dist/**/*.dmg
+             packages/main/dist/**/*.AppImage
+
+  publish:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Download production artifacts for ${{ matrix.os }}
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+
+      - name: List all files and folders
+        run: ls
