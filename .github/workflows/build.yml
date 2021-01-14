@@ -43,9 +43,9 @@ jobs:
         with:
           name: ${{ matrix.os }}-dist
           path: |
-            packages/main/dist/**/*.exe
-            packages/main/dist/**/*.dmg
-            packages/main/dist/**/*.AppImage
+            packages/main/dist/*.exe
+            packages/main/dist/*.dmg
+            packages/main/dist/*.AppImage
 
   publish:
     runs-on: ubuntu-latest
