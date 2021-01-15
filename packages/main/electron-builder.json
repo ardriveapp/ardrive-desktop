@@ -22,7 +22,8 @@
         "package.json"
     ],
     "mac": {
-        "category": "public.app-category.utilities"
+        "category": "public.app-category.utilities",
+        "target": "pkg"
     },
     "win": {},
     "linux": {

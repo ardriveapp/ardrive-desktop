@@ -44,7 +44,7 @@ jobs:
           name: ${{ matrix.os }}
           path: |
             packages/main/dist/*.exe
-            packages/main/dist/*.dmg
+            packages/main/dist/*.pkg
             packages/main/dist/*.AppImage
 
   publish:
