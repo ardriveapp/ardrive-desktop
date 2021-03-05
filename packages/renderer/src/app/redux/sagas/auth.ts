@@ -20,7 +20,7 @@ function* startWatchingSaga(action?: any) {
   }
   if (user != null) {
     const electronHooks: ElectronHooks = yield getContext("electronHooks");
-    yield call([electronHooks.core, "startWatchingFolders"], user.login);
+    yield call([electronHooks.core, "startWatchingFolders"], user.login, user.password);
   }
 }
 
