@@ -72,7 +72,7 @@ export const initialize = (window: BrowserWindow) => {
       await setProfileWalletBalance(+balance, user.login)
 
       window.webContents.send("notifyUploadStatus", uploadBatch);
-    }, 15000);
+    }, 30000);
   }
 
   ipcMain.handle("startWatchingFolders", async (_, login: string, password: string) => {
