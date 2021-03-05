@@ -29,6 +29,7 @@ import {
   getDriveFromDriveTable,
   getProfileLastBlockHeight,
   setDriveToSync,
+  setProfileWalletBalance,
 } from "ardrive-core-js/lib/db";
 
 import { CancellationToken } from "../types";
@@ -65,6 +66,11 @@ export const initialize = (window: BrowserWindow) => {
       const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(
         user.login
       );
+
+      // Get latest wallet balance
+      let balance = await getWalletBalance(user.walletPublicKey);
+      await setProfileWalletBalance(+balance, user.login)
+
       window.webContents.send("notifyUploadStatus", uploadBatch);
     }, 15000);
   }
