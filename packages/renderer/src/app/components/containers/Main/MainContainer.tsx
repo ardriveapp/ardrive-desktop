@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -59,6 +59,7 @@ import { withModal } from "app/components/modals/hooks";
 import { TranslationAt } from "app/components/TranslationAt";
 import { FontVariants } from "app/components/typography";
 import { appActions } from "app/redux/slices/app";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const NewButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
@@ -83,6 +84,13 @@ const SettingsButtonMenu = () => {
   const dispatch = useDispatch();
   const user = useSelector(authSelectors.getUser);
 
+  const openFolder = useCallback(async () => {
+    const result = await dispatch(appActions.openFolder());
+    const syncFolderPath = unwrapResult(result);
+
+    setSyncFolderPath(syncFolderPath);
+  }, [dispatch]);
+
   return (
     <SettingsButtonMenuContainer>
       <SettingsButtonMenuHeader>{t("settingsHeader")}</SettingsButtonMenuHeader>
@@ -90,7 +98,7 @@ const SettingsButtonMenu = () => {
         <Lock />
         {t("changeLogin")}
       </SettingsButtonMenuContainerItem>
-      <SettingsButtonMenuContainerItem>
+      <SettingsButtonMenuContainerItem onClick={openFolder}>
         <SyncFolder />
         {t("changeSync")}
       </SettingsButtonMenuContainerItem>
