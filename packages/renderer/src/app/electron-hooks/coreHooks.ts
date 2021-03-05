@@ -29,8 +29,8 @@ class CoreHooksImplementation implements CoreHooks {
       walletPath
     );
   }
-  async startWatchingFolders(username: string) {
-    await this.ipcRenderer.invoke("startWatchingFolders", username);
+  async startWatchingFolders(username: string, password: string) {
+    await this.ipcRenderer.invoke("startWatchingFolders", username, password);
   }
   async fetchFiles(username: string): Promise<any[]> {
     return await this.ipcRenderer.invoke("fetchFiles", username);
