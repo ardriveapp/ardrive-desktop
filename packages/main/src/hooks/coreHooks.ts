@@ -1,3 +1,4 @@
+import fs from "fs";
 import { BrowserWindow, ipcMain, dialog, shell } from "electron";
 import { Path } from "typescript";
 import {
@@ -146,19 +147,35 @@ export const initialize = (window: BrowserWindow) => {
   );
 
   /**
-  * Updates user's sync directory
-  */
-  ipcMain.handle(
-    "updateUserSyncDir",
-    async (_, syncFolderPath: string, login: string, password: string) => {
-      const user: ArDriveUser = await getUser(password, login);
-      if (user) {
-        user.syncFolderPath = syncFolderPath;
-        // TODO: We need updateUser method
-        await addNewUser(password, user);
-      }
+   * Generate new wallet
+   */
+  ipcMain.handle("createNewWallet", async () => {
+    const date = Number(new Date());
+    const { walletPrivateKey, walletPublicKey } = await generateWallet();
+    const result = await dialog.showSaveDialog({
+      defaultPath: `ardrive-wallet-keys-${date}.json`,
+      filters: [{ name: "Wallet Keys", extensions: ["json"] }],
+    });
+    if (!result.canceled) {
+      const filePath = result.filePath?.toString();
+      fs.writeFile(
+        filePath!,
+        JSON.stringify(
+          {
+            private_key: walletPrivateKey,
+            public_key: walletPublicKey,
+          },
+          null,
+          2
+        ),
+        (err) => {
+          if (err) throw err;
+          console.log("ArDrive:: new wallet generated!!");
+          console.log(`Wallet path:: ${filePath}`);
+        }
+      );
     }
-  );
+  });
 
   ipcMain.handle("fetchFiles", async (_, username: string) => {
     const allFiles = await getAllFilesByLoginFromSyncTable(username);
