@@ -145,6 +145,21 @@ export const initialize = (window: BrowserWindow) => {
     }
   );
 
+  /**
+  * Updates user's sync directory
+  */
+  ipcMain.handle(
+    "updateUserSyncDir",
+    async (_, syncFolderPath: string, login: string, password: string) => {
+      const user: ArDriveUser = await getUser(password, login);
+      if (user) {
+        user.syncFolderPath = syncFolderPath;
+        // TODO: We need updateUser method
+        await addNewUser(password, user);
+      }
+    }
+  );
+
   ipcMain.handle("fetchFiles", async (_, username: string) => {
     const allFiles = await getAllFilesByLoginFromSyncTable(username);
     const currentDate = new Date();

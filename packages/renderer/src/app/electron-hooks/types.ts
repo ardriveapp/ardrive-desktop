@@ -23,6 +23,11 @@ export interface CoreHooks {
     createNew: boolean,
     walletPath?: string
   ): Promise<string>;
+  updateUserSyncDir(
+    syncFolderPath: string,
+    login: string,
+    password: string
+  ): Promise<string>;
   startWatchingFolders(username: string): Promise<void>;
   fetchFiles(username: string): Promise<any[]>;
   stopWatchingFolders(): Promise<void>;
