@@ -6,7 +6,10 @@
             "password": "Password",
             "unlock_button": "Unlock",
             "setup_new_user": "Setup a new user",
-            "need_help": "Need help?"
+            "need_help": "Need help?",
+            "usage_policy": "Usage Policy",
+            "agree_warning": "Please read usage policy and agree with it.",
+            "agree_text": "I Agree with User Policy"
         },
         "create_user": {
             "steps": {
@@ -15,7 +18,9 @@
                     "username": "Username",
                     "password": "Password",
                     "confirm_password": "Confirm Password",
-                    "continue": "Continue"
+                    "continue": "Continue",
+                    "agree_warning": "Please read usage policy and agree with it.",
+                    "agree_text": "I Agree with User Policy"
                 },
                 "second": {
                     "choose_your_wallet": "Choose your wallet",
