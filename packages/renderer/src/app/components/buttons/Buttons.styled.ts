@@ -19,6 +19,7 @@ export const RoundedButton = styled.button`
   border: none;
   padding-left: 20px;
   padding-right: 20px;
+  margin-bottom: 20px;
   cursor: pointer;
 
   &:disabled {
@@ -42,7 +43,7 @@ export const ButtonImage = styled.div`
   }
 `;
 
-export const ButtonWithContent = styled(RoundedButton)<{
+export const ButtonWithContent = styled(RoundedButton) <{
   active?: boolean;
 }>`
   display: flex;

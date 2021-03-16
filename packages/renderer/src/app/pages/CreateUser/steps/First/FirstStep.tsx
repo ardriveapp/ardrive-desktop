@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { AppTextLogo, RoundedButton } from "app/components";
 
 import { CreateUserFormContainer } from "./FirstStep.styled";
+import { PolicyContainer, AgreeText, AgreePolicyCheckBox } from 'app/pages/Login/Login.styled';
 import { useTranslationAt } from "app/utils/hooks";
 import { ArdriveInput } from "app/components/inputs/ArdriveInput";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
@@ -16,6 +17,7 @@ const FirstStep: React.FC<{
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [secondPassword, setSecondPassword] = useState("");
+  const [agreeStatus, setAgree] = useState(false);
 
   const setField = useCallback((setFunction: any) => {
     return (event: any) => {
@@ -24,12 +26,16 @@ const FirstStep: React.FC<{
   }, []);
 
   const continueHandler = useCallback(() => {
+    if (!agreeStatus) {
+      alert(t("agree_warning"));
+      return
+    }
     const passwordEquals =
       password != null && secondPassword != null && password === secondPassword;
     if (username && passwordEquals) {
       onContinue(username, password);
     }
-  }, [password, secondPassword, username, onContinue]);
+  }, [password, secondPassword, username, onContinue, agreeStatus, t]);
 
   return (
     <>
@@ -52,6 +58,10 @@ const FirstStep: React.FC<{
         />
         <RoundedButton onClick={continueHandler}>{t("continue")}</RoundedButton>
       </CreateUserFormContainer>
+      <PolicyContainer>
+        <AgreeText>{t("agree_text")}</AgreeText>
+        <AgreePolicyCheckBox type="checkbox" onChange={() => setAgree(!agreeStatus)} />
+      </PolicyContainer>
     </>
   );
 };
