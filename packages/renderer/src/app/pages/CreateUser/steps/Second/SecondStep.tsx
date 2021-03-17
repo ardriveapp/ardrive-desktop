@@ -13,6 +13,7 @@ import { ArdriveHeader } from "app/components/typography/Headers.styled";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { AppDispatch } from "app/redux";
 import { appActions } from "app/redux/slices/app";
+import { authActions } from "app/redux/slices/auth";
 
 const translationsPath = "pages.create_user.steps.second";
 
@@ -29,6 +30,16 @@ const SecondStep: React.FC<{
     onContinue(false, walletPath);
   }, [dispatch, onContinue]);
 
+  const generateWallet = useCallback(async () => {
+    const wallet = await dispatch(authActions.createNewWalletThunk());
+    console.log("wallet: ", wallet);
+    if (wallet) {
+      onContinue(true);
+    } else {
+      console.log("Something went wrong while creating a wallet");
+    }
+  }, [dispatch]);
+
   return (
     <>
       <ArdriveHeader>{t("choose_your_wallet")}</ArdriveHeader>
@@ -40,7 +51,7 @@ const SecondStep: React.FC<{
         />
       </Description>
       <ButtonsContainer>
-        <ImportWalletButton onClick={() => onContinue(true)}>
+        <ImportWalletButton onClick={generateWallet}>
           {t("create_new")}
         </ImportWalletButton>
         <ImportWalletButton onClick={openFile}>

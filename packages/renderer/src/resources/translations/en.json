@@ -6,7 +6,11 @@
             "password": "Password",
             "unlock_button": "Unlock",
             "setup_new_user": "Setup a new user",
-            "need_help": "Need help?"
+            "need_help": "Need help?",
+            "usage_policy": "ArDrive terms of service and privacy policy",
+            "agree_warning": "Please read usage policy and agree with it.",
+            "agree_text": "I agree to the",
+            "modal_header": "Log in"
         },
         "create_user": {
             "steps": {
@@ -15,7 +19,12 @@
                     "username": "Username",
                     "password": "Password",
                     "confirm_password": "Confirm Password",
-                    "continue": "Continue"
+                    "continue": "Continue",
+                    "agree_warning": "Please read usage policy and agree with it.",
+                    "usage_policy": "ArDrive terms of service and privacy policy",
+                    "agree_text": "I agree to the",
+                    "unmatch_warning": "The confirmation password does not match.",
+                    "helper_text": "Your password can never be changed or recovered. Please keep it safe!"
                 },
                 "second": {
                     "choose_your_wallet": "Choose your wallet",

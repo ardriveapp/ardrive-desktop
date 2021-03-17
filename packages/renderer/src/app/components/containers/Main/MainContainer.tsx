@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -59,6 +59,8 @@ import { withModal } from "app/components/modals/hooks";
 import { TranslationAt } from "app/components/TranslationAt";
 import { FontVariants } from "app/components/typography";
 import { appActions } from "app/redux/slices/app";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { AppDispatch } from "app/redux";
 
 const NewButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
@@ -80,9 +82,16 @@ const NewButtonMenu = () => {
 
 const SettingsButtonMenu = () => {
   const { t } = useTranslationAt("components.mainContainer");
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const user = useSelector(authSelectors.getUser);
+  const { showModal } = useModal();
 
+  const handleClick = () => {
+    showModal("login");
+    if (user != null) {
+      dispatch(authActions.backupWallet(user));
+    }
+  }
   return (
     <SettingsButtonMenuContainer>
       <SettingsButtonMenuHeader>{t("settingsHeader")}</SettingsButtonMenuHeader>
@@ -90,7 +99,7 @@ const SettingsButtonMenu = () => {
         <Lock />
         {t("changeLogin")}
       </SettingsButtonMenuContainerItem>
-      <SettingsButtonMenuContainerItem>
+      <SettingsButtonMenuContainerItem onClick={openFolder}>
         <SyncFolder />
         {t("changeSync")}
       </SettingsButtonMenuContainerItem>
@@ -101,11 +110,12 @@ const SettingsButtonMenu = () => {
         {t("pauseSync")}
       </SettingsButtonMenuContainerItem>
       <SettingsButtonMenuContainerItem
-        onClick={() => {
-          if (user != null) {
-            dispatch(authActions.backupWallet(user));
-          }
-        }}
+        // onClick={() => {
+        //   if (user != null) {
+        //     dispatch(authActions.backupWallet(user));
+        //   }
+        // }}
+        onClick={handleClick}
       >
         <Backup />
         {t("backup")}
