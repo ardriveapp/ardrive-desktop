@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-export type ModalType = "new_drive" | "attach_drive";
+export type ModalType = "new_drive" | "attach_drive" | "login";
 
 interface ModalContext {
   modalVisible: boolean;
@@ -11,8 +11,8 @@ interface ModalContext {
 
 export const AppModalContext = React.createContext<ModalContext>({
   modalVisible: false,
-  showModal: () => {},
-  hideModal: () => {},
+  showModal: () => { },
+  hideModal: () => { },
 });
 
 export const useModal = () => {
