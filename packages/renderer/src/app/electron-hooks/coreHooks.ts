@@ -43,6 +43,9 @@ class CoreHooksImplementation implements CoreHooks {
     );
   }
 
+  async createNewWallet() {
+    await this.ipcRenderer.invoke("createNewWallet");
+  }
   async startWatchingFolders(username: string) {
     await this.ipcRenderer.invoke("startWatchingFolders", username);
   }

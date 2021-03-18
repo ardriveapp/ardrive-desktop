@@ -1,3 +1,4 @@
+import fs from "fs";
 import { BrowserWindow, ipcMain, dialog, shell } from "electron";
 import { Path } from "typescript";
 import {

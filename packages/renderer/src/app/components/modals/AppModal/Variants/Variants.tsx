@@ -10,8 +10,10 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { appSelectors, authSelectors } from "app/redux/selectors";
 import { appActions } from "app/redux/slices/app";
-import { TextLabel } from "./Variants.styled";
+import { TextLabel, LoginFormContainer } from "./Variants.styled";
 import { useEffect } from "react";
+import { UnlockButton } from 'app/pages/Login/Login.styled';
+import { authActions } from "app/redux/slices/auth";
 
 interface ModalProps {
   onClose?(): void;
@@ -184,6 +186,62 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
           {t("attach")}
         </RoundedButton>,
       ]}
+    />
+  );
+};
+
+
+export const LoginModal: React.FC<ModalProps> = ({
+  visible,
+  onClose,
+}) => {
+  const { t } = useTranslationAt("pages.login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const user = useSelector(authSelectors.getUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user != null) {
+      dispatch(appActions.getAllDrives(user));
+    }
+  }, [dispatch, user]);
+
+  const setField = useCallback((setFunction: any) => {
+    return (event: any) => {
+      setFunction(event.currentTarget.value);
+    };
+  }, []);
+
+  const login = useCallback(() => {
+    dispatch(
+      authActions.login({
+        login: username,
+        password,
+      })
+    );
+  }, [dispatch, username, password]);
+
+  return (
+    <AppModalBase
+      onClose={onClose}
+      title={t("modal_header")}
+      visible={visible}
+      body={[
+        <LoginFormContainer>
+          <ArdriveInput
+            placeholder={t("username")}
+            onChange={setField(setUsername)}
+          />
+          <ArdriveInput
+            type="password"
+            placeholder={t("password")}
+            onChange={setField(setPassword)}
+          />
+          <UnlockButton onClick={login}>{t("unlock_button")}</UnlockButton>
+        </LoginFormContainer>
+      ]}
+      footer={[]}
     />
   );
 };

@@ -100,6 +100,14 @@ const SettingsButtonMenu = () => {
     }
   }, [dispatch]);
 
+  const { showModal } = useModal();
+
+  const handleClick = () => {
+    showModal("login");
+    if (user != null) {
+      dispatch(authActions.backupWallet(user));
+    }
+  }
   return (
     <SettingsButtonMenuContainer>
       <SettingsButtonMenuHeader>{t("settingsHeader")}</SettingsButtonMenuHeader>
@@ -118,11 +126,12 @@ const SettingsButtonMenu = () => {
         {t("pauseSync")}
       </SettingsButtonMenuContainerItem>
       <SettingsButtonMenuContainerItem
-        onClick={() => {
-          if (user != null) {
-            dispatch(authActions.backupWallet(user));
-          }
-        }}
+        // onClick={() => {
+        //   if (user != null) {
+        //     dispatch(authActions.backupWallet(user));
+        //   }
+        // }}
+        onClick={handleClick}
       >
         <Backup />
         {t("backup")}

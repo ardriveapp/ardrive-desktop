@@ -28,6 +28,7 @@ export interface CoreHooks {
     login: string,
     password: string
   ): Promise<string>;
+  createNewWallet(): Promise<void>;
   startWatchingFolders(username: string): Promise<void>;
   fetchFiles(username: string): Promise<any[]>;
   stopWatchingFolders(): Promise<void>;
@@ -55,6 +56,7 @@ export interface NativeHooks {
   openCommunityLink(): Promise<void>;
   openHelpLink(): Promise<void>;
   openCustomLink(link?: string): Promise<void>;
+  openUsageLink(): Promise<void>;
 }
 
 export interface ElectronHooks {

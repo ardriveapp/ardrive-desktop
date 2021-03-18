@@ -122,6 +122,10 @@ export const appActions = {
       await electronHooks.native.openCustomLink(link);
     }
   ),
+  openUsageLink: createAsyncThunk("app/openUsageLink", async (_, thunkAPI) => {
+    const electronHooks = thunkAPI.extra as ElectronHooks;
+    await electronHooks.native.openUsageLink();
+  }),
 };
 
 const getFileStatus = (fileDataSyncStatus: number) => {

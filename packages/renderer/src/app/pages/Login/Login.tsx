@@ -10,10 +10,15 @@ import {
   SetupNewUserButton,
   NeedHelpButton,
   LoginFormContainer,
+  AgreePolicyCheckBox,
+  AgreeText,
+  PolicyContainer,
+  UsageLink
 } from "./Login.styled";
 import { ArdriveInput } from "app/components/inputs/ArdriveInput";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
 import { authActions } from "app/redux/slices/auth";
+import { appActions } from "app/redux/slices/app";
 
 export default () => {
   const { t } = useTranslationAt("pages.login");
@@ -21,15 +26,20 @@ export default () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const [agreeStatus, setAgree] = useState(false);
 
   const login = useCallback(() => {
+    if (!agreeStatus) {
+      alert(t("agree_warning"));
+      return
+    }
     dispatch(
       authActions.login({
         login: username,
         password,
       })
     );
-  }, [dispatch, username, password]);
+  }, [dispatch, username, password, agreeStatus, t]);
 
   const setField = useCallback((setFunction: any) => {
     return (event: any) => {
@@ -55,6 +65,13 @@ export default () => {
           placeholder={t("password")}
           onChange={setField(setPassword)}
         />
+        <PolicyContainer>
+          <AgreePolicyCheckBox type="checkbox" onChange={() => setAgree(!agreeStatus)} />
+          <div>
+            <AgreeText>{t("agree_text")}</AgreeText>
+            <UsageLink onClick={() => dispatch(appActions.openUsageLink())}>{t("usage_policy")}</UsageLink>
+          </div>
+        </PolicyContainer>
         <UnlockButton onClick={login}>{t("unlock_button")}</UnlockButton>
       </LoginFormContainer>
       <SetupNewUserButton onClick={createNewUser}>
