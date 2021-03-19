@@ -1,3 +1,4 @@
+import fs from "fs";
 import { BrowserWindow, ipcMain, dialog, shell } from "electron";
 import { Path } from "typescript";
 import {
@@ -14,27 +15,22 @@ import {
   getAllMyPrivateArDriveIds,
   checkUploadStatus,
   getPriceOfNextUploadBatch,
+  uploadArDriveFiles,
   getWalletBalance,
   backupWallet,
   createNewPrivateDrive,
   createNewPublicDrive,
   addSharedPublicDrive,
-  uploadArDriveFilesAndBundles,
 } from "ardrive-core-js";
-import { ArDriveUser, ArFSDriveMetaData, UploadBatch } from "ardrive-core-js/lib/types";
+import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
   addDriveToDriveTable,
   getAllFilesByLoginFromSyncTable,
-  getAllPersonalDrivesByLoginFromDriveTable,
   getDriveFromDriveTable,
-  getProfileLastBlockHeight,
-  setDriveToSync,
-  setProfileWalletBalance,
 } from "ardrive-core-js/lib/db";
 
 import { CancellationToken } from "../types";
 import { generateWallet } from "ardrive-core-js/lib/arweave";
-import { getAllMyPersonalDrives } from "ardrive-core-js/lib/download";
 
 export const initialize = (window: BrowserWindow) => {
   let cancellationToken: CancellationToken;
@@ -66,17 +62,18 @@ export const initialize = (window: BrowserWindow) => {
       const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(
         user.login
       );
-
-      // Get latest wallet balance
-      let balance = await getWalletBalance(user.walletPublicKey);
-      await setProfileWalletBalance(+balance, user.login)
-
       window.webContents.send("notifyUploadStatus", uploadBatch);
-    }, 30000);
+    }, 10000);
   }
 
-  ipcMain.handle("startWatchingFolders", async (_, login: string, password: string) => {
-    const user = await getUser(password, login);
+  async function getAllDrives(user: ArDriveUser) {
+    const publicDrives = await getAllMyPublicArDriveIds(user.walletPublicKey);
+    const privateDrives = await getAllMyPrivateArDriveIds(user);
+    return publicDrives.concat(privateDrives);
+  }
+
+  ipcMain.handle("startWatchingFolders", async (_, login: string) => {
+    const user = await getUserFromProfile(login);
 
     if (user == null) {
       return;
@@ -90,13 +87,14 @@ export const initialize = (window: BrowserWindow) => {
     if (passwordResult) {
       const user = await getUser(password, username);
       const balance = await getWalletBalance(user.walletPublicKey);
+
       return {
-        result: true, user
-        /*user: {
+        result: true,
+        user: {
           login: user.login,
           walletPublicKey: user.walletPublicKey,
           walletBalance: balance,
-        },*/
+        },
       };
     }
     return {
@@ -131,21 +129,35 @@ export const initialize = (window: BrowserWindow) => {
         walletPrivateKey: JSON.stringify(wallet.walletPrivateKey),
         walletPublicKey: wallet.walletPublicKey,
       };
-
       const result = await addNewUser(password, user);
-      user.walletPrivateKey = JSON.stringify(wallet.walletPrivateKey)
-      user.dataProtectionKey = password;
 
       if (result === "Success") {
-        const drives = await getAllMyPersonalDrives(user);
-        // Set all drives to sync by default
-        drives.forEach(async (drive: ArFSDriveMetaData) => {
-          await setDriveToSync(drive.driveId);
-        })
+        const allDrives = await getAllDrives(user);
+        for (const drive of allDrives) {
+          await addDriveToDriveTable({
+            ...drive,
+            login: user.login,
+          });
+        }
         return true;
       }
 
       return false;
+    }
+  );
+
+  /**
+  * Updates user's sync directory
+  */
+  ipcMain.handle(
+    "updateUserSyncDir",
+    async (_, syncFolderPath: string, login: string, password: string) => {
+      const user: ArDriveUser = await getUser(password, login);
+      if (user) {
+        user.syncFolderPath = syncFolderPath;
+        // TODO: We need updateUser method
+        await addNewUser(password, user);
+      }
     }
   );
 
@@ -171,7 +183,7 @@ export const initialize = (window: BrowserWindow) => {
 
   ipcMain.handle("uploadFiles", async (_, login: string, password: string) => {
     const user: ArDriveUser = await getUser(password, login);
-    await uploadArDriveFilesAndBundles(user);
+    await uploadArDriveFiles(user);
   });
 
   ipcMain.handle(
@@ -179,35 +191,19 @@ export const initialize = (window: BrowserWindow) => {
     async (_, login: string, driveType: "public" | "private") => {
       const user = await getUserFromProfile(login);
 
-      // Get the last block height that has been synced
-      let lastBlockHeight = await getProfileLastBlockHeight(user.login)
-      console.log ("Last Block Height: ", lastBlockHeight);
-      // If undefined, by default we sync from block 0
-      if (lastBlockHeight === undefined) {
-        lastBlockHeight = 0;
-      } else {
-        lastBlockHeight = lastBlockHeight.lastBlockHeight;
-      }
-
       switch (driveType) {
         case "private":
-          return await getAllMyPrivateArDriveIds(user, lastBlockHeight);
+          return await getAllMyPrivateArDriveIds(user);
         case "public":
-          return await getAllMyPublicArDriveIds(user.login, user.walletPublicKey, lastBlockHeight);
+          return await getAllMyPublicArDriveIds(user.walletPublicKey);
       }
     }
   );
 
   ipcMain.handle("getAllDrives", async (_, login: string, password: string) => {
     const user: ArDriveUser = await getUser(password, login);
-    const drives = await getAllMyPersonalDrives(user);
-
-    // Set all drives to sync by default
-    drives.forEach(async (drive: ArFSDriveMetaData) => {
-      await setDriveToSync(drive.driveId);
-    })
-
-    return drives.map((drive: any) => ({
+    const drives = await getAllDrives(user);
+    return drives.map((drive) => ({
       id: drive.id,
       driveId: drive.driveId,
       name: drive.driveName,
@@ -223,19 +219,18 @@ export const initialize = (window: BrowserWindow) => {
       driveId: string,
       isShared: boolean = false
     ) => {
-      const user: ArDriveUser = await getUser(password, login);
+      const user = await getUser(password, login);
       if (isShared) {
         await addSharedPublicDrive(user, driveId);
         return;
       }
-      const allDrives = await getAllPersonalDrivesByLoginFromDriveTable(user.login);
-      const drive = allDrives.find((drive: any) => drive.driveId === driveId);
+      const allDrives = await getAllDrives(user);
+      const drive = allDrives.find((drive) => drive.driveId === driveId);
       if (drive != null) {
         await addDriveToDriveTable({
           ...drive,
           login: user.login,
         });
-        await setDriveToSync(drive.driveId);
         await startWatcher(user);
       }
     }

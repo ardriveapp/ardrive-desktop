@@ -4,7 +4,7 @@ import createElectronStorage from "redux-persist-electron-storage";
 
 import { ElectronHooks } from "app/electron-hooks/types";
 
-import { AppUser, AuthState, CreateUserArgs, LoginStartArgs } from "../types";
+import { AppUser, AuthState, CreateUserArgs, LoginStartArgs, UpdateUserSyncDirArgs } from "../types";
 import { withPayloadType } from "app/utils";
 
 const initialState: AuthState = {
@@ -56,6 +56,17 @@ export const authActions = {
         syncFolderPath,
         createNew,
         walletPath
+      );
+    }
+  ),
+  updateUserSyncDirThunk: createAsyncThunk<void, UpdateUserSyncDirArgs>(
+    "auth/updateUserSyncDirThunk",
+    async (payload, thunkAPI) => {
+      const electronHooks = thunkAPI.extra as ElectronHooks;
+      await electronHooks.core.updateUserSyncDir(
+        payload.syncFolderPath,
+        payload.login,
+        payload.password
       );
     }
   ),

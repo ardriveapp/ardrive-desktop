@@ -42,3 +42,38 @@ export const NeedHelpButton = styled.button`
 
   color: rgba(0, 6, 10, 0.6);
 `;
+export const UsageLink = styled.span`
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  text-decoration: underline;
+
+  font-family: "Open Sans";
+  font-style: normal;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+`;
+
+export const AgreePolicyCheckBox = styled.input`
+  width: 30px;
+  height: 30px;
+  margin: auto;
+  margin-right: 30px;
+`
+
+export const PolicyContainer = styled.div`
+  display: flex;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+`
+export const AgreeText = styled.span`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  margin-right: 10px;
+`
