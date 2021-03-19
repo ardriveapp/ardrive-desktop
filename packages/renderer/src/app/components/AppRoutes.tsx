@@ -22,6 +22,7 @@ const prepareRoutes = (routes: RouteProps[]) =>
 export const AppRoutes = () => {
   const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
   const isFirstLaunch = useSelector(authSelectors.getIsFirstLaunch);
+  const user = useSelector(authSelectors.getUser);
   const dispatch = useDispatch();
 
   const routes = useMemo(() => {
@@ -29,13 +30,20 @@ export const AppRoutes = () => {
       dispatch(appActions.changeWindowSize("desktop"));
       return prepareRoutes(WelcomeRoutes);
     }
+    if (!user) {
+      dispatch(appActions.changeWindowSize("desktop"));
+      return <>
+        <Redirect to="/create-user" />
+        {prepareRoutes(LoginRoutes)}
+      </>
+    }
     if (!isLoggedIn) {
       dispatch(appActions.changeWindowSize("desktop"));
       return prepareRoutes(LoginRoutes);
     }
     dispatch(appActions.changeWindowSize("mobile"));
     return prepareRoutes(HomeRoutes);
-  }, [isLoggedIn, isFirstLaunch, dispatch]);
+  }, [isLoggedIn, isFirstLaunch, dispatch, user]);
 
   return (
     <HashRouter>

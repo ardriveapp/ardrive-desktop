@@ -8,4 +8,5 @@ export const ArdriveHeader = styled.span`
   text-align: center;
   letter-spacing: 2px;
   text-transform: uppercase;
+  margin-top: 40px;
 `;

@@ -11,3 +11,7 @@ export const TextLabel = styled.div`
   width: 100%;
   text-align: center;
 `;
+
+export const LoginFormContainer = styled.div`
+  width: 100%;
+`;

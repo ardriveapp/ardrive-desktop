@@ -23,7 +23,13 @@ export interface CoreHooks {
     createNew: boolean,
     walletPath?: string
   ): Promise<string>;
-  startWatchingFolders(username: string, password: string): Promise<void>;
+  updateUserSyncDir(
+    syncFolderPath: string,
+    login: string,
+    password: string
+  ): Promise<string>;
+  createNewWallet(): Promise<void>;
+  startWatchingFolders(username: string): Promise<void>;
   fetchFiles(username: string): Promise<any[]>;
   stopWatchingFolders(): Promise<void>;
   uploadFiles(login: string, password: string): Promise<void>;
@@ -50,6 +56,7 @@ export interface NativeHooks {
   openCommunityLink(): Promise<void>;
   openHelpLink(): Promise<void>;
   openCustomLink(link?: string): Promise<void>;
+  openUsageLink(): Promise<void>;
 }
 
 export interface ElectronHooks {
