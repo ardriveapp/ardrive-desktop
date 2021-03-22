@@ -58,3 +58,9 @@ export type CreateUserArgs = {
   createNew: boolean;
   walletPath?: string;
 };
+
+export type UpdateUserSyncDirArgs = {
+  syncFolderPath: string;
+  login: string;
+  password: string;
+};

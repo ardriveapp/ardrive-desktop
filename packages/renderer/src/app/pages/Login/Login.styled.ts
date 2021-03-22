@@ -42,3 +42,20 @@ export const NeedHelpButton = styled.button`
 
   color: rgba(0, 6, 10, 0.6);
 `;
+
+export const AgreePolicyCheckBox = styled.input`
+  margin: auto;
+`
+
+export const PolicyContainer = styled.div`
+  display: flex;
+`
+export const AgreeText = styled.span`
+  font-family: "Open Sans";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  margin-right: 10px;
+`

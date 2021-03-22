@@ -17,3 +17,5 @@ export const CommunityLink =
   "https://community.xyz/#-8A6RexFkpfWwuyVO98wzSFZh0d6VJuI-buTJvlwOJQ";
 
 export const HelpLink = "https://ardrive.io/";
+
+export const UsageLink = "https://ardrive.io/tos-and-privacy/";

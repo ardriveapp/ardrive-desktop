@@ -1,6 +1,6 @@
 import { ipcMain, dialog, BrowserWindow, shell } from "electron";
 
-import { CommunityLink, HelpLink, Sizes } from "../config";
+import { CommunityLink, HelpLink, UsageLink, Sizes } from "../config";
 import { WindowType } from "../types";
 
 export const initialize = (window: BrowserWindow) => {
@@ -37,6 +37,10 @@ export const initialize = (window: BrowserWindow) => {
 
   ipcMain.handle("openHelpLink", async (_) => {
     await shell.openExternal(HelpLink);
+  });
+
+  ipcMain.handle("openUsageLink", async (_) => {
+    await shell.openExternal(UsageLink);
   });
 
   ipcMain.handle("openCustomLink", async (_, link: string) => {
