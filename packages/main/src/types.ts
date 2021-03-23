@@ -1,20 +1,20 @@
 export type WindowType = "desktop" | "mobile";
 
 export type WindowSize = {
-  [type in WindowType]: {
-    height: number;
-    width: number;
-  };
+	[type in WindowType]: {
+		height: number;
+		width: number;
+	};
 };
 
 export class CancellationToken {
-  isCancelled: boolean;
+	isCancelled: boolean;
 
-  constructor() {
-    this.isCancelled = false;
-  }
+	constructor() {
+		this.isCancelled = false;
+	}
 
-  cancel() {
-    this.isCancelled = true;
-  }
+	cancel() {
+		this.isCancelled = true;
+	}
 }

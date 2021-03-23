@@ -6,28 +6,28 @@ import { initializeHooks } from "./hooks";
 import { Sizes, DbName } from "./config";
 
 const startApplication = async () => {
-  await setupDatabase(`./${DbName}`);
+	await setupDatabase(`./${DbName}`);
 
-  const window = new BrowserWindow({
-    ...Sizes["desktop"],
-    icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
-    title: "ArDrive",
-    resizable: false,
-    webPreferences: {
-      nodeIntegration: true,
-      enableRemoteModule: true,
-      webSecurity: false,
-    },
-  });
-  window.setMenuBarVisibility(false);
+	const window = new BrowserWindow({
+		...Sizes["desktop"],
+		icon: isDev ? `${__dirname}/../assets/icon.png` : undefined,
+		title: "ArDrive",
+		resizable: false,
+		webPreferences: {
+			nodeIntegration: true,
+			enableRemoteModule: true,
+			webSecurity: false,
+		},
+	});
+	window.setMenuBarVisibility(false);
 
-  if (isDev) {
-    window.loadURL("http://localhost:3000");
-  } else {
-    window.loadFile(`${__dirname}/renderer/index.html`);
-  }
+	if (isDev) {
+		window.loadURL("http://localhost:3000");
+	} else {
+		window.loadFile(`${__dirname}/renderer/index.html`);
+	}
 
-  initializeHooks([window], [window]);
+	initializeHooks([window], [window]);
 };
 
 app.on("ready", startApplication);

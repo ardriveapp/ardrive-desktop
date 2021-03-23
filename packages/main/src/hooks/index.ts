@@ -5,9 +5,9 @@ type CoreArguments = Parameters<typeof initializeCoreHooks>;
 type NativeArguments = Parameters<typeof initializeNativeHooks>;
 
 export const initializeHooks = (
-  coreArgs: CoreArguments,
-  nativeArgs: NativeArguments
+	coreArgs: CoreArguments,
+	nativeArgs: NativeArguments
 ) => {
-  initializeCoreHooks(...coreArgs);
-  initializeNativeHooks(...nativeArgs);
+	initializeCoreHooks(...coreArgs);
+	initializeNativeHooks(...nativeArgs);
 };
