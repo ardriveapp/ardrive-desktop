@@ -1,64 +1,64 @@
 import styled from "styled-components";
 
 export const RoundedButton = styled.button`
-  background: ${(props) => props.theme.colors.red};
-  border-radius: 4px;
-  width: 100%;
-  height: 64px;
+	background: ${(props) => props.theme.colors.red};
+	border-radius: 4px;
+	width: 100%;
+	height: 64px;
 
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 16px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+	font-family: "Montserrat";
+	font-style: normal;
+	font-weight: bold;
+	font-size: 20px;
+	line-height: 16px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
 
-  color: white;
-  outline: none;
-  border: none;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-bottom: 20px;
-  cursor: pointer;
+	color: white;
+	outline: none;
+	border: none;
+	padding-left: 20px;
+	padding-right: 20px;
+	margin-bottom: 20px;
+	cursor: pointer;
 
-  &:disabled {
-    cursor: default;
-    background-color: #a4a4a4;
-  }
+	&:disabled {
+		cursor: default;
+		background-color: #a4a4a4;
+	}
 `;
 
 export const ButtonImage = styled.div`
-  height: 24px;
-  width: 24px;
-  margin-right: 16px;
+	height: 24px;
+	width: 24px;
+	margin-right: 16px;
 
-  & > svg {
-    fill: white;
-    opacity: 1;
+	& > svg {
+		fill: white;
+		opacity: 1;
 
-    & > path {
-      opacity: 1;
-    }
-  }
+		& > path {
+			opacity: 1;
+		}
+	}
 `;
 
 export const ButtonWithContent = styled(RoundedButton) <{
-  active?: boolean;
+	active?: boolean;
 }>`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 233px;
-  height: 56px;
-  font-size: 16px;
-  line-height: 16px;
-  margin-bottom: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 233px;
+	height: 56px;
+	font-size: 16px;
+	line-height: 16px;
+	margin-bottom: 36px;
 `;
 
 export const TransparentButtonWithContent = styled(ButtonWithContent)`
-  background-color: transparent;
-  text-transform: capitalize;
-  opacity: ${(props) => (props.active ? "1" : "0.6")};
-  margin-bottom: 0;
+	background-color: transparent;
+	text-transform: capitalize;
+	opacity: ${(props) => (props.active ? "1" : "0.6")};
+	margin-bottom: 0;
 `;

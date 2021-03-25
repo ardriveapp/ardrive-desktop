@@ -9,39 +9,39 @@ import electronHooks from "../electron-hooks";
 
 const hooks = electronHooks();
 const sagaMiddleware = createSagaMiddleware({
-  context: {
-    electronHooks: hooks,
-  },
+	context: {
+		electronHooks: hooks,
+	},
 });
 
 const persistConfig = {
-  key: "root",
-  storage: createElectronStorage(),
-  blacklist: ["app", "auth"],
+	key: "root",
+	storage: createElectronStorage(),
+	blacklist: ["app", "auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer,
-  enhancers: (defaultEnhancers) => [
-    applyMiddleware(hooks.middleware),
-    applyMiddleware(sagaMiddleware),
-    ...defaultEnhancers,
-  ],
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      thunk: {
-        extraArgument: hooks,
-      },
-      serializableCheck: {
-        ignoredActions: ["persist/PERSIST"],
-      },
-    }),
+	reducer: persistedReducer,
+	enhancers: (defaultEnhancers) => [
+		applyMiddleware(hooks.middleware),
+		applyMiddleware(sagaMiddleware),
+		...defaultEnhancers,
+	],
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			thunk: {
+				extraArgument: hooks,
+			},
+			serializableCheck: {
+				ignoredActions: ["persist/PERSIST"],
+			},
+		}),
 });
 
 export type AppDispatch = typeof store.dispatch;
 
 export const persistor = persistStore(store, null, () =>
-  sagaMiddleware.run(rootSaga)
+	sagaMiddleware.run(rootSaga)
 );

@@ -1,140 +1,147 @@
 {
-    "pages": {
-        "login": {
-            "login": "Log In",
-            "username": "Username",
-            "password": "Password",
-            "unlock_button": "Unlock",
-            "setup_new_user": "Setup a new user",
-            "need_help": "Need help?",
-            "modal_header": "Log in"
-        },
-        "create_user": {
-            "steps": {
-                "first": {
-                    "create_account": "Create account",
-                    "username": "Username",
-                    "password": "Password",
-                    "confirm_password": "Confirm Password",
-                    "continue": "Continue",
-                    "agree_warning": "Please read usage policy and agree with it.",
-                    "agree_text": "I Agree with User Policy"
-                },
-                "second": {
-                    "choose_your_wallet": "Choose your wallet",
-                    "create_new": "Create new",
-                    "import_existing": "Import existing",
-                    "wallet_description": "The Arweave wallet used for ArDrive is the key to unlock all your private data.\n\n<0>Keep it secret, keep it safe!</0>"
-                },
-                "third": {
-                    "select_sync_folder": "Select sync folder",
-                    "lets_go": "Lets go!",
-                    "your_path": "Your path to the\n<0>PermaWeb</0>",
-                    "path_description": "Pick a local folder to synchronize your Public and Private Drives.\n\nAny files dropped into your local Drives will be uploaded after your approval."
-                }
-            }
-        },
-        "welcome": {
-            "steps": {
-                "first": {
-                    "welcome_to": "Welcome to",
-                    "description": "Your private and secure, decentralized, pay-as-you-go, censorship-resistant and <0>permanent</0> hard drive",
-                    "jump_in": "Jump In"
-                },
-                "second": {
-                    "next": "next",
-                    "back": "back",
-                    "substeps": {
-                        "0": {
-                            "title": "Welcome to The Permaweb",
-                            "description": "ArDrive isn’t just another cloud sync app.  It’s the beginning of a permanent hard drive.\n\nAny files you upload here will outlive you!\n\nThat also means we do a few things differently."
-                        },
-                        "1": {
-                            "title": "Pay per file",
-                            "description": "No subscriptions are needed!\n\nInstead of another monthly charge for empty space you don’t use, pay a few cents once and store your files forever on ArDrive."
-                        },
-                        "2": {
-                            "title": "Seconds from Forever",
-                            "description": "Decentralized, permanent data storage doesn’t happen in an instant.\n\nWhen the green checkmark appears next to your file, it has been uploaded to the PermaWeb."
-                        },
-                        "3": {
-                            "title": "Total Privacy Control",
-                            "description": "Your choice: make files public or private using the best encryption.\n\nNo one will see what you don’t want them to."
-                        },
-                        "4": {
-                            "title": "Never Deleted",
-                            "description": "Remember: There is no delete button (for you or us)!\n\nOnce uploaded, your data can’t be removed.\n\nThink twice before uploading all your teenage love poetry..."
-                        }
-                    }
-                }
-            }
-        },
-        "privateDrive": {
-            "header": "Private Drive"
-        }
-    },
-    "components": {
-        "sidebar": {
-            "create_new": "Create new",
-            "uploads": "Uploads",
-            "personal": "Personal drive",
-            "public": "Public drive",
-            "shared": "Shared drives",
-            "help": "Need help?",
-            "drives": "Personal Drives"
-        },
-        "fileList": {
-            "emptyDescription": " This place looks empty... Upload some files with the \"Create New\" button",
-            "fileName": "File Name",
-            "lastModified": "Last Modified Date",
-            "fileSize": "File Size",
-            "uploadedFrom": "Uploaded from {{from}} {{date}}",
-            "downloadedFrom": "Downloaded to {{from}} {{date}}",
-            "syncing": "Syncing with {{from}} {{date}}",
-            "id": "ID",
-            "owner": "Owner",
-            "location": "Location",
-            "modified": "Modified"
-        },
-        "detailsSidebar": {
-            "details": "Details",
-            "activity": "Activity"
-        },
-        "modals": {
-            "newDrive": {
-                "header": "New Drive",
-                "cancel": "Cancel",
-                "create": "Create",
-                "driveName": "Drive name",
-                "driveType": "Select drive type",
-                "public": "Public",
-                "private": "Private"
-            },
-            "attachDrive": {
-                "header": "Attach Drive",
-                "cancel": "Cancel",
-                "attach": "Attach",
-                "sharedDriveId": "Shared drive ID",
-                "personalDrive": "Select personal drive",
-                "or": "Or"
-            }
-        },
-        "mainContainer": {
-            "new": "New",
-            "localDrive": "Local drive",
-            "settings": "Settings",
-            "newDrive": "New Drive",
-            "attachDrive": "Attach Drive",
-            "changeLogin": "Change login & password",
-            "changeSync": "Change sync folder",
-            "pauseSync": "Pause syncing",
-            "backup": "Backup Arweave wallet",
-            "settingsHeader": "Settings",
-            "uploadNotification": "{{filesCount}} file ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
-            "uploadNotification_plural": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
-            "yes": "Yes",
-            "no": "No",
-            "syncingText": "Your ArDrive Is Synced seems off..."
-        }
-    }
+	"pages": {
+		"login": {
+			"login": "Log In",
+			"username": "Username",
+			"password": "Password",
+			"unlock_button": "Unlock",
+			"setup_new_user": "Setup a new user",
+			"need_help": "Need help?",
+			"usage_policy": "ArDrive terms of service and privacy policy",
+			"agree_warning": "Please read usage policy and agree with it.",
+			"agree_text": "I agree to the",
+			"modal_header": "Log in"
+		},
+		"create_user": {
+			"steps": {
+				"first": {
+					"create_account": "Create account",
+					"username": "Username",
+					"password": "Password",
+					"confirm_password": "Confirm Password",
+					"continue": "Continue",
+					"agree_warning": "Please read usage policy and agree with it.",
+					"usage_policy": "ArDrive terms of service and privacy policy",
+					"agree_text": "I agree to the",
+					"unmatch_warning": "The confirmation password does not match.",
+					"helper_text": "Your password can never be changed or recovered. Please keep it safe!",
+					"duplicated_error": "User exists already!"
+				},
+				"second": {
+					"choose_your_wallet": "Choose your wallet",
+					"create_new": "Create new",
+					"import_existing": "Import existing",
+					"wallet_description": "The Arweave wallet used for ArDrive is the key to unlock all your private data.\n\n<0>Keep it secret, keep it safe!</0>"
+				},
+				"third": {
+					"select_sync_folder": "Select sync folder",
+					"lets_go": "Lets go!",
+					"your_path": "Your path to the\n<0>PermaWeb</0>",
+					"path_description": "Pick a local folder to synchronize your Public and Private Drives.\n\nAny files dropped into your local Drives will be uploaded after your approval."
+				}
+			}
+		},
+		"welcome": {
+			"steps": {
+				"first": {
+					"welcome_to": "Welcome to",
+					"description": "Your private and secure, decentralized, pay-as-you-go, censorship-resistant and <0>permanent</0> hard drive",
+					"jump_in": "Jump In"
+				},
+				"second": {
+					"next": "next",
+					"back": "back",
+					"substeps": {
+						"0": {
+							"title": "Welcome to The Permaweb",
+							"description": "ArDrive isn’t just another cloud sync app.  It’s the beginning of a permanent hard drive.\n\nAny files you upload here will outlive you!\n\nThat also means we do a few things differently."
+						},
+						"1": {
+							"title": "Pay per file",
+							"description": "No subscriptions are needed!\n\nInstead of another monthly charge for empty space you don’t use, pay a few cents once and store your files forever on ArDrive."
+						},
+						"2": {
+							"title": "Seconds from Forever",
+							"description": "Decentralized, permanent data storage doesn’t happen in an instant.\n\nWhen the green checkmark appears next to your file, it has been uploaded to the PermaWeb."
+						},
+						"3": {
+							"title": "Total Privacy Control",
+							"description": "Your choice: make files public or private using the best encryption.\n\nNo one will see what you don’t want them to."
+						},
+						"4": {
+							"title": "Never Deleted",
+							"description": "Remember: There is no delete button (for you or us)!\n\nOnce uploaded, your data can’t be removed.\n\nThink twice before uploading all your teenage love poetry..."
+						}
+					}
+				}
+			}
+		},
+		"privateDrive": {
+			"header": "Private Drive"
+		}
+	},
+	"components": {
+		"sidebar": {
+			"create_new": "Create new",
+			"uploads": "Uploads",
+			"personal": "Personal drive",
+			"public": "Public drive",
+			"shared": "Shared drives",
+			"help": "Need help?",
+			"drives": "Personal Drives"
+		},
+		"fileList": {
+			"emptyDescription": " This place looks empty... Upload some files with the \"Create New\" button",
+			"fileName": "File Name",
+			"lastModified": "Last Modified Date",
+			"fileSize": "File Size",
+			"uploadedFrom": "Uploaded from {{from}} {{date}}",
+			"downloadedFrom": "Downloaded to {{from}} {{date}}",
+			"syncing": "Syncing with {{from}} {{date}}",
+			"id": "ID",
+			"owner": "Owner",
+			"location": "Location",
+			"modified": "Modified"
+		},
+		"detailsSidebar": {
+			"details": "Details",
+			"activity": "Activity"
+		},
+		"modals": {
+			"newDrive": {
+				"header": "New Drive",
+				"cancel": "Cancel",
+				"create": "Create",
+				"driveName": "Drive name",
+				"driveType": "Select drive type",
+				"public": "Public",
+				"private": "Private"
+			},
+			"attachDrive": {
+				"header": "Attach Drive",
+				"cancel": "Cancel",
+				"attach": "Attach",
+				"sharedDriveId": "Shared drive ID",
+				"personalDrive": "Select personal drive",
+				"or": "Or"
+			}
+		},
+		"mainContainer": {
+			"new": "New",
+			"localDrive": "Local drive",
+			"settings": "Settings",
+			"newDrive": "New Drive",
+			"attachDrive": "Attach Drive",
+			"changeLogin": "Change login & password",
+			"changeSync": "Change sync folder",
+			"pauseSync": "Pause syncing",
+			"backup": "Backup Arweave wallet",
+			"settingsHeader": "Settings",
+			"uploadNotification": "{{filesCount}} file ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
+			"uploadNotification_plural": "{{filesCount}} files ({{totalSize}}) ready to upload\nTotal Price: <0>{{totalPrice}} AR</0>",
+			"yes": "Yes",
+			"no": "No",
+			"syncingText": "Your ArDrive Is Synced seems off..."
+		}
+	}
 }
