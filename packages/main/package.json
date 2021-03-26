@@ -34,7 +34,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "ardrive-core-js": "0.2.31",
+    "ardrive-core-js": "^0.2.31",
     "electron-is-dev": "^1.2.0"
   }
 }
