@@ -1,7 +1,6 @@
 # Logs
 logs
 *.log
-npm-debug.log.*
 
 # Runtime data
 pids
@@ -49,22 +48,9 @@ main.js.map
 Backup
 Sync
 
-#Compiled CSS
+.idea
+npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
-
-#Yarn
-#https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-#zero installs
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Misc
-.idea
 *.db
