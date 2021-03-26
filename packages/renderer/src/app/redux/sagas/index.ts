@@ -4,5 +4,5 @@ import appSaga from "./app";
 import authSaga from "./auth";
 
 export default function* () {
-  yield all([appSaga(), authSaga()]);
+	yield all([appSaga(), authSaga()]);
 }
