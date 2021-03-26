@@ -22,5 +22,5 @@ export default {
 	getIsFirstLaunch,
 	getUser,
 	getIsSyncing,
-	getIsDuplicated
+	getIsDuplicated,
 };

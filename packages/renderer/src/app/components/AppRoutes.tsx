@@ -8,7 +8,7 @@ import {
 	Switch,
 } from "react-router-dom";
 
-import { authSelectors } from "app/redux/selectors";
+import { authSelectors, appSelectors } from "app/redux/selectors";
 import {
 	HomeRoutes,
 	LoginRoutes,
@@ -22,15 +22,17 @@ const prepareRoutes = (routes: RouteProps[]) =>
 export const AppRoutes = () => {
 	const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
 	const isFirstLaunch = useSelector(authSelectors.getIsFirstLaunch);
-	const user = useSelector(authSelectors.getUser);
+	const users = useSelector(appSelectors.getAllUsers);
 	const dispatch = useDispatch();
 
 	const routes = useMemo(() => {
+
+		dispatch(appActions.getAllUsers());
 		if (isFirstLaunch && !isLoggedIn) {
 			dispatch(appActions.changeWindowSize("desktop"));
 			return prepareRoutes(WelcomeRoutes);
 		}
-		if (!user) {
+		if (!users) {
 			dispatch(appActions.changeWindowSize("desktop"));
 			return <>
 				<Redirect to="/create-user" />
@@ -39,11 +41,14 @@ export const AppRoutes = () => {
 		}
 		if (!isLoggedIn) {
 			dispatch(appActions.changeWindowSize("desktop"));
-			return prepareRoutes(LoginRoutes);
+			return <>
+				<Redirect to="/" />
+				{prepareRoutes(LoginRoutes)};
+			</>
 		}
 		dispatch(appActions.changeWindowSize("mobile"));
 		return prepareRoutes(HomeRoutes);
-	}, [isLoggedIn, isFirstLaunch, dispatch, user]);
+	}, [isLoggedIn, isFirstLaunch, dispatch, users]);
 
 	return (
 		<HashRouter>

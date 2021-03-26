@@ -84,6 +84,7 @@ const SettingsButtonMenu = () => {
 	const { t } = useTranslationAt("components.mainContainer");
 	const dispatch: AppDispatch = useDispatch();
 	const user = useSelector(authSelectors.getUser);
+	const { showModal } = useModal();
 
 	const openFolder = useCallback(async () => {
 		const result = await dispatch(appActions.openFolder());
@@ -99,6 +100,10 @@ const SettingsButtonMenu = () => {
 			);
 		}
 	}, [dispatch, user]);
+
+	const handleClick = () => {
+		showModal("login");
+	}
 
 	return (
 		<SettingsButtonMenuContainer>
@@ -118,11 +123,7 @@ const SettingsButtonMenu = () => {
 				{t("pauseSync")}
 			</SettingsButtonMenuContainerItem>
 			<SettingsButtonMenuContainerItem
-				onClick={() => {
-					if (user != null) {
-						dispatch(authActions.backupWallet(user));
-					}
-				}}
+				onClick={handleClick}
 			>
 				<Backup />
 				{t("backup")}

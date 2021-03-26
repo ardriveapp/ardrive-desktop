@@ -124,6 +124,13 @@
 				"sharedDriveId": "Shared drive ID",
 				"personalDrive": "Select personal drive",
 				"or": "Or"
+			},
+			"loginDrive": {
+				"header": "Log In",
+				"cancel": "Cancel",
+				"login": "LogIn",
+				"username": "Username",
+				"password": "Password"
 			}
 		},
 		"mainContainer": {

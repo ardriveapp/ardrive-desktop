@@ -99,6 +99,9 @@ class CoreHooksImplementation implements CoreHooks {
 			isShared
 		);
 	}
+	async getAllUsers() {
+		return await this.ipcRenderer.invoke("getAllUsers");
+	}
 }
 
 export default CoreHooksImplementation;

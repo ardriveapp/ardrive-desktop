@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 
 import { useTranslationAt } from "app/utils/hooks";
 
-import { ButtonWithIcon, RoundedButton } from "app/components/buttons";
+import { ButtonWithIcon, RoundedButton, ButtonsContainer, LoginButton } from "app/components/buttons";
 import { AppModalBase } from "../AppModal";
 import { ArdriveInput } from "app/components/inputs";
 import { ArdriveSelect } from "app/components/inputs/ArdriveSelect";
@@ -10,8 +10,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { appSelectors, authSelectors } from "app/redux/selectors";
 import { appActions } from "app/redux/slices/app";
+import { authActions } from "app/redux/slices/auth";
 import { TextLabel } from "./Variants.styled";
-import { useEffect } from "react";
 
 interface ModalProps {
 	onClose?(): void;
@@ -183,6 +183,68 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
 				>
 					{t("attach")}
 				</RoundedButton>,
+			]}
+		/>
+	);
+};
+export const LoginModal: React.FC<ModalProps> = ({ visible, onClose }) => {
+	const { t } = useTranslationAt("components.modals.loginDrive");
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const isFilled = useMemo(() => username !== "" && password !== "", [
+		username,
+		password,
+	]);
+	const user = useSelector(authSelectors.getUser);
+
+	const dispatch = useDispatch();
+	const login = useCallback(async () => {
+		await dispatch(
+			authActions.login({
+				login: username,
+				password,
+			})
+		);
+		if (onClose != null) {
+			onClose();
+			if (user != null) {
+				dispatch(authActions.backupWallet(user));
+			}
+		}
+	}, [dispatch, username, password, onClose, user]);
+
+	return (
+		<AppModalBase
+			onClose={onClose}
+			title={t("header")}
+			visible={visible}
+			body={[
+				<ArdriveInput
+					placeholder={t("username")}
+					onChange={e => setUsername(e.currentTarget.value)}
+					hideIcon
+				/>,
+				<ArdriveInput
+					type="password"
+					onChange={(e) => setPassword(e.currentTarget.value)}
+					placeholder={t("password")}
+					hideIcon
+				/>
+			]}
+			footer={[
+				<ButtonsContainer>
+					<LoginButton
+						onClick={onClose}
+					>
+						{t("cancel")}
+					</LoginButton>
+					<LoginButton
+						onClick={login}
+						disabled={!isFilled}
+					>
+						{t("login")}
+					</LoginButton>,
+				</ButtonsContainer>
 			]}
 		/>
 	);

@@ -13,4 +13,6 @@ const getUploadNotification = createSelector(
 
 const getAllDrives = createSelector(getAppState, (app) => app.drives);
 
-export default { getAppState, getFiles, getUploadNotification, getAllDrives };
+const getAllUsers = createSelector(getAppState, (app) => app.users);
+
+export default { getAppState, getFiles, getUploadNotification, getAllDrives, getAllUsers };

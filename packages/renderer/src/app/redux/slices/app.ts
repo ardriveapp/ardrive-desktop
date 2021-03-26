@@ -8,6 +8,7 @@ import { authActions } from "./auth";
 const initialState: AppState = {
 	files: [],
 	drives: [],
+	users: 0,
 	uploadNotification: undefined,
 };
 
@@ -126,6 +127,10 @@ export const appActions = {
 		const electronHooks = thunkAPI.extra as ElectronHooks;
 		await electronHooks.native.openUsageLink();
 	}),
+	getAllUsers: createAsyncThunk("app/getAllUsers", async (_, thunkAPI) => {
+		const electronHooks = thunkAPI.extra as ElectronHooks;
+		return await electronHooks.core.getAllUsers();
+	})
 };
 const getFileStatus = (fileDataSyncStatus: number) => {
 	if (fileDataSyncStatus === 1) {
@@ -161,6 +166,9 @@ const appSlice = createSlice({
 		builder.addCase(appActions.addUploadNotification, (state, action) => {
 			state.uploadNotification = action.payload;
 		});
+		builder.addCase(appActions.getAllUsers.fulfilled, (state, action) => {
+			state.users = action.payload;
+		})
 		builder.addCase(appActions.getAllDrives.fulfilled, (state, action) => {
 			state.drives = action.payload;
 		});

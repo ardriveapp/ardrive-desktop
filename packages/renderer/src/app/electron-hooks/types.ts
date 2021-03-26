@@ -48,6 +48,7 @@ export interface CoreHooks {
 		driveId: string,
 		isShared: boolean
 	): Promise<void>;
+	getAllUsers(): Promise<Number>;
 }
 
 export interface NativeHooks {

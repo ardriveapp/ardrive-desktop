@@ -1,5 +1,11 @@
 import styled from "styled-components";
 
+export const ButtonsContainer = styled.div`
+	width: 100%;
+	justify-content: space-between;
+	display: flex;
+`
+
 export const RoundedButton = styled.button`
 	background: ${(props) => props.theme.colors.red};
 	border-radius: 4px;
@@ -19,7 +25,7 @@ export const RoundedButton = styled.button`
 	border: none;
 	padding-left: 20px;
 	padding-right: 20px;
-	margin-bottom: 20px;
+	margin: auto;
 	cursor: pointer;
 
 	&:disabled {
@@ -43,6 +49,12 @@ export const ButtonImage = styled.div`
 	}
 `;
 
+export const LoginButton = styled(RoundedButton)`
+	width: 45%;
+	height: 50px;
+	padding: 10px;
+	font-size: 16px;
+`
 export const ButtonWithContent = styled(RoundedButton) <{
 	active?: boolean;
 }>`

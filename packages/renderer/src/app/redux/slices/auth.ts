@@ -120,9 +120,7 @@ const authSlice = createSlice({
 			}
 		});
 		builder.addCase(authActions.checkDuplicatedUserThunk.fulfilled, (state, action) => {
-			if (action.payload) {
-				state.isDuplicated = true;
-			}
+			state.isDuplicated = action.payload;
 		})
 		builder.addCase(authActions.logout.fulfilled, (state, _) => {
 			state.isLoggedIn = false;

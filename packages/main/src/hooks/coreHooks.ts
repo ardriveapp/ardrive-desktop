@@ -27,6 +27,7 @@ import {
 	addDriveToDriveTable,
 	getAllFilesByLoginFromSyncTable,
 	getDriveFromDriveTable,
+	getAllFromProfile,
 } from "ardrive-core-js/lib/db";
 
 import { CancellationToken } from "../types";
@@ -152,10 +153,10 @@ export const initialize = (window: BrowserWindow) => {
 			username
 		) => {
 			const user = await getUserFromProfile(username);
-			if (user?.login === username) {
-				return true;
+			if (user === undefined) {
+				return false;
 			}
-			return false;
+			return true;
 		}
 	)
 	/**
@@ -318,4 +319,12 @@ export const initialize = (window: BrowserWindow) => {
 			await startWatcher(user);
 		}
 	);
+
+	ipcMain.handle(
+		"getAllUsers",
+		async (_) => {
+			const users = await getAllFromProfile();
+			return users.length;
+		}
+	)
 };

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-export type ModalType = "new_drive" | "attach_drive";
+export type ModalType = "new_drive" | "attach_drive" | "login";
 
 interface ModalContext {
 	modalVisible: boolean;
