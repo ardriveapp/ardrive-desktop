@@ -57,8 +57,5 @@
     "npm": ">=4.x",
     "yarn": ">=0.21.3"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": []
 }
