@@ -1,41 +1,40 @@
 {
-  "name": "ardrive-desktop",
-  "productName": "ArDrive",
-  "description": "ArDrive - Secure, Permenant Storage",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "lerna run build",
-    "build-dev": "lerna run build -- --dir",
-    "start": "lerna run start --parallel",
-    "version": "lerna version minor --force-publish --no-push"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ardrive/ardrive-desktop.git"
-  },
-  "author": {
-    "name": "ArDrive DevTeam",
-    "email": "info@ardrive.io",
-    "url": "https://ardrive.io"
-  },
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/ardrive/ardrive-desktop/issues"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.19.0",
-    "@typescript-eslint/parser": "^4.19.0",
-    "eslint": "^7.22.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "lerna": "^3.19.0",
-    "prettier": "^2.2.1",
-    "eslint-plugin-react": "^7.19.0"
-  },
-  "dependencies": {
-    "loadash": "^1.0.0"
-  }
+	"name": "ardrive-desktop",
+	"productName": "ArDrive",
+	"description": "ArDrive - Secure, Permenant Storage",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"build": "lerna run build",
+		"build-dev": "lerna run build -- --dir",
+		"start": "lerna run start --parallel",
+		"version": "lerna version minor --force-publish --no-push"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ardrive/ardrive-desktop.git"
+	},
+	"author": {
+		"name": "ArDrive DevTeam",
+		"email": "info@ardrive.io",
+		"url": "https://ardrive.io"
+	},
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/ardrive/ardrive-desktop/issues"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^4.19.0",
+		"@typescript-eslint/parser": "^4.19.0",
+		"eslint-config-prettier": "^8.1.0",
+		"eslint-plugin-prettier": "^3.3.1",
+		"eslint-plugin-react": "^7.19.0",
+		"lerna": "^3.19.0",
+		"prettier": "^2.2.1"
+	},
+	"dependencies": {
+		"loadash": "^1.0.0"
+	}
 }
