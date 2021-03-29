@@ -9,7 +9,7 @@
 	"scripts": {
 		"build": "lerna run build",
 		"build-dev": "lerna run build -- --dir",
-		"start": "lerna run start --parallel",
+		"start": "set PORT=3001 && lerna run start --parallel",
 		"version": "lerna version minor --force-publish --no-push"
 	},
 	"repository": {

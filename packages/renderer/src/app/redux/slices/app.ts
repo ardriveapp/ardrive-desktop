@@ -130,7 +130,11 @@ export const appActions = {
 	getAllUsers: createAsyncThunk("app/getAllUsers", async (_, thunkAPI) => {
 		const electronHooks = thunkAPI.extra as ElectronHooks;
 		return await electronHooks.core.getAllUsers();
-	})
+	}),
+	uploadFile: createAction(
+		"app/fileUpload",
+		withPayloadType<any[]>()
+	)
 };
 const getFileStatus = (fileDataSyncStatus: number) => {
 	if (fileDataSyncStatus === 1) {
@@ -163,6 +167,32 @@ const appSlice = createSlice({
 				webLink: file.permaWebLink,
 			}));
 		});
+		builder.addCase(appActions.uploadFile, (state, action) => {
+			for (let file of action.payload) {
+				state.files.push({
+					type: 'file',
+					name: file.name,
+					id: 'testId',
+					modifiedDate: file.lastModifiedDate,
+					owner: 'test',
+					location: file.webkitRelativePath,
+					size: file.size
+				})
+			}
+			// alert(state.files[0])
+			// state.files = action.payload.map((file) => ({
+			// 	id: 'file.id',
+			// 	name: 'file.name',
+			// 	type: "file",
+			// 	modifiedDate: 'file.lastModifiedDate',
+			// 	owner: 'file.login',
+			// 	location: 'file.webkitRelativePath',
+			// 	size: 0,
+			// 	driveName: file.drive?.driveName,
+			// 	syncStatus: 'syncing',
+			// 	webLink: 'test',
+			// }));
+		})
 		builder.addCase(appActions.addUploadNotification, (state, action) => {
 			state.uploadNotification = action.payload;
 		});
