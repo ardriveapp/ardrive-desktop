@@ -1,59 +1,92 @@
 import React, { useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { AppTextLogo, RoundedButton } from "app/components";
 
-import { CreateUserFormContainer } from "./FirstStep.styled";
+import { CreateUserFormContainer, WarningText, HelperText } from "./FirstStep.styled";
+import { PolicyContainer, AgreeText, AgreePolicyCheckBox, UsageLink } from 'app/pages/Login/Login.styled';
 import { useTranslationAt } from "app/utils/hooks";
 import { ArdriveInput } from "app/components/inputs/ArdriveInput";
 import { ArdriveHeader } from "app/components/typography/Headers.styled";
+import { appActions } from "app/redux/slices/app";
+import { authSelectors } from "app/redux/selectors";
+import { authActions } from './../../../../redux/slices/auth';
 
 const translationsPath = "pages.create_user.steps.first";
 
 const FirstStep: React.FC<{
-  onContinue(username: string, password: string): void;
+	onContinue(username: string, password: string): void;
 }> = ({ onContinue }) => {
-  const { t } = useTranslationAt(translationsPath);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [secondPassword, setSecondPassword] = useState("");
+	const { t } = useTranslationAt(translationsPath);
+	const dispatch = useDispatch();
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [secondPassword, setSecondPassword] = useState("");
+	const [agreeStatus, setAgree] = useState(false);
+	const [error, setError] = useState(false);
+	const [dupError, setDupErr] = useState(false);
+	const isDuplicated = useSelector(authSelectors.getIsDuplicated);
+	const setField = useCallback((setFunction: any) => {
+		return (event: any) => {
+			setFunction(event.currentTarget.value);
+		};
+	}, []);
 
-  const setField = useCallback((setFunction: any) => {
-    return (event: any) => {
-      setFunction(event.currentTarget.value);
-    };
-  }, []);
+	const continueHandler = useCallback(() => {
+		if (!agreeStatus) {
+			alert(t("agree_warning"));
+			return
+		}
+		const passwordEquals =
+			password != null && secondPassword != null && password === secondPassword;
+		if (username && passwordEquals) {
+			dispatch(
+				authActions.checkDuplicatedUserThunk(username)
+			);
+			if (isDuplicated) {
+				setDupErr(true);
+			}
+			else {
+				setDupErr(false);
+				setError(false);
+				onContinue(username, password);
+			}
+		} else setError(true);
+	}, [password, secondPassword, username, onContinue, agreeStatus, t, dispatch, isDuplicated]);
 
-  const continueHandler = useCallback(() => {
-    const passwordEquals =
-      password != null && secondPassword != null && password === secondPassword;
-    if (username && passwordEquals) {
-      onContinue(username, password);
-    }
-  }, [password, secondPassword, username, onContinue]);
-
-  return (
-    <>
-      <ArdriveHeader>{t("create_account")}</ArdriveHeader>
-      <AppTextLogo />
-      <CreateUserFormContainer>
-        <ArdriveInput
-          placeholder={t("username")}
-          onChange={setField(setUsername)}
-        />
-        <ArdriveInput
-          type="password"
-          placeholder={t("password")}
-          onChange={setField(setPassword)}
-        />
-        <ArdriveInput
-          type="password"
-          placeholder={t("confirm_password")}
-          onChange={setField(setSecondPassword)}
-        />
-        <RoundedButton onClick={continueHandler}>{t("continue")}</RoundedButton>
-      </CreateUserFormContainer>
-    </>
-  );
+	return (
+		<>
+			<ArdriveHeader>{t("create_account")}</ArdriveHeader>
+			<AppTextLogo />
+			<CreateUserFormContainer>
+				<HelperText>{t("helper_text")}</HelperText>
+				<ArdriveInput
+					placeholder={t("username")}
+					onChange={setField(setUsername)}
+				/>
+				<ArdriveInput
+					type="password"
+					placeholder={t("password")}
+					onChange={setField(setPassword)}
+				/>
+				<ArdriveInput
+					type="password"
+					placeholder={t("confirm_password")}
+					onChange={setField(setSecondPassword)}
+				/>
+				{dupError && <WarningText>{t("duplicated_error")}</WarningText>}
+				{error && <WarningText>{t("unmatch_warning")}</WarningText>}
+				<PolicyContainer>
+					<AgreePolicyCheckBox type="checkbox" onChange={() => setAgree(!agreeStatus)} />
+					<div>
+						<AgreeText>{t("agree_text")}</AgreeText>
+						<UsageLink onClick={() => dispatch(appActions.openUsageLink())}>{t("usage_policy")}</UsageLink>
+					</div>
+				</PolicyContainer>
+				<RoundedButton onClick={continueHandler}>{t("continue")}</RoundedButton>
+			</CreateUserFormContainer>
+		</>
+	);
 };
 
 export default FirstStep;
