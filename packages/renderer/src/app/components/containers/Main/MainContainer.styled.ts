@@ -4,334 +4,334 @@ import Popover from "react-popover";
 import { LogoWithoutText, Logout, Users, Help } from "app/components/images";
 
 export const Container = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 `;
 
 export const Header = styled.div`
-  background-color: white;
-  height: 71px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
+	background-color: white;
+	height: 71px;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
 `;
 
 export const BottomContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
 
-  ::-webkit-scrollbar {
-    width: 4px;
-    background: transparent;
-  }
+	::-webkit-scrollbar {
+		width: 4px;
+		background: transparent;
+	}
 
-  ::-webkit-scrollbar-thumb {
-    width: 4px;
-    background: #c5c4c6;
-  }
+	::-webkit-scrollbar-thumb {
+		width: 4px;
+		background: #c5c4c6;
+	}
 `;
 
 export const ContentContainer = styled.div`
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 `;
 
 export const AppLogo = styled(LogoWithoutText)`
-  margin-left: 16px;
-  width: 64px;
-  height: 38px;
+	margin-left: 16px;
+	width: 64px;
+	height: 38px;
 `;
 
 export const CurrentUserContainer = styled.div`
-  margin-right: 16px;
-  display: flex;
-  align-items: center;
+	margin-right: 16px;
+	display: flex;
+	align-items: center;
 `;
 
 export const CurrentUserIcon = styled.div<{
-  image: string;
+	image: string;
 }>`
-  border: 2px solid ${(props) => props.theme.colors.red};
-  width: 32px;
-  height: 32px;
-  border-radius: 100%;
-  background-image: url(${(props) => props.image});
-  background-size: cover;
-  cursor: pointer;
+	border: 2px solid ${(props) => props.theme.colors.red};
+	width: 32px;
+	height: 32px;
+	border-radius: 100%;
+	background-image: url(${(props) => props.image});
+	background-size: cover;
+	cursor: pointer;
 `;
 
 export const CurrentUserIconWithoutBorder = styled(CurrentUserIcon)`
-  border: none;
-  width: 47px;
-  height: 47px;
+	border: none;
+	width: 47px;
+	height: 47px;
 `;
 
 export const CurrentUserDetailsBar = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 112px;
-  background-color: white;
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
-  border-radius: 3px;
-  padding: 18px;
-  cursor: default;
-  pointer-events: none;
+	display: flex;
+	width: 100vw;
+	height: 112px;
+	background-color: white;
+	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
+	border-radius: 3px;
+	padding: 18px;
+	cursor: default;
+	pointer-events: none;
 `;
 
 export const UserDetailsContainer = styled.div`
-  margin-left: 16px;
+  	margin-left: 16px;
 `;
 
 export const UserNameContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 `;
 
 export const UserName = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: rgba(0, 6, 10, 0.87);
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 24px;
+	color: rgba(0, 6, 10, 0.87);
 `;
 
 export const UserAddress = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 20px;
-  color: rgba(0, 6, 10, 0.6);
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 20px;
+	color: rgba(0, 6, 10, 0.6);
 `;
 
 export const UserBalance = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: #700327;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 24px;
+	color: #700327;
 `;
 
 export const UsersIcon = styled(Users)`
-  width: 20px;
-  height: 20px;
-  margin-right: 18px;
-  cursor: pointer;
+	width: 20px;
+	height: 20px;
+	margin-right: 18px;
+	cursor: pointer;
 `;
 
 export const HelpIcon = styled(Help)`
-  width: 20px;
-  height: 20px;
-  margin-right: 18px;
-  cursor: pointer;
+	width: 20px;
+	height: 20px;
+	margin-right: 18px;
+	cursor: pointer;
 `;
 
 export const LogoutButton = styled(Logout)`
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  pointer-events: all;
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+	pointer-events: all;
 `;
 
 export const FooterContainer = styled.div`
-  background-color: #333333;
-  height: 58px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+	background-color: #333333;
+	height: 58px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
 `;
 
 export const FooterButtonText = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 10px;
-  line-height: 12px;
-  text-align: center;
-  text-transform: uppercase;
-  margin-top: 4px;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 10px;
+	line-height: 12px;
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 4px;
 `;
 
 export const FooterButton = styled.div<{
-  isActive?: boolean;
+	isActive?: boolean;
 }>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
 
-  ${FooterButtonText} {
-    color: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
-  }
+	${FooterButtonText} {
+		color: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
+	}
 
-  &:hover {
-    ${FooterButtonText} {
-      color: white;
-    }
+	&:hover {
+		${FooterButtonText} {
+			color: white;
+		}
 
-    & > svg {
-      path {
-        fill: white;
-      }
-    }
-  }
+		& > svg {
+			path {
+				fill: white;
+			}
+		}
+	}
 
-  & > svg {
-    g {
-      opacity: 1;
-    }
+	& > svg {
+			g {
+				opacity: 1;
+			}
 
-    path {
-      fill: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
-    }
-  }
+		path {
+			fill: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
+		}
+	}
 `;
 
 export const StyledPopover = styled(Popover).attrs(() => ({
-  tipSize: 0.1,
+	tipSize: 0.1,
 }))``;
 
 export const NewButtonMenuContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
-  width: 180px;
-  height: 88px;
-  border-radius: 3px;
-  background: #ffffff;
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 16px;
+	width: 180px;
+	height: 88px;
+	border-radius: 3px;
+	background: #ffffff;
+  	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
 `;
 
 export const NewButtonMenuContainerItem = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 16px;
-  color: #a4a4a4;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 16px;
+	color: #a4a4a4;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
 
-  & > svg {
-    margin-right: 24px;
-  }
+	& > svg {
+		margin-right: 24px;
+	}
 `;
 
 export const SettingsButtonMenuContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  height: 180px;
-  width: 290px;
-  border-radius: 0px;
-  background: #ffffff;
-  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 20px;
+	height: 180px;
+	width: 290px;
+	border-radius: 0px;
+	background: #ffffff;
+	box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export const SettingsButtonMenuContainerItem = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-  color: #a4a4a4;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 20px;
+	color: #a4a4a4;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
 
-  & > svg {
-    width: 16px;
-    margin-right: 12px;
-  }
+	& > svg {
+		width: 16px;
+		margin-right: 12px;
+	}
 `;
 
 export const SettingsButtonMenuHeader = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
-  color: rgba(0, 6, 10, 0.87);
-  margin-bottom: 17px;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 24px;
+	color: rgba(0, 6, 10, 0.87);
+	margin-bottom: 17px;
 `;
 
 export const UploadNotificationContainer = styled.div`
-  width: 100%;
-  background-color: white;
-  padding-left: 16px;
-  padding-right: 16px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding-top: 28px;
-  padding-bottom: 28px;
+	width: 100%;
+	background-color: white;
+	padding-left: 16px;
+	padding-right: 16px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	padding-top: 28px;
+	padding-bottom: 28px;
 `;
 
 export const UploadText = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 22px;
-  margin-left: 18px;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 22px;
+	margin-left: 18px;
 
-  color: rgba(0, 6, 10, 0.6);
+  	color: rgba(0, 6, 10, 0.6);
 `;
 
 export const NotificationInfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
+	display: flex;
+	align-items: center;
+	width: 100%;
 `;
 
 export const NotificationButtonsContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-top: 16px;
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+	margin-top: 16px;
 `;
 
 export const NotificationButton = styled.div`
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 16px;
-  text-align: center;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #700327;
-  margin-left: 35px;
-  cursor: pointer;
+	font-family: "Montserrat";
+	font-style: normal;
+	font-weight: bold;
+	font-size: 14px;
+	line-height: 16px;
+	text-align: center;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #700327;
+	margin-left: 35px;
+	cursor: pointer;
 `;
 
 export const SyncingStatusContainer = styled.div`
-  width: 100vw;
-  padding-top: 14px;
-  padding-bottom: 14px;
-  background-color: #700327;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	width: 100vw;
+	padding-top: 14px;
+	padding-bottom: 14px;
+	background-color: #700327;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 `;
 
 export const SyncingText = styled.div`
-  font-family: "Open Sans";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-  color: #ffffff;
+	font-family: "Open Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 20px;
+	color: #ffffff;
 `;

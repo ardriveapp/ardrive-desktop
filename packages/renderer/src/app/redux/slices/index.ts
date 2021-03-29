@@ -6,6 +6,6 @@ import * as authSlice from "./auth";
 import { RootState } from "../types";
 
 export default combineReducers<RootState>({
-  app: appSlice.reducer,
-  auth: authSlice.reducer,
+	app: appSlice.reducer,
+	auth: authSlice.reducer,
 });

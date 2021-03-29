@@ -1,31 +1,31 @@
 {
-    "productName": "ArDrive",
-    "appId": "com.ardrive.ArDrive",
-    "directories": {
-        "buildResources": "assets"
-    },
-    "files": [
-        {
-            "from": "../renderer/build/",
-            "to": "./renderer/",
-            "filter": [
-                "**/*"
-            ]
-        },
-        {
-            "from": "./build/",
-            "to": "./",
-            "filter": [
-                "**/*"
-            ]
-        },
-        "package.json"
-    ],
-    "mac": {
-        "category": "public.app-category.utilities"
-    },
-    "win": {},
-    "linux": {
-        "category": "Utility"
-    }
+	"productName": "ArDrive",
+	"appId": "com.ardrive.ArDrive",
+	"directories": {
+		"buildResources": "assets"
+	},
+	"files": [
+		{
+			"from": "../renderer/build/",
+			"to": "./renderer/",
+			"filter": [
+				"**/*"
+			]
+		},
+		{
+			"from": "./build/",
+			"to": "./",
+			"filter": [
+				"**/*"
+			]
+		},
+		"package.json"
+	],
+	"mac": {
+		"category": "public.app-category.utilities"
+	},
+	"win": {},
+	"linux": {
+		"category": "Utility"
+	}
 }
