@@ -36,6 +36,12 @@ export interface AuthState {
 	isDuplicated: boolean;
 }
 
+type actionType = AppUser | LoginStartArgs | CreateUserArgs | null;
+
+export interface AuthAction<actionType> {
+	payload: actionType;
+}
+
 export interface RootState {
 	app: AppState;
 	auth: AuthState;
