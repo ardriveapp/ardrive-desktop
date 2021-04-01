@@ -7,6 +7,7 @@ import {
 	CreateNewFolder,
 	Gear,
 	Lock,
+	Activity,
 	LockedFolder,
 	NewDrive,
 	Pause,
@@ -159,6 +160,10 @@ const BottomMenu = () => {
 			<FooterButton onClick={() => dispatch(appActions.openSyncFolder())}>
 				<LockedFolder />
 				<FooterButtonText>{t("localDrive")}</FooterButtonText>
+			</FooterButton>
+			<FooterButton onClick={() => dispatch(appActions.openSyncFolder())}>
+				<Activity />
+				<FooterButtonText>{t("activity")}</FooterButtonText>
 			</FooterButton>
 			<StyledPopover
 				body={<SettingsButtonMenu />}

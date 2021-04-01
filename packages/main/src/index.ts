@@ -22,7 +22,7 @@ const startApplication = async () => {
 	window.setMenuBarVisibility(false);
 
 	if (isDev) {
-		window.loadURL("http://localhost:3000");
+		window.loadURL("http://localhost:3001");
 	} else {
 		window.loadFile(`${__dirname}/renderer/index.html`);
 	}

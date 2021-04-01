@@ -4,7 +4,6 @@ import prettyBytes from "pretty-bytes";
 
 import {
 	AddContentDescription,
-	AddContentImage,
 	EmptyContentContainer,
 	FileDetailsContainer,
 	FileDetailsFeature,
@@ -25,6 +24,7 @@ import {
 } from "./FileList.styled";
 import { ArDriveFile } from "app/redux/types";
 import { Cloud, Share, Lock, PublicUrl } from "app/components/images";
+import FileUpload from 'app/components/FileUpload/FileUpload';
 import { useTranslationAt } from "app/utils/hooks";
 import { useDispatch } from "react-redux";
 import { appActions } from "app/redux/slices/app";
@@ -96,6 +96,9 @@ const FileList: React.FC<{
 	const { t } = useTranslationAt("components.fileList");
 	const [selectedItem, setSelectedItem] = useState<ArDriveFile | null>(null);
 	const [showFileDetails, setShowFileDetails] = useState(false);
+	const [newUserInfo, setNewUserInfo] = useState({
+		profileImages: []
+	} as any);
 
 	const selectItemHandler = useCallback(
 		(item) => {
@@ -107,11 +110,15 @@ const FileList: React.FC<{
 		},
 		[selectedItem]
 	);
-
+	const updateUploadedFiles = (files: Object[]) =>
+		setNewUserInfo({ ...newUserInfo, profileImages: files });
 	if (items == null || items.length === 0) {
 		return (
 			<EmptyContentContainer>
-				<AddContentImage />
+				<FileUpload
+					multiple
+					updateFilesCb={updateUploadedFiles}
+				/>
 				<AddContentDescription>{t("emptyDescription")}</AddContentDescription>
 			</EmptyContentContainer>
 		);

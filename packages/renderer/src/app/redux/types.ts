@@ -19,6 +19,7 @@ export interface ArDriveFile {
 	location: string;
 	modifiedDate: string;
 	type: "folder" | "file";
+	ext?: string;
 	name: string;
 	size: number;
 	image?: string;

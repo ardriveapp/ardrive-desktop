@@ -25,7 +25,8 @@ export const RoundedButton = styled.button`
 	border: none;
 	padding-left: 20px;
 	padding-right: 20px;
-	margin: auto;
+	margin-left: auto;
+	margin-right: auto;
 	cursor: pointer;
 
 	&:disabled {
