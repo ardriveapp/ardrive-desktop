@@ -8,7 +8,6 @@
         "plugin:import/warnings",
         "plugin:import/typescript",
         "plugin:promise/recommended",
-        "plugin:node/recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "prettier"
