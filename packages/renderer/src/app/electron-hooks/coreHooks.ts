@@ -58,13 +58,13 @@ class CoreHooksImplementation implements CoreHooks {
 	async openSyncFolder(login: string) {
 		await this.ipcRenderer.invoke('openSyncFolder', login);
 	}
-	async createNewDrive(login: string, driveName: string, isPrivate: boolean = true) {
+	async createNewDrive(login: string, driveName: string, isPrivate = true) {
 		await this.ipcRenderer.invoke('createNewDrive', login, driveName, isPrivate);
 	}
 	async getAllDrives(login: string, password: string) {
 		return await this.ipcRenderer.invoke('getAllDrives', login, password);
 	}
-	async attachDrive(login: string, password: string, driveId: string, isShared: boolean = false) {
+	async attachDrive(login: string, password: string, driveId: string, isShared = false) {
 		await this.ipcRenderer.invoke('attachDrive', login, password, driveId, isShared);
 	}
 	async getAllUsers() {

@@ -233,25 +233,22 @@ export const initialize = (window: BrowserWindow) => {
 		}));
 	});
 
-	ipcMain.handle(
-		'attachDrive',
-		async (_, login: string, password: string, driveId: string, isShared: boolean = false) => {
-			const user = await getUser(password, login);
-			if (isShared) {
-				await addSharedPublicDrive(user, driveId);
-				return;
-			}
-			const allDrives = await getAllDrives(user);
-			const drive = allDrives.find((drive) => drive.driveId === driveId);
-			if (drive != null) {
-				await addDriveToDriveTable({
-					...drive,
-					login: user.login
-				});
-				await startWatcher(user);
-			}
+	ipcMain.handle('attachDrive', async (_, login: string, password: string, driveId: string, isShared = false) => {
+		const user = await getUser(password, login);
+		if (isShared) {
+			await addSharedPublicDrive(user, driveId);
+			return;
 		}
-	);
+		const allDrives = await getAllDrives(user);
+		const drive = allDrives.find((drive) => drive.driveId === driveId);
+		if (drive != null) {
+			await addDriveToDriveTable({
+				...drive,
+				login: user.login
+			});
+			await startWatcher(user);
+		}
+	});
 
 	ipcMain.handle('backupWallet', async (_, login: string, password: string) => {
 		const result = await dialog.showOpenDialog({
@@ -272,7 +269,7 @@ export const initialize = (window: BrowserWindow) => {
 		await shell.openPath(user.syncFolderPath);
 	});
 
-	ipcMain.handle('createNewDrive', async (_, login: string, driveName: string, isPrivate: boolean = true) => {
+	ipcMain.handle('createNewDrive', async (_, login: string, driveName: string, isPrivate = true) => {
 		const user: ArDriveUser = await getUserFromProfile(login);
 		if (isPrivate) {
 			const newPrivateDrive = await createNewPrivateDrive(user.login, driveName);

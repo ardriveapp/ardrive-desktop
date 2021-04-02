@@ -9,7 +9,7 @@ export interface UploadNotification {
 export interface AppState {
 	files: ArDriveFile[];
 	drives: ArDrive[];
-	users: Number;
+	users: number;
 	uploadNotification?: UploadNotification;
 }
 

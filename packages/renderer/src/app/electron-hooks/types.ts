@@ -35,7 +35,7 @@ export interface CoreHooks {
 	createNewDrive(login: string, driveName: string, isPrivate: boolean): Promise<void>;
 	getAllDrives(login: string, password: string): Promise<Array<ArDrive>>;
 	attachDrive(login: string, password: string, driveId: string, isShared: boolean): Promise<void>;
-	getAllUsers(): Promise<Number>;
+	getAllUsers(): Promise<number>;
 }
 
 export interface NativeHooks {
