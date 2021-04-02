@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { LogoWithoutText, LogoWithText } from "app/components/images";
+import { LogoWithoutText, LogoWithText } from 'app/components/images';
 
 export const WelcomeContainer = styled.div`
 	height: 100%;
@@ -19,14 +19,14 @@ export const LeftContainer = styled.div`
 	align-items: center;
 `;
 export const RightContainer = styled.div`
-  	position: relative;
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	max-height: 100%;
 `;
 export const ContentContainer = styled.div`
-  	height: 100%;
+	height: 100%;
 	width: 100%;
 	display: flex;
 	flex-direction: column;

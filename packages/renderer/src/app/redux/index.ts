@@ -1,23 +1,23 @@
-import { applyMiddleware, configureStore } from "@reduxjs/toolkit";
-import createSagaMiddleware from "redux-saga";
-import { persistStore, persistReducer } from "redux-persist";
-import createElectronStorage from "redux-persist-electron-storage";
+import { applyMiddleware, configureStore } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
+import { persistStore, persistReducer } from 'redux-persist';
+import createElectronStorage from 'redux-persist-electron-storage';
 
-import rootReducer from "./slices";
-import rootSaga from "./sagas";
-import electronHooks from "../electron-hooks";
+import rootReducer from './slices';
+import rootSaga from './sagas';
+import electronHooks from '../electron-hooks';
 
 const hooks = electronHooks();
 const sagaMiddleware = createSagaMiddleware({
 	context: {
-		electronHooks: hooks,
-	},
+		electronHooks: hooks
+	}
 });
 
 const persistConfig = {
-	key: "root",
+	key: 'root',
 	storage: createElectronStorage(),
-	blacklist: ["app", "auth"],
+	blacklist: ['app', 'auth']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -27,21 +27,19 @@ export const store = configureStore({
 	enhancers: (defaultEnhancers) => [
 		applyMiddleware(hooks.middleware),
 		applyMiddleware(sagaMiddleware),
-		...defaultEnhancers,
+		...defaultEnhancers
 	],
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
 			thunk: {
-				extraArgument: hooks,
+				extraArgument: hooks
 			},
 			serializableCheck: {
-				ignoredActions: ["persist/PERSIST"],
-			},
-		}),
+				ignoredActions: ['persist/PERSIST']
+			}
+		})
 });
 
 export type AppDispatch = typeof store.dispatch;
 
-export const persistor = persistStore(store, null, () =>
-	sagaMiddleware.run(rootSaga)
-);
+export const persistor = persistStore(store, null, () => sagaMiddleware.run(rootSaga));

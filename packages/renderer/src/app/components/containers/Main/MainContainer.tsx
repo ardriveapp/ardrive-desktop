@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
 	AttachDrive,
@@ -13,10 +13,10 @@ import {
 	SampleUserImage,
 	SyncFolder,
 	Syncing,
-	UploadInfo,
-} from "app/components/images";
-import { appSelectors, authSelectors } from "app/redux/selectors";
-import { useTranslationAt } from "app/utils/hooks";
+	UploadInfo
+} from 'app/components/images';
+import { appSelectors, authSelectors } from 'app/redux/selectors';
+import { useTranslationAt } from 'app/utils/hooks';
 
 import {
 	BottomContainer,
@@ -51,37 +51,37 @@ import {
 	NotificationInfoContainer,
 	SyncingStatusContainer,
 	SyncingText,
-	HelpIcon,
-} from "./MainContainer.styled";
-import { authActions } from "app/redux/slices/auth";
-import { useModal } from "app/components/modals/utils";
-import { withModal } from "app/components/modals/hooks";
-import { TranslationAt } from "app/components/TranslationAt";
-import { FontVariants } from "app/components/typography";
-import { appActions } from "app/redux/slices/app";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { AppDispatch } from "app/redux";
+	HelpIcon
+} from './MainContainer.styled';
+import { authActions } from 'app/redux/slices/auth';
+import { useModal } from 'app/components/modals/utils';
+import { withModal } from 'app/components/modals/hooks';
+import { TranslationAt } from 'app/components/TranslationAt';
+import { FontVariants } from 'app/components/typography';
+import { appActions } from 'app/redux/slices/app';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { AppDispatch } from 'app/redux';
 
 const NewButtonMenu = () => {
-	const { t } = useTranslationAt("components.mainContainer");
+	const { t } = useTranslationAt('components.mainContainer');
 	const { showModal } = useModal();
 
 	return (
 		<NewButtonMenuContainer>
-			<NewButtonMenuContainerItem onClick={() => showModal("new_drive")}>
+			<NewButtonMenuContainerItem onClick={() => showModal('new_drive')}>
 				<NewDrive />
-				{t("newDrive")}
+				{t('newDrive')}
 			</NewButtonMenuContainerItem>
-			<NewButtonMenuContainerItem onClick={() => showModal("attach_drive")}>
+			<NewButtonMenuContainerItem onClick={() => showModal('attach_drive')}>
 				<AttachDrive />
-				{t("attachDrive")}
+				{t('attachDrive')}
 			</NewButtonMenuContainerItem>
 		</NewButtonMenuContainer>
 	);
 };
 
 const SettingsButtonMenu = () => {
-	const { t } = useTranslationAt("components.mainContainer");
+	const { t } = useTranslationAt('components.mainContainer');
 	const dispatch: AppDispatch = useDispatch();
 	const user = useSelector(authSelectors.getUser);
 	const { showModal } = useModal();
@@ -95,38 +95,34 @@ const SettingsButtonMenu = () => {
 				authActions.updateUserSyncDirThunk({
 					syncFolderPath: syncFolderPath,
 					login: user.login,
-					password: user.password,
+					password: user.password
 				})
 			);
 		}
 	}, [dispatch, user]);
 
 	const handleClick = () => {
-		showModal("login");
-	}
+		showModal('login');
+	};
 
 	return (
 		<SettingsButtonMenuContainer>
-			<SettingsButtonMenuHeader>{t("settingsHeader")}</SettingsButtonMenuHeader>
+			<SettingsButtonMenuHeader>{t('settingsHeader')}</SettingsButtonMenuHeader>
 			<SettingsButtonMenuContainerItem>
 				<Lock />
-				{t("changeLogin")}
+				{t('changeLogin')}
 			</SettingsButtonMenuContainerItem>
 			<SettingsButtonMenuContainerItem onClick={openFolder}>
 				<SyncFolder />
-				{t("changeSync")}
+				{t('changeSync')}
 			</SettingsButtonMenuContainerItem>
-			<SettingsButtonMenuContainerItem
-				onClick={() => dispatch(authActions.pauseSyncing())}
-			>
+			<SettingsButtonMenuContainerItem onClick={() => dispatch(authActions.pauseSyncing())}>
 				<Pause />
-				{t("pauseSync")}
+				{t('pauseSync')}
 			</SettingsButtonMenuContainerItem>
-			<SettingsButtonMenuContainerItem
-				onClick={handleClick}
-			>
+			<SettingsButtonMenuContainerItem onClick={handleClick}>
 				<Backup />
-				{t("backup")}
+				{t('backup')}
 			</SettingsButtonMenuContainerItem>
 		</SettingsButtonMenuContainer>
 	);
@@ -134,7 +130,7 @@ const SettingsButtonMenu = () => {
 
 //  TODO: Extract bottom menu to separate component and make it more usable and univeral
 const BottomMenu = () => {
-	const { t } = useTranslationAt("components.mainContainer");
+	const { t } = useTranslationAt('components.mainContainer');
 	const [showNewButtonMenu, setShowNewButtonMenu] = useState(false);
 	const [showSettingsButtonMenu, setSettingsNewButtonMenu] = useState(false);
 	const dispatch = useDispatch();
@@ -153,24 +149,21 @@ const BottomMenu = () => {
 					}}
 				>
 					<CreateNewFolder />
-					<FooterButtonText>{t("new")}</FooterButtonText>
+					<FooterButtonText>{t('new')}</FooterButtonText>
 				</FooterButton>
 			</StyledPopover>
 			<FooterButton onClick={() => dispatch(appActions.openSyncFolder())}>
 				<LockedFolder />
-				<FooterButtonText>{t("localDrive")}</FooterButtonText>
+				<FooterButtonText>{t('localDrive')}</FooterButtonText>
 			</FooterButton>
 			<StyledPopover
 				body={<SettingsButtonMenu />}
 				isOpen={showSettingsButtonMenu}
 				onOuterAction={() => setSettingsNewButtonMenu(false)}
 			>
-				<FooterButton
-					isActive={showSettingsButtonMenu}
-					onClick={() => setSettingsNewButtonMenu((p) => !p)}
-				>
+				<FooterButton isActive={showSettingsButtonMenu} onClick={() => setSettingsNewButtonMenu((p) => !p)}>
 					<Gear />
-					<FooterButtonText>{t("settings")}</FooterButtonText>
+					<FooterButtonText>{t('settings')}</FooterButtonText>
 				</FooterButton>
 			</StyledPopover>
 		</>
@@ -179,7 +172,7 @@ const BottomMenu = () => {
 
 const UploadNotification = () => {
 	const notification = useSelector(appSelectors.getUploadNotification);
-	const { t } = useTranslationAt("components.mainContainer");
+	const { t } = useTranslationAt('components.mainContainer');
 	const dispatch = useDispatch();
 	const user = useSelector(authSelectors.getUser);
 
@@ -209,9 +202,9 @@ const UploadNotification = () => {
 						}
 					}}
 				>
-					{t("yes")}
+					{t('yes')}
 				</NotificationButton>
-				<NotificationButton>{t("no")}</NotificationButton>
+				<NotificationButton>{t('no')}</NotificationButton>
 			</NotificationButtonsContainer>
 		</UploadNotificationContainer>
 	);
@@ -219,7 +212,7 @@ const UploadNotification = () => {
 
 const MainContainer: React.FC = ({ children }) => {
 	const [showUserDetails, setShowUserDetails] = useState(false);
-	const { t } = useTranslationAt("components.mainContainer");
+	const { t } = useTranslationAt('components.mainContainer');
 
 	const dispatch = useDispatch();
 	const user = useSelector(authSelectors.getUser);
@@ -241,9 +234,7 @@ const MainContainer: React.FC = ({ children }) => {
 								<UserDetailsContainer>
 									<UserNameContainer>
 										<UserName>{user?.login}</UserName>
-										<LogoutButton
-											onClick={() => dispatch(authActions.logout())}
-										/>
+										<LogoutButton onClick={() => dispatch(authActions.logout())} />
 									</UserNameContainer>
 									<UserAddress>{user?.address}</UserAddress>
 									<UserBalance>{user?.balance}</UserBalance>
@@ -251,10 +242,7 @@ const MainContainer: React.FC = ({ children }) => {
 							</CurrentUserDetailsBar>
 						}
 					>
-						<CurrentUserIcon
-							onClick={() => setShowUserDetails((prev) => !prev)}
-							image={SampleUserImage}
-						/>
+						<CurrentUserIcon onClick={() => setShowUserDetails((prev) => !prev)} image={SampleUserImage} />
 					</StyledPopover>
 				</CurrentUserContainer>
 			</Header>
@@ -262,7 +250,7 @@ const MainContainer: React.FC = ({ children }) => {
 				{!isSyncing && (
 					<SyncingStatusContainer>
 						<Syncing />
-						<SyncingText>{t("syncingText")}</SyncingText>
+						<SyncingText>{t('syncingText')}</SyncingText>
 					</SyncingStatusContainer>
 				)}
 				<UploadNotification />

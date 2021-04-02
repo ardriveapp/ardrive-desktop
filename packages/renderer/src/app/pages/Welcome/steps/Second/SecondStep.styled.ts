@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { RoundedButton } from "app/components";
+import { RoundedButton } from 'app/components';
 
 export const WelcomeText = styled.span`
 	margin-bottom: 24px;
-	font-family: "Montserrat";
+	font-family: 'Montserrat';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 28px;
@@ -17,7 +17,7 @@ export const WelcomeText = styled.span`
 
 export const DesciptionText = styled.span`
 	width: 500px;
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 20px;

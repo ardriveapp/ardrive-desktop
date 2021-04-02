@@ -1,27 +1,24 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { CreateUser, Sync, Wallet, WelcomeContainer } from "app/components";
+import { CreateUser, Sync, Wallet, WelcomeContainer } from 'app/components';
 
-import { FirstStep, SecondStep, ThirdStep } from "./steps";
-import { authActions } from "app/redux/slices/auth";
+import { FirstStep, SecondStep, ThirdStep } from './steps';
+import { authActions } from 'app/redux/slices/auth';
 
 export default () => {
 	const [step, setStep] = useState(0);
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
 	const [walletPath, setWalletPath] = useState<string | undefined>();
 	const [createNew, setCreateNew] = useState<boolean>(false);
 	const dispatch = useDispatch();
 
-	const firstStepCompleted = useCallback(
-		(username: string, password: string) => {
-			setUsername(username);
-			setPassword(password);
-			setStep((prev) => prev + 1);
-		},
-		[]
-	);
+	const firstStepCompleted = useCallback((username: string, password: string) => {
+		setUsername(username);
+		setPassword(password);
+		setStep((prev) => prev + 1);
+	}, []);
 
 	const goNextStep = useCallback(() => {
 		setStep((prev) => prev + 1);
@@ -45,7 +42,7 @@ export default () => {
 						password,
 						syncFolderPath,
 						createNew,
-						walletPath,
+						walletPath
 					})
 				);
 			}

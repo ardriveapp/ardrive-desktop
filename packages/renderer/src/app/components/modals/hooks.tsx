@@ -1,8 +1,8 @@
-import React from "react";
-import { useState } from "react";
+import React from 'react';
+import { useState } from 'react';
 
-import { AppModal } from "./AppModal";
-import { AppModalContext, ModalType } from "./utils";
+import { AppModal } from './AppModal';
+import { AppModalContext, ModalType } from './utils';
 
 export const withModal = (Component: React.ComponentType) => (props: any) => {
 	const [modalType, setModalType] = useState<ModalType>();
@@ -13,7 +13,7 @@ export const withModal = (Component: React.ComponentType) => (props: any) => {
 				showModal: setModalType,
 				modalVisible: modalType != null,
 				hideModal: () => setModalType(undefined),
-				modalType: modalType,
+				modalType: modalType
 			}}
 		>
 			<AppModal />

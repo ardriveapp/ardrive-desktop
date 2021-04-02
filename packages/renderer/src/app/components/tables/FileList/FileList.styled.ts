@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import Popover from "react-popover";
+import styled from 'styled-components';
+import Popover from 'react-popover';
 
-import { AddContent, Folder, File } from "app/components";
-import { Options } from "app/components/images";
+import { AddContent, Folder, File } from 'app/components';
+import { Options } from 'app/components/images';
 
 export const FileListTable = styled.table`
 	width: 100%;
@@ -11,7 +11,7 @@ export const FileListTable = styled.table`
 
 export const FileListTableHead = styled.thead`
 	& td {
-		font-family: "Open Sans";
+		font-family: 'Open Sans';
 		font-style: normal;
 		font-weight: 600;
 		font-size: 12px;
@@ -30,8 +30,7 @@ export const FileListTableRow = styled.tr<{
 	background-color: white;
 
 	td {
-		color: ${(props) =>
-		props.active ? props.theme.colors.red : "initial"} !important;
+		color: ${(props) => (props.active ? props.theme.colors.red : 'initial')} !important;
 	}
 
 	&:hover {
@@ -79,7 +78,7 @@ export const AddContentImage = styled(AddContent)`
 `;
 
 export const AddContentDescription = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 18px;
@@ -115,7 +114,7 @@ export const ItemContent = styled.div`
 	padding-top: 10px;
 
 	& > span:nth-child(1) {
-		font-family: "Open Sans";
+		font-family: 'Open Sans';
 		font-style: normal;
 		font-weight: 600;
 		font-size: 16px;
@@ -127,7 +126,7 @@ export const ItemContent = styled.div`
 	}
 
 	& > span:nth-child(2) {
-		font-family: "Open Sans";
+		font-family: 'Open Sans';
 		font-style: normal;
 		font-weight: normal;
 		font-size: 14px;
@@ -135,18 +134,18 @@ export const ItemContent = styled.div`
 		color: rgba(0, 6, 10, 0.6);
 	}
 
-  	& > span:nth-child(3) {
-		font-family: "Open Sans";
+	& > span:nth-child(3) {
+		font-family: 'Open Sans';
 		font-style: normal;
 		font-weight: normal;
 		font-size: 12px;
 		line-height: 16px;
 		color: #a4a4a4;
-  	}
+	}
 `;
 
 export const StyledPopover = styled(Popover).attrs(() => ({
-	tipSize: 0.1,
+	tipSize: 0.1
 }))``;
 
 export const FileDetailsContainer = styled.div`
@@ -157,7 +156,7 @@ export const FileDetailsContainer = styled.div`
 `;
 
 export const FileDetailsFileName = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 16px;
@@ -173,7 +172,7 @@ export const FileDetailsMenuBar = styled.div`
 		cursor: pointer;
 	}
 
-  	margin-bottom: 16px;
+	margin-bottom: 16px;
 `;
 
 export const FileDetailsFeatureContainer = styled.div`
@@ -189,7 +188,7 @@ export const FileDetailsFeature = styled.div`
 `;
 export const FileDetailsFeatureName = styled.div`
 	width: 20%;
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 12px;
@@ -202,7 +201,7 @@ export const FileDetailsFeatureValue = styled.div`
 	white-space: nowrap;
 	overflow: hidden;
 
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 12px;

@@ -1,15 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import { useTranslationAt } from "app/utils/hooks";
+import { useTranslationAt } from 'app/utils/hooks';
 
-import {
-	StepButton,
-	DesciptionText,
-	WelcomeText,
-	ButtonsContainer,
-} from "./SecondStep.styled";
+import { StepButton, DesciptionText, WelcomeText, ButtonsContainer } from './SecondStep.styled';
 
-const translationsPath = "pages.welcome.steps.second";
+const translationsPath = 'pages.welcome.steps.second';
 
 const SecondStep: React.FC<{
 	onContinue(): void;
@@ -24,8 +19,8 @@ const SecondStep: React.FC<{
 			<WelcomeText>{title}</WelcomeText>
 			<DesciptionText>{description}</DesciptionText>
 			<ButtonsContainer>
-				<StepButton onClick={onBack}>{t("back")}</StepButton>
-				<StepButton onClick={onContinue}>{t("next")}</StepButton>
+				<StepButton onClick={onBack}>{t('back')}</StepButton>
+				<StepButton onClick={onContinue}>{t('next')}</StepButton>
 			</ButtonsContainer>
 		</>
 	);

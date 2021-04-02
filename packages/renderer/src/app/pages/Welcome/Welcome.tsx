@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useCallback, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {
 	FirstWelcomeStep,
@@ -8,23 +8,23 @@ import {
 	SecondsFromForewerStep,
 	TotalPrivacyStep,
 	WelcomeContainer,
-	WelcomeToPermawebStep,
-} from "app/components";
-import { FirstStep, SecondStep } from "./steps";
-import { useTranslationAt } from "app/utils/hooks";
+	WelcomeToPermawebStep
+} from 'app/components';
+import { FirstStep, SecondStep } from './steps';
+import { useTranslationAt } from 'app/utils/hooks';
 
 export default () => {
 	const history = useHistory();
 	const [step, setStep] = useState(0);
 	const [subStep, setSubStep] = useState(0);
-	const { t } = useTranslationAt("pages.welcome.steps");
+	const { t } = useTranslationAt('pages.welcome.steps');
 
 	const jumpIn = useCallback(() => {
 		setStep(1);
 	}, []);
 
 	const continueHandler = useCallback(() => {
-		history.push("/create-user");
+		history.push('/create-user');
 	}, [history]);
 
 	const goNext = useCallback(() => {

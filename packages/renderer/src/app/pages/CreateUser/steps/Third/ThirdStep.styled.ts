@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { RoundedButton } from "app/components";
+import { RoundedButton } from 'app/components';
 
 export const Description = styled.span`
 	text-align: center;
@@ -23,7 +23,7 @@ export const SelectSyncFolderButton = styled(RoundedButton)`
 	text-align: left;
 
 	height: 56px;
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;
@@ -31,5 +31,5 @@ export const SelectSyncFolderButton = styled(RoundedButton)`
 `;
 
 export const LetsGoButton = styled(RoundedButton)`
-  	width: 380px;
+	width: 380px;
 `;

@@ -1,2 +1,2 @@
-export { default as Home } from "./Home";
-export * from "./subpages";
+export { default as Home } from './Home';
+export * from './subpages';

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const InputContainer = styled.div`
 	position: relative;
@@ -18,12 +18,12 @@ export const StyledInput = styled.input<{
 	outline: none;
 	height: 100%;
 	width: 100%;
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;
 	line-height: 20px;
-	padding-left: ${(props) => (props.hideIcon ? "20px" : "52px")};
+	padding-left: ${(props) => (props.hideIcon ? '20px' : '52px')};
 
 	&:focus {
 		border-bottom: 2px solid ${(props) => props.theme.colors.red};

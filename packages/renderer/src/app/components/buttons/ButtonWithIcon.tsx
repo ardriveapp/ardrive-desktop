@@ -1,29 +1,25 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import { Folder, Help, Private, Public, Share, Upload } from "../images";
+import { Folder, Help, Private, Public, Share, Upload } from '../images';
 
-import {
-	ButtonImage as ButtonIcon,
-	ButtonWithContent,
-	TransparentButtonWithContent,
-} from "./Buttons.styled";
+import { ButtonImage as ButtonIcon, ButtonWithContent, TransparentButtonWithContent } from './Buttons.styled';
 
-type ButtonIcon = "folder" | "upload" | "private" | "public" | "share" | "help";
+type ButtonIcon = 'folder' | 'upload' | 'private' | 'public' | 'share' | 'help';
 
 const getImage = (image?: ButtonIcon) => {
 	switch (image) {
-		case "folder":
+		case 'folder':
 			return <Folder />;
-		case "upload":
+		case 'upload':
 			return <Upload />;
-		case "private":
+		case 'private':
 			return <Private />;
-		case "public":
+		case 'public':
 			return <Public />;
-		case "share":
+		case 'share':
 			return <Share />;
-		case "help":
+		case 'help':
 			return <Help />;
 		default:
 			return null;
@@ -36,13 +32,7 @@ type ButtonWithIconProps = {
 	active?: boolean;
 } & React.ComponentProps<typeof TransparentButtonWithContent>;
 
-const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
-	icon: image,
-	children,
-	transparent,
-	active,
-	...rest
-}) => {
+const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({ icon: image, children, transparent, active, ...rest }) => {
 	const Button = transparent ? TransparentButtonWithContent : ButtonWithContent;
 	return (
 		<Button active={active} {...rest}>

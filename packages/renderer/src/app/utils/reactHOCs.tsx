@@ -1,5 +1,5 @@
-import React from "react";
-import { Redirect, Route, RouteProps, Switch } from "react-router-dom";
+import React from 'react';
+import { Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 
 export const withSubroutes = (
 	Component: React.ComponentType<{

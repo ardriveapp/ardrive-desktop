@@ -1,10 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import {
-	Checkmark,
-	SelectContainer,
-	SliderContainer,
-} from "./ArdriveSlider.styled";
+import { Checkmark, SelectContainer, SliderContainer } from './ArdriveSlider.styled';
 
 const ArdriveSlider: React.FC<{
 	variants: string[];
@@ -14,13 +10,7 @@ const ArdriveSlider: React.FC<{
 		<SliderContainer>
 			{variants.map((variant, i) => (
 				<SelectContainer key={i} htmlFor={`${variant}_${i}`}>
-					<input
-						type="radio"
-						defaultChecked={i === 0}
-						id={`${variant}_${i}`}
-						value={i}
-						name={name}
-					/>
+					<input type="radio" defaultChecked={i === 0} id={`${variant}_${i}`} value={i} name={name} />
 					<Checkmark>{variant}</Checkmark>
 				</SelectContainer>
 			))}
