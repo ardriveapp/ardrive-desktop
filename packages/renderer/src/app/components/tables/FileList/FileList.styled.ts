@@ -72,6 +72,23 @@ export const EmptyContentContainer = styled.div`
 	padding-left: 40px;
 	padding-right: 40px;
 `;
+export const FormField = styled.input`
+	font-size: 18px;
+	display: block;
+	width: 100%;
+	border: none;
+	text-transform: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+
+	&:focus {
+		outline: none;
+	}
+`;
 
 export const AddContentImage = styled(AddContent)`
 	height: 52px;

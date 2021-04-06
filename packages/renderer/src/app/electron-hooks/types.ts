@@ -34,6 +34,7 @@ export interface CoreHooks {
 	fetchFiles(username: string): Promise<any[]>;
 	stopWatchingFolders(): Promise<void>;
 	uploadFiles(login: string, password: string): Promise<void>;
+	uploadFile(login: string, password: string, filesContent: any[], newFiles: any[]): Promise<string[]>;
 	backupWallet(login: string, password: string): Promise<void>;
 	openSyncFolder(login: string): Promise<void>;
 	createNewDrive(

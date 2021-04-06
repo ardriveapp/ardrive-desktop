@@ -24,7 +24,6 @@ export const AppRoutes = () => {
 	const isFirstLaunch = useSelector(authSelectors.getIsFirstLaunch);
 	const users = useSelector(appSelectors.getAllUsers);
 	const dispatch = useDispatch();
-
 	const routes = useMemo(() => {
 
 		dispatch(appActions.getAllUsers());

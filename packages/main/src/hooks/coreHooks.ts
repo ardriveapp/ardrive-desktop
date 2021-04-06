@@ -22,16 +22,30 @@ import {
 	createNewPublicDrive,
 	addSharedPublicDrive,
 } from "ardrive-core-js";
+import Arweave from 'arweave';
 import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
 import {
 	addDriveToDriveTable,
 	getAllFilesByLoginFromSyncTable,
 	getDriveFromDriveTable,
 	getAllFromProfile,
+	updateFileDataSyncStatus,
+	setFileUploaderObject,
+	getFilesToUploadFromSyncTable
 } from "ardrive-core-js/lib/db";
 
-import { CancellationToken } from "../types";
+import { CancellationToken, ArFSFileMetaData } from "../types";
 import { generateWallet } from "ardrive-core-js/lib/arweave";
+
+const arweave = Arweave.init({
+	host: 'arweave.net', // Arweave Gateway
+	port: 443,
+	protocol: 'https',
+	timeout: 600000
+});
+
+const appName = 'ArDrive-Desktop';
+const appVersion = '0.1.0';
 
 export const initialize = (window: BrowserWindow) => {
 	let cancellationToken: CancellationToken;
@@ -228,6 +242,24 @@ export const initialize = (window: BrowserWindow) => {
 		const user: ArDriveUser = await getUser(password, login);
 		await uploadArDriveFiles(user);
 	});
+
+	ipcMain.handle(
+		"uploadFile",
+		async (_, login: string, password: string, filesContent: any[], types: any[]) => {
+			const user: ArDriveUser = await getUser(password, login);
+			const id = filesContent.map(async (file, index) => {
+				const transaction = await arweave.createTransaction(
+					{ data: file },
+					JSON.parse(user.walletPrivateKey)
+				);
+				transaction.addTag('App-Name', appName);
+				transaction.addTag('App-Version', appVersion);
+				transaction.addTag('Content-Type', types[index]);
+				return transaction.id;
+			})
+			return id;
+		}
+	)
 
 	ipcMain.handle(
 		"getDrives",

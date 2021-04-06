@@ -2,6 +2,7 @@ import {
 	all,
 	call,
 	getContext,
+	PutEffect,
 	putResolve,
 	select,
 	takeLatest,
@@ -27,7 +28,7 @@ function* startWatchingSaga(action?: any) {
 function* loginSaga(action: any) {
 	const loginStartArgs: LoginStartArgs = action.payload;
 
-	const result = yield putResolve(
+	const result: PutEffect<any> = yield putResolve(
 		authActions.loginThunk(loginStartArgs) as any
 	);
 	yield call(startWatchingSaga, result);

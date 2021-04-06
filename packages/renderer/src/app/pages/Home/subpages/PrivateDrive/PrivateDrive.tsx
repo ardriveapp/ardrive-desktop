@@ -13,7 +13,6 @@ export default () => {
 	const dispatch = useDispatch();
 	const files = useSelector(appSelectors.getFiles);
 	const user = useSelector(authSelectors.getUser);
-
 	useEffect(() => {
 		if (user != null) {
 			dispatch(appActions.fetchFiles(user.login));
