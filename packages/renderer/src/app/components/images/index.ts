@@ -1,3 +1,3 @@
-export * from "./images";
-export * from "./Logos.styled";
-export * from "./icons";
+export * from './images';
+export * from './Logos.styled';
+export * from './icons';

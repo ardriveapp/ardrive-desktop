@@ -1,6 +1,6 @@
-import fs from "fs";
-import { BrowserWindow, ipcMain, dialog, shell } from "electron";
-import { Path } from "typescript";
+import fs from 'fs';
+import { BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { Path } from 'typescript';
 import {
 	passwordCheck,
 	getUser,
@@ -20,22 +20,19 @@ import {
 	backupWallet,
 	createNewPrivateDrive,
 	createNewPublicDrive,
-	addSharedPublicDrive,
-} from "ardrive-core-js";
-import Arweave from 'arweave';
-import { ArDriveUser, UploadBatch } from "ardrive-core-js/lib/types";
+	addSharedPublicDrive
+} from 'ardrive-core-js';
+import { ArDriveUser, UploadBatch } from 'ardrive-core-js/lib/types';
 import {
 	addDriveToDriveTable,
 	getAllFilesByLoginFromSyncTable,
 	getDriveFromDriveTable,
-	getAllFromProfile,
-	updateFileDataSyncStatus,
-	setFileUploaderObject,
-	getFilesToUploadFromSyncTable
-} from "ardrive-core-js/lib/db";
+	getAllFromProfile
+} from 'ardrive-core-js/lib/db';
 
-import { CancellationToken, ArFSFileMetaData } from "../types";
-import { generateWallet } from "ardrive-core-js/lib/arweave";
+import { CancellationToken } from '../types';
+import { generateWallet } from 'ardrive-core-js/lib/arweave';
+import Arweave from 'arweave';
 
 const arweave = Arweave.init({
 	host: 'arweave.net', // Arweave Gateway
@@ -74,10 +71,8 @@ export const initialize = (window: BrowserWindow) => {
 			await downloadMyArDriveFiles(user);
 			await checkUploadStatus(user.login);
 
-			const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(
-				user.login
-			);
-			window.webContents.send("notifyUploadStatus", uploadBatch);
+			const uploadBatch: UploadBatch = await getPriceOfNextUploadBatch(user.login);
+			window.webContents.send('notifyUploadStatus', uploadBatch);
 		}, 10000);
 	}
 
@@ -87,7 +82,7 @@ export const initialize = (window: BrowserWindow) => {
 		return publicDrives.concat(privateDrives);
 	}
 
-	ipcMain.handle("startWatchingFolders", async (_, login: string) => {
+	ipcMain.handle('startWatchingFolders', async (_, login: string) => {
 		const user = await getUserFromProfile(login);
 
 		if (user == null) {
@@ -97,7 +92,7 @@ export const initialize = (window: BrowserWindow) => {
 		await startWatcher(user);
 	});
 
-	ipcMain.handle("login", async (_, username: string, password: string) => {
+	ipcMain.handle('login', async (_, username: string, password: string) => {
 		const passwordResult: boolean = await passwordCheck(password, username);
 		if (passwordResult) {
 			const user = await getUser(password, username);
@@ -108,21 +103,21 @@ export const initialize = (window: BrowserWindow) => {
 				user: {
 					login: user.login,
 					walletPublicKey: user.walletPublicKey,
-					walletBalance: balance,
-				},
+					walletBalance: balance
+				}
 			};
 		}
 		return {
-			result: false,
+			result: false
 		};
 	});
 
-	ipcMain.handle("stopWatchingFolders", (_) => {
+	ipcMain.handle('stopWatchingFolders', (_) => {
 		cancellationToken?.cancel();
 	});
 
 	ipcMain.handle(
-		"createNewUser",
+		'createNewUser',
 		async (
 			_,
 			username: string,
@@ -132,9 +127,7 @@ export const initialize = (window: BrowserWindow) => {
 			walletPath?: string
 		) => {
 			const wallet =
-				createNew || walletPath == null
-					? await generateWallet()
-					: await getLocalWallet(walletPath as Path);
+				createNew || walletPath == null ? await generateWallet() : await getLocalWallet(walletPath as Path);
 
 			const user: ArDriveUser = {
 				login: username,
@@ -142,16 +135,16 @@ export const initialize = (window: BrowserWindow) => {
 				syncFolderPath: syncFolderPath,
 				autoSyncApproval: 0,
 				walletPrivateKey: JSON.stringify(wallet.walletPrivateKey),
-				walletPublicKey: wallet.walletPublicKey,
+				walletPublicKey: wallet.walletPublicKey
 			};
 			const result = await addNewUser(password, user);
 
-			if (result === "Success") {
+			if (result === 'Success') {
 				const allDrives = await getAllDrives(user);
 				for (const drive of allDrives) {
 					await addDriveToDriveTable({
 						...drive,
-						login: user.login,
+						login: user.login
 					});
 				}
 				return true;
@@ -160,42 +153,33 @@ export const initialize = (window: BrowserWindow) => {
 			return false;
 		}
 	);
-	ipcMain.handle(
-		"checkDuplicatedUser",
-		async (
-			_,
-			username
-		) => {
-			const user = await getUserFromProfile(username);
-			if (user === undefined) {
-				return false;
-			}
-			return true;
+	ipcMain.handle('checkDuplicatedUser', async (_, username) => {
+		const user = await getUserFromProfile(username);
+		if (user === undefined) {
+			return false;
 		}
-	)
+		return true;
+	});
 	/**
-	* Updates user's sync directory
-	*/
-	ipcMain.handle(
-		"updateUserSyncDir",
-		async (_, syncFolderPath: string, login: string, password: string) => {
-			const user: ArDriveUser = await getUser(password, login);
-			if (user) {
-				user.syncFolderPath = syncFolderPath;
-				// TODO: We need updateUser method
-				await addNewUser(password, user);
-			}
+	 * Updates user's sync directory
+	 */
+	ipcMain.handle('updateUserSyncDir', async (_, syncFolderPath: string, login: string, password: string) => {
+		const user: ArDriveUser = await getUser(password, login);
+		if (user) {
+			user.syncFolderPath = syncFolderPath;
+			// TODO: We need updateUser method
+			await addNewUser(password, user);
 		}
-	);
+	});
 	/**
-	   * Generate new wallet
-	   */
-	ipcMain.handle("createNewWallet", async () => {
+	 * Generate new wallet
+	 */
+	ipcMain.handle('createNewWallet', async () => {
 		const date = Number(new Date());
 		const { walletPrivateKey, walletPublicKey } = await generateWallet();
 		const result = await dialog.showSaveDialog({
 			defaultPath: `ardrive-wallet-keys-${date}.json`,
-			filters: [{ name: "Wallet Keys", extensions: ["json"] }],
+			filters: [{ name: 'Wallet Keys', extensions: ['json'] }]
 		});
 		if (!result.canceled) {
 			const filePath = result.filePath?.toString();
@@ -204,33 +188,29 @@ export const initialize = (window: BrowserWindow) => {
 				JSON.stringify(
 					{
 						private_key: walletPrivateKey,
-						public_key: walletPublicKey,
+						public_key: walletPublicKey
 					},
 					null,
 					2
 				),
 				(err) => {
 					if (err) throw err;
-					console.log("ArDrive:: new wallet generated!!");
+					console.log('ArDrive:: new wallet generated!!');
 					console.log(`Wallet path:: ${filePath}`);
 				}
 			);
 		}
 	});
 
-	ipcMain.handle("fetchFiles", async (_, username: string) => {
+	ipcMain.handle('fetchFiles', async (_, username: string) => {
 		const allFiles = await getAllFilesByLoginFromSyncTable(username);
 		const currentDate = new Date();
 		const minimumDate = new Date(currentDate);
 		minimumDate.setDate(currentDate.getDate() - 3);
 
 		// TODO: Move all that stuff to database query
-		const filteredByDate = allFiles.filter(
-			(file) => +file.lastModifiedDate >= minimumDate.getTime()
-		);
-		const orderedByDate = filteredByDate.sort(
-			(f, s) => +s.lastModifiedDate - +f.lastModifiedDate
-		);
+		const filteredByDate = allFiles.filter((file) => +file.lastModifiedDate >= minimumDate.getTime());
+		const orderedByDate = filteredByDate.sort((f, s) => +s.lastModifiedDate - +f.lastModifiedDate);
 
 		for (const file of orderedByDate) {
 			file.drive = await getDriveFromDriveTable(file.driveId);
@@ -238,7 +218,7 @@ export const initialize = (window: BrowserWindow) => {
 		return orderedByDate;
 	});
 
-	ipcMain.handle("uploadFiles", async (_, login: string, password: string) => {
+	ipcMain.handle('uploadFiles', async (_, login: string, password: string) => {
 		const user: ArDriveUser = await getUser(password, login);
 		await uploadArDriveFiles(user);
 	});
@@ -261,102 +241,78 @@ export const initialize = (window: BrowserWindow) => {
 		}
 	)
 
-	ipcMain.handle(
-		"getDrives",
-		async (_, login: string, driveType: "public" | "private") => {
-			const user = await getUserFromProfile(login);
+	ipcMain.handle('getDrives', async (_, login: string, driveType: 'public' | 'private') => {
+		const user = await getUserFromProfile(login);
 
-			switch (driveType) {
-				case "private":
-					return await getAllMyPrivateArDriveIds(user);
-				case "public":
-					return await getAllMyPublicArDriveIds(user.walletPublicKey);
-			}
+		switch (driveType) {
+			case 'private':
+				return await getAllMyPrivateArDriveIds(user);
+			case 'public':
+				return await getAllMyPublicArDriveIds(user.walletPublicKey);
 		}
-	);
+	});
 
-	ipcMain.handle("getAllDrives", async (_, login: string, password: string) => {
+	ipcMain.handle('getAllDrives', async (_, login: string, password: string) => {
 		const user: ArDriveUser = await getUser(password, login);
 		const drives = await getAllDrives(user);
 		return drives.map((drive) => ({
 			id: drive.id,
 			driveId: drive.driveId,
-			name: drive.driveName,
+			name: drive.driveName
 		}));
 	});
 
-	ipcMain.handle(
-		"attachDrive",
-		async (
-			_,
-			login: string,
-			password: string,
-			driveId: string,
-			isShared: boolean = false
-		) => {
-			const user = await getUser(password, login);
-			if (isShared) {
-				await addSharedPublicDrive(user, driveId);
-				return;
-			}
-			const allDrives = await getAllDrives(user);
-			const drive = allDrives.find((drive) => drive.driveId === driveId);
-			if (drive != null) {
-				await addDriveToDriveTable({
-					...drive,
-					login: user.login,
-				});
-				await startWatcher(user);
-			}
+	ipcMain.handle('attachDrive', async (_, login: string, password: string, driveId: string, isShared = false) => {
+		const user = await getUser(password, login);
+		if (isShared) {
+			await addSharedPublicDrive(user, driveId);
+			return;
 		}
-	);
+		const allDrives = await getAllDrives(user);
+		const drive = allDrives.find((drive) => drive.driveId === driveId);
+		if (drive != null) {
+			await addDriveToDriveTable({
+				...drive,
+				login: user.login
+			});
+			await startWatcher(user);
+		}
+	});
 
-	ipcMain.handle("backupWallet", async (_, login: string, password: string) => {
+	ipcMain.handle('backupWallet', async (_, login: string, password: string) => {
 		const result = await dialog.showOpenDialog({
-			properties: ["openDirectory"],
+			properties: ['openDirectory']
 		});
 		if (!result.canceled && result.filePaths.length > 0) {
 			const user: ArDriveUser = await getUser(password, login);
 			const wallet = {
 				walletPrivateKey: JSON.parse(user.walletPrivateKey),
-				walletPublicKey: user.walletPublicKey,
+				walletPublicKey: user.walletPublicKey
 			};
 			await backupWallet(result.filePaths[0], wallet, login);
 		}
 	});
 
-	ipcMain.handle("openSyncFolder", async (_, login: string) => {
+	ipcMain.handle('openSyncFolder', async (_, login: string) => {
 		const user: ArDriveUser = await getUserFromProfile(login);
 		await shell.openPath(user.syncFolderPath);
 	});
 
-	ipcMain.handle(
-		"createNewDrive",
-		async (_, login: string, driveName: string, isPrivate: boolean = true) => {
-			const user: ArDriveUser = await getUserFromProfile(login);
-			if (isPrivate) {
-				const newPrivateDrive = await createNewPrivateDrive(
-					user.login,
-					driveName
-				);
-				await addDriveToDriveTable(newPrivateDrive);
-			} else {
-				const newPublicDrive = await createNewPublicDrive(
-					user.login,
-					driveName
-				);
-				await addDriveToDriveTable(newPublicDrive);
-			}
-			await setupDrives(user.login, user.syncFolderPath);
-			await startWatcher(user);
+	ipcMain.handle('createNewDrive', async (_, login: string, driveName: string, isPrivate = true) => {
+		const user: ArDriveUser = await getUserFromProfile(login);
+		if (isPrivate) {
+			const newPrivateDrive = await createNewPrivateDrive(user.login, driveName);
+			await addDriveToDriveTable(newPrivateDrive);
+		} else {
+			const newPublicDrive = await createNewPublicDrive(user.login, driveName);
+			await addDriveToDriveTable(newPublicDrive);
 		}
-	);
+		await setupDrives(user.login, user.syncFolderPath);
+		await startWatcher(user);
+	});
 
-	ipcMain.handle(
-		"getAllUsers",
-		async (_) => {
-			const users = await getAllFromProfile();
-			return users.length;
-		}
-	)
+	ipcMain.handle('getAllUsers', async (_) => {
+		const users = await getAllFromProfile();
+		return users.length;
+	});
 };

@@ -8,16 +8,12 @@
 		{
 			"from": "../renderer/build/",
 			"to": "./renderer/",
-			"filter": [
-				"**/*"
-			]
+			"filter": ["**/*"]
 		},
 		{
 			"from": "./build/",
 			"to": "./",
-			"filter": [
-				"**/*"
-			]
+			"filter": ["**/*"]
 		},
 		"package.json"
 	],

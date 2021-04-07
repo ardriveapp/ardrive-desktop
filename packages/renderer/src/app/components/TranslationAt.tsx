@@ -1,5 +1,5 @@
-import React from "react";
-import { Trans, TransProps } from "react-i18next";
+import React from 'react';
+import { Trans, TransProps } from 'react-i18next';
 
 interface TranslationAtProps extends TransProps {
 	atPath: string;

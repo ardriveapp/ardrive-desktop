@@ -1,15 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import { User, Password } from "app/components/images";
+import { User, Password } from 'app/components/images';
 
-import {
-	ImageContainer,
-	InputContainer,
-	StyledInput,
-} from "./ArdriveInput.styled";
+import { ImageContainer, InputContainer, StyledInput } from './ArdriveInput.styled';
 
-interface ArdriveInputProps
-	extends React.InputHTMLAttributes<HTMLInputElement> {
+interface ArdriveInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	hideIcon?: boolean;
 }
 
@@ -18,11 +13,7 @@ const ArdriveInput: React.FC<ArdriveInputProps> = (props) => {
 
 	return (
 		<InputContainer>
-			{!hideIcon && (
-				<ImageContainer>
-					{type === "password" ? <Password /> : <User />}
-				</ImageContainer>
-			)}
+			{!hideIcon && <ImageContainer>{type === 'password' ? <Password /> : <User />}</ImageContainer>}
 			<StyledInput {...props} />
 		</InputContainer>
 	);

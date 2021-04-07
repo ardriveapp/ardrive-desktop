@@ -1,27 +1,27 @@
-import { ipcMain, dialog, BrowserWindow, shell } from "electron";
+import { ipcMain, dialog, BrowserWindow, shell } from 'electron';
 
-import { CommunityLink, HelpLink, UsageLink, Sizes } from "../config";
-import { WindowType } from "../types";
+import { CommunityLink, HelpLink, UsageLink, Sizes } from '../config';
+import { WindowType } from '../types';
 
 export const initialize = (window: BrowserWindow) => {
-	ipcMain.handle("openFile", async (_) => {
+	ipcMain.handle('openFile', async (_) => {
 		const result = await dialog.showOpenDialog({
-			properties: ["openFile"],
+			properties: ['openFile']
 		});
 		return result;
 	});
 
-	ipcMain.handle("openFolder", async (_) => {
+	ipcMain.handle('openFolder', async (_) => {
 		const result = await dialog.showOpenDialog({
-			properties: ["openDirectory"],
+			properties: ['openDirectory']
 		});
 		return result;
 	});
 
-	ipcMain.handle("changeWindowSize", async (_, windowType: WindowType) => {
+	ipcMain.handle('changeWindowSize', async (_, windowType: WindowType) => {
 		switch (windowType) {
-			case "desktop":
-			case "mobile":
+			case 'desktop':
+			case 'mobile':
 				window.setResizable(true);
 				window.setSize(Sizes[windowType].width, Sizes[windowType].height, true);
 				window.setResizable(false);
@@ -31,19 +31,19 @@ export const initialize = (window: BrowserWindow) => {
 		}
 	});
 
-	ipcMain.handle("openCommunityLink", async (_) => {
+	ipcMain.handle('openCommunityLink', async (_) => {
 		await shell.openExternal(CommunityLink);
 	});
 
-	ipcMain.handle("openHelpLink", async (_) => {
+	ipcMain.handle('openHelpLink', async (_) => {
 		await shell.openExternal(HelpLink);
 	});
 
-	ipcMain.handle("openUsageLink", async (_) => {
+	ipcMain.handle('openUsageLink', async (_) => {
 		await shell.openExternal(UsageLink);
 	});
 
-	ipcMain.handle("openCustomLink", async (_, link: string) => {
+	ipcMain.handle('openCustomLink', async (_, link: string) => {
 		if (link) {
 			await shell.openExternal(link);
 		}

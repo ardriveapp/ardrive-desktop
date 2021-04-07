@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import Popover from "react-popover";
+import styled from 'styled-components';
+import Popover from 'react-popover';
 
-import { LogoWithoutText, Logout, Users, Help } from "app/components/images";
+import { LogoWithoutText, Logout, Users, Help } from 'app/components/images';
 
 export const Container = styled.div`
 	height: 100%;
@@ -86,7 +86,7 @@ export const CurrentUserDetailsBar = styled.div`
 `;
 
 export const UserDetailsContainer = styled.div`
-  	margin-left: 16px;
+	margin-left: 16px;
 `;
 
 export const UserNameContainer = styled.div`
@@ -95,7 +95,7 @@ export const UserNameContainer = styled.div`
 `;
 
 export const UserName = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 16px;
@@ -104,7 +104,7 @@ export const UserName = styled.div`
 `;
 
 export const UserAddress = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 12px;
@@ -113,7 +113,7 @@ export const UserAddress = styled.div`
 `;
 
 export const UserBalance = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 16px;
@@ -151,7 +151,7 @@ export const FooterContainer = styled.div`
 `;
 
 export const FooterButtonText = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 10px;
@@ -170,7 +170,7 @@ export const FooterButton = styled.div<{
 	cursor: pointer;
 
 	${FooterButtonText} {
-		color: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
+		color: ${(props) => (props.isActive ? 'white' : '#a4a4a4')};
 	}
 
 	&:hover {
@@ -186,18 +186,18 @@ export const FooterButton = styled.div<{
 	}
 
 	& > svg {
-			g {
-				opacity: 1;
-			}
+		g {
+			opacity: 1;
+		}
 
 		path {
-			fill: ${(props) => (props.isActive ? "white" : "#a4a4a4")};
+			fill: ${(props) => (props.isActive ? 'white' : '#a4a4a4')};
 		}
 	}
 `;
 
 export const StyledPopover = styled(Popover).attrs(() => ({
-	tipSize: 0.1,
+	tipSize: 0.1
 }))``;
 
 export const NewButtonMenuContainer = styled.div`
@@ -209,11 +209,11 @@ export const NewButtonMenuContainer = styled.div`
 	height: 88px;
 	border-radius: 3px;
 	background: #ffffff;
-  	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
+	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.12);
 `;
 
 export const NewButtonMenuContainerItem = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 14px;
@@ -241,7 +241,7 @@ export const SettingsButtonMenuContainer = styled.div`
 `;
 
 export const SettingsButtonMenuContainerItem = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 14px;
@@ -258,7 +258,7 @@ export const SettingsButtonMenuContainerItem = styled.div`
 `;
 
 export const SettingsButtonMenuHeader = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 16px;
@@ -280,14 +280,14 @@ export const UploadNotificationContainer = styled.div`
 `;
 
 export const UploadText = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;
 	line-height: 22px;
 	margin-left: 18px;
 
-  	color: rgba(0, 6, 10, 0.6);
+	color: rgba(0, 6, 10, 0.6);
 `;
 
 export const NotificationInfoContainer = styled.div`
@@ -304,7 +304,7 @@ export const NotificationButtonsContainer = styled.div`
 `;
 
 export const NotificationButton = styled.div`
-	font-family: "Montserrat";
+	font-family: 'Montserrat';
 	font-style: normal;
 	font-weight: bold;
 	font-size: 14px;
@@ -328,7 +328,7 @@ export const SyncingStatusContainer = styled.div`
 `;
 
 export const SyncingText = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 14px;

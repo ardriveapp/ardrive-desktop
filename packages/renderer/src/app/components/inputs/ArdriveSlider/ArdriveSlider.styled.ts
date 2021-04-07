@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const SliderContainer = styled.div`
 	display: flex;
@@ -6,13 +6,13 @@ export const SliderContainer = styled.div`
 `;
 
 export const Checkmark = styled.div`
-  width: 100%;
+	width: 100%;
 	height: 100%;
 	background-color: #fbfbfb;
 	color: rgba(0, 6, 10, 0.6);
 	line-height: 48px;
 	text-align: center;
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 14px;

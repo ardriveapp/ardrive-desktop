@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const SidebarContainer = styled.div`
 	display: flex;
@@ -24,7 +24,7 @@ export const BottomContainer = styled.div`
 `;
 
 export const GroupHeader = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 18px;

@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { ButtonWithIcon, RoundedButton } from "app/components/buttons";
-import { Close } from "app/components/images";
+import { ButtonWithIcon, RoundedButton } from 'app/components/buttons';
+import { Close } from 'app/components/images';
 
 export const AppModalContainer = styled.div<{
 	visible: boolean;
@@ -11,7 +11,7 @@ export const AppModalContainer = styled.div<{
 	left: 0;
 	width: 100%;
 	height: 100%;
-	display: ${(props) => (props.visible ? "flex" : "none")};
+	display: ${(props) => (props.visible ? 'flex' : 'none')};
 	justify-content: center;
 	align-items: center;
 	background-color: rgba(248, 248, 248, 0.2);
@@ -42,7 +42,7 @@ export const AppModalWindowHeader = styled.div`
 `;
 
 export const AppModalWindowHeaderText = styled.div`
-	font-family: "Montserrat";
+	font-family: 'Montserrat';
 	font-style: normal;
 	font-weight: 600;
 	font-size: 16px;
@@ -89,5 +89,5 @@ export const AppModalWindowFooter = styled.div`
 `;
 
 export const AppModalWindowBody = styled.div`
-  	padding: 26px;
+	padding: 26px;
 `;

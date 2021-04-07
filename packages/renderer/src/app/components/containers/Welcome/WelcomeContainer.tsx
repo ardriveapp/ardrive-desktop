@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import {
 	ContentContainer,
@@ -7,8 +7,8 @@ import {
 	WelcomeContainer,
 	AppLogo,
 	LogoContainer,
-	AppLogoWithText,
-} from "./WelcomeContainer.styled";
+	AppLogoWithText
+} from './WelcomeContainer.styled';
 
 const Container: React.FC<{
 	rightImage?: React.ReactNode;
@@ -18,9 +18,7 @@ const Container: React.FC<{
 		<WelcomeContainer>
 			<LeftContainer>{rightImage}</LeftContainer>
 			<RightContainer>
-				<LogoContainer>
-					{useLogoWithText ? <AppLogoWithText /> : <AppLogo />}
-				</LogoContainer>
+				<LogoContainer>{useLogoWithText ? <AppLogoWithText /> : <AppLogo />}</LogoContainer>
 				<ContentContainer>{children}</ContentContainer>
 			</RightContainer>
 		</WelcomeContainer>

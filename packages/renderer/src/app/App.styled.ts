@@ -1,7 +1,7 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
-import "fontsource-montserrat";
-import "fontsource-open-sans";
+import 'fontsource-montserrat';
+import 'fontsource-open-sans';
 
 export const GlobalStyle = createGlobalStyle`
 	* {

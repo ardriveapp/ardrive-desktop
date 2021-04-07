@@ -5,27 +5,27 @@ module.exports = {
 	target: 'electron-main',
 	externals: {
 		sqlite3: 'commonjs sqlite3',
-		fsevents: "require('fsevents')",
+		fsevents: "require('fsevents')"
 	},
 	module: {
 		rules: [
 			{
 				test: /\.tsx?$/,
 				use: 'babel-loader',
-				exclude: /node_modules/,
-			},
-		],
+				exclude: /node_modules/
+			}
+		]
 	},
 	resolve: {
-		extensions: ['.tsx', '.ts', '.js'],
+		extensions: ['.tsx', '.ts', '.js']
 	},
 	output: {
 		filename: 'index.js',
-		path: path.resolve(__dirname, 'build'),
+		path: path.resolve(__dirname, 'build')
 	},
 	node: {
 		global: false,
 		__filename: false,
-		__dirname: false,
-	},
+		__dirname: false
+	}
 };

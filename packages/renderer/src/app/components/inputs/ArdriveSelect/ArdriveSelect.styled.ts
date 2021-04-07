@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const ArdriveSelectContainer = styled.div`
 	height: 58px;
@@ -13,7 +13,7 @@ export const StyledSelect = styled.select`
 	outline: none;
 	height: 100%;
 	width: 100%;
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;
@@ -23,7 +23,7 @@ export const StyledSelect = styled.select`
 
 	&:focus {
 		border-bottom: 2px solid ${(props) => props.theme.colors.red};
-  	}
+	}
 
 	&:invalid {
 		color: #a9a9a9;

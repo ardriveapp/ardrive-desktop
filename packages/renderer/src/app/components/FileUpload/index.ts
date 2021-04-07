@@ -1,2 +1,2 @@
 export * from "./FileUpload.styled";
-export { default as FileUpload } from "./FileUpload";
+export { default as FileUpload } from './FileUpload';

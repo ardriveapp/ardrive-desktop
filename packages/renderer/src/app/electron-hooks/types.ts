@@ -1,6 +1,6 @@
-import { Middleware } from "@reduxjs/toolkit";
+import { Middleware } from '@reduxjs/toolkit';
 
-export type WindowType = "desktop" | "mobile";
+export type WindowType = 'desktop' | 'mobile';
 
 export interface ArDrive {
 	id: string;
@@ -24,11 +24,7 @@ export interface CoreHooks {
 		walletPath?: string
 	): Promise<string>;
 	checkDuplcatedUser(username: string): Promise<boolean>;
-	updateUserSyncDir(
-		syncFolderPath: string,
-		login: string,
-		password: string
-	): Promise<string>;
+	updateUserSyncDir(syncFolderPath: string, login: string, password: string): Promise<string>;
 	createNewWallet(): Promise<void>;
 	startWatchingFolders(username: string): Promise<void>;
 	fetchFiles(username: string): Promise<any[]>;
@@ -37,19 +33,10 @@ export interface CoreHooks {
 	uploadFile(login: string, password: string, filesContent: any[], newFiles: any[]): Promise<string[]>;
 	backupWallet(login: string, password: string): Promise<void>;
 	openSyncFolder(login: string): Promise<void>;
-	createNewDrive(
-		login: string,
-		driveName: string,
-		isPrivate: boolean
-	): Promise<void>;
+	createNewDrive(login: string, driveName: string, isPrivate: boolean): Promise<void>;
 	getAllDrives(login: string, password: string): Promise<Array<ArDrive>>;
-	attachDrive(
-		login: string,
-		password: string,
-		driveId: string,
-		isShared: boolean
-	): Promise<void>;
-	getAllUsers(): Promise<Number>;
+	attachDrive(login: string, password: string, driveId: string, isShared: boolean): Promise<void>;
+	getAllUsers(): Promise<number>;
 }
 
 export interface NativeHooks {

@@ -1,1 +1,1 @@
-export { default as ArdriveSlider } from "./ArdriveSlider";
+export { default as ArdriveSlider } from './ArdriveSlider';
