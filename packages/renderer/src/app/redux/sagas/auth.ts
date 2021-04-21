@@ -1,12 +1,19 @@
-import { all, call, getContext, putResolve, select, takeLatest } from 'redux-saga/effects';
+import {
+	all,
+	call,
+	getContext,
+	putResolve,
+	select,
+	takeLatest,
+} from "redux-saga/effects";
 
-import { ElectronHooks } from 'app/electron-hooks/types';
-import { AppUser, CreateUserArgs, LoginStartArgs } from '../types';
-import { authActions } from '../slices/auth';
-import { authSelectors } from '../selectors';
+import { ElectronHooks } from "app/electron-hooks/types";
+import { AppUser, CreateUserArgs, LoginStartArgs, AuthAction } from "../types";
+import { authActions } from "../slices/auth";
+import { authSelectors } from "../selectors";
 
-function* startWatchingSaga(action?: any) {
-	let user: AppUser | null = action?.payload;
+function* startWatchingSaga(action?: AuthAction<AppUser | null>) {
+	let user: AppUser | null = action?.payload || null;
 
 	if (user == null) {
 		user = yield select(authSelectors.getUser);
@@ -17,14 +24,14 @@ function* startWatchingSaga(action?: any) {
 	}
 }
 
-function* loginSaga(action: any) {
+function* loginSaga(action: AuthAction<LoginStartArgs>) {
 	const loginStartArgs: LoginStartArgs = action.payload;
 
 	const result = yield putResolve(authActions.loginThunk(loginStartArgs) as any);
 	yield call(startWatchingSaga, result);
 }
 
-function* createUserSaga(action: any) {
+function* createUserSaga(action: AuthAction<CreateUserArgs>) {
 	const createUserArgs: CreateUserArgs = action.payload;
 
 	yield putResolve(authActions.createUserThunk(createUserArgs) as any);
