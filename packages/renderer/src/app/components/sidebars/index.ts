@@ -1,2 +1,2 @@
-export * from "./AppSidebar";
-export * from "./DetailsSidebar";
+export * from './AppSidebar';
+export * from './DetailsSidebar';

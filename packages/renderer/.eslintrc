@@ -1,0 +1,15 @@
+{
+    "root": false,
+    "plugins": ["@typescript-eslint", "prettier", "react"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:import/typescript",
+        "plugin:promise/recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
+    ]
+}

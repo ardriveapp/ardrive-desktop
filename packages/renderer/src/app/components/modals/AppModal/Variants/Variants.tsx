@@ -1,17 +1,17 @@
-import React, { useCallback, useMemo, useEffect } from "react";
+import React, { useCallback, useMemo, useEffect } from 'react';
 
-import { useTranslationAt } from "app/utils/hooks";
+import { useTranslationAt } from 'app/utils/hooks';
 
-import { ButtonWithIcon, RoundedButton, ButtonsContainer, LoginButton } from "app/components/buttons";
-import { AppModalBase } from "../AppModal";
-import { ArdriveInput } from "app/components/inputs";
-import { ArdriveSelect } from "app/components/inputs/ArdriveSelect";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { appSelectors, authSelectors } from "app/redux/selectors";
-import { appActions } from "app/redux/slices/app";
-import { authActions } from "app/redux/slices/auth";
-import { TextLabel } from "./Variants.styled";
+import { ButtonWithIcon, RoundedButton, ButtonsContainer, LoginButton } from 'app/components/buttons';
+import { AppModalBase } from '../AppModal';
+import { ArdriveInput } from 'app/components/inputs';
+import { ArdriveSelect } from 'app/components/inputs/ArdriveSelect';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { appSelectors, authSelectors } from 'app/redux/selectors';
+import { appActions } from 'app/redux/slices/app';
+import { authActions } from 'app/redux/slices/auth';
+import { TextLabel } from './Variants.styled';
 
 interface ModalProps {
 	onClose?(): void;
@@ -20,17 +20,14 @@ interface ModalProps {
 
 enum DriveType {
 	Public,
-	Private,
+	Private
 }
 
 export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
-	const { t } = useTranslationAt("components.modals.newDrive");
+	const { t } = useTranslationAt('components.modals.newDrive');
 	const [driveName, setDriveName] = useState<string>();
 	const [driveType, setDriveType] = useState<DriveType>();
-	const isFilled = useMemo(() => driveName != null && driveType != null, [
-		driveName,
-		driveType,
-	]);
+	const isFilled = useMemo(() => driveName != null && driveType != null, [driveName, driveType]);
 	const user = useSelector(authSelectors.getUser);
 	const dispatch = useDispatch();
 
@@ -40,7 +37,7 @@ export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
 				appActions.createNewDrive({
 					login: user.login,
 					driveName: driveName,
-					isPrivate: driveType === DriveType.Private,
+					isPrivate: driveType === DriveType.Private
 				})
 			);
 			if (onClose != null) {
@@ -52,7 +49,7 @@ export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
 	return (
 		<AppModalBase
 			onClose={onClose}
-			title={t("header")}
+			title={t('header')}
 			visible={visible}
 			body={[
 				<ArdriveInput
@@ -60,47 +57,33 @@ export const NewDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
 					value={driveName}
 					onChange={(e) => setDriveName(e.currentTarget.value)}
 					hideIcon
-					placeholder={t("driveName")}
+					placeholder={t('driveName')}
 				/>,
-				<ArdriveSelect
-					key="driveType"
-					value={driveType}
-					onChange={(e) => setDriveType(+e.currentTarget.value)}
-				>
+				<ArdriveSelect key="driveType" value={driveType} onChange={(e) => setDriveType(+e.currentTarget.value)}>
 					<option value="" disabled selected>
-						{t("driveType")}
+						{t('driveType')}
 					</option>
-					<option value={DriveType.Public}>{t("public")}</option>
-					<option value={DriveType.Private}>{t("private")}</option>
-				</ArdriveSelect>,
+					<option value={DriveType.Public}>{t('public')}</option>
+					<option value={DriveType.Private}>{t('private')}</option>
+				</ArdriveSelect>
 			]}
 			footer={[
 				<ButtonWithIcon key="cancel" active transparent onClick={onClose}>
-					{t("cancel")}
+					{t('cancel')}
 				</ButtonWithIcon>,
-				<RoundedButton
-					key="create"
-					onClick={createDriveHanlder}
-					disabled={!isFilled}
-				>
-					{t("create")}
-				</RoundedButton>,
+				<RoundedButton key="create" onClick={createDriveHanlder} disabled={!isFilled}>
+					{t('create')}
+				</RoundedButton>
 			]}
 		/>
 	);
 };
 
-export const AttachDriveModal: React.FC<ModalProps> = ({
-	visible,
-	onClose,
-}) => {
-	const { t } = useTranslationAt("components.modals.attachDrive");
+export const AttachDriveModal: React.FC<ModalProps> = ({ visible, onClose }) => {
+	const { t } = useTranslationAt('components.modals.attachDrive');
 	const [sharedDriveId, setSharedDriveId] = useState<string>();
 	const [personalDriveId, setPersonalDriveId] = useState<string>();
-	const isFilled = useMemo(
-		() => sharedDriveId != null || personalDriveId != null,
-		[sharedDriveId, personalDriveId]
-	);
+	const isFilled = useMemo(() => sharedDriveId != null || personalDriveId != null, [sharedDriveId, personalDriveId]);
 	const user = useSelector(authSelectors.getUser);
 	const drives = useSelector(appSelectors.getAllDrives);
 	const dispatch = useDispatch();
@@ -118,7 +101,7 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
 					appActions.attachDrive({
 						...user,
 						driveId: sharedDriveId,
-						isShared: true,
+						isShared: true
 					})
 				);
 			} else if (personalDriveId != null) {
@@ -126,7 +109,7 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
 					appActions.attachDrive({
 						...user,
 						driveId: personalDriveId,
-						isShared: false,
+						isShared: false
 					})
 				);
 			}
@@ -140,7 +123,7 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
 	return (
 		<AppModalBase
 			onClose={onClose}
-			title={t("header")}
+			title={t('header')}
 			visible={visible}
 			body={[
 				<ArdriveInput
@@ -149,19 +132,17 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
 					value={sharedDriveId}
 					onChange={(e) => setSharedDriveId(e.currentTarget.value || undefined)}
 					hideIcon
-					placeholder={t("sharedDriveId")}
+					placeholder={t('sharedDriveId')}
 				/>,
-				<TextLabel key="or">{t("or")}</TextLabel>,
+				<TextLabel key="or">{t('or')}</TextLabel>,
 				<ArdriveSelect
 					disabled={sharedDriveId != null}
 					key="personalDrive"
 					value={personalDriveId}
-					onChange={(e) =>
-						setPersonalDriveId(e.currentTarget.value || undefined)
-					}
+					onChange={(e) => setPersonalDriveId(e.currentTarget.value || undefined)}
 				>
 					<option value="" selected>
-						{t("personalDrive")}
+						{t('personalDrive')}
 					</option>
 					{drives.map((drive) => {
 						return (
@@ -170,31 +151,24 @@ export const AttachDriveModal: React.FC<ModalProps> = ({
 							</option>
 						);
 					})}
-				</ArdriveSelect>,
+				</ArdriveSelect>
 			]}
 			footer={[
 				<ButtonWithIcon key="cancel" active transparent onClick={onClose}>
-					{t("cancel")}
+					{t('cancel')}
 				</ButtonWithIcon>,
-				<RoundedButton
-					key="create"
-					onClick={attachDriveHanlder}
-					disabled={!isFilled}
-				>
-					{t("attach")}
-				</RoundedButton>,
+				<RoundedButton key="create" onClick={attachDriveHanlder} disabled={!isFilled}>
+					{t('attach')}
+				</RoundedButton>
 			]}
 		/>
 	);
 };
 export const LoginModal: React.FC<ModalProps> = ({ visible, onClose }) => {
-	const { t } = useTranslationAt("components.modals.loginDrive");
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const isFilled = useMemo(() => username !== "" && password !== "", [
-		username,
-		password,
-	]);
+	const { t } = useTranslationAt('components.modals.loginDrive');
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
+	const isFilled = useMemo(() => username !== '' && password !== '', [username, password]);
 	const user = useSelector(authSelectors.getUser);
 
 	const dispatch = useDispatch();
@@ -202,7 +176,7 @@ export const LoginModal: React.FC<ModalProps> = ({ visible, onClose }) => {
 		await dispatch(
 			authActions.login({
 				login: username,
-				password,
+				password
 			})
 		);
 		if (onClose != null) {
@@ -216,34 +190,28 @@ export const LoginModal: React.FC<ModalProps> = ({ visible, onClose }) => {
 	return (
 		<AppModalBase
 			onClose={onClose}
-			title={t("header")}
+			title={t('header')}
 			visible={visible}
 			body={[
 				<ArdriveInput
-					placeholder={t("username")}
-					onChange={e => setUsername(e.currentTarget.value)}
+					placeholder={t('username')}
+					onChange={(e) => setUsername(e.currentTarget.value)}
 					hideIcon
 				/>,
 				<ArdriveInput
 					type="password"
 					onChange={(e) => setPassword(e.currentTarget.value)}
-					placeholder={t("password")}
+					placeholder={t('password')}
 					hideIcon
 				/>
 			]}
 			footer={[
 				<ButtonsContainer>
-					<LoginButton
-						onClick={onClose}
-					>
-						{t("cancel")}
+					<LoginButton onClick={onClose}>{t('cancel')}</LoginButton>
+					<LoginButton onClick={login} disabled={!isFilled}>
+						{t('login')}
 					</LoginButton>
-					<LoginButton
-						onClick={login}
-						disabled={!isFilled}
-					>
-						{t("login")}
-					</LoginButton>,
+					,
 				</ButtonsContainer>
 			]}
 		/>

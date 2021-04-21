@@ -1,1 +1,1 @@
-export { default as FirstStep } from "./FirstStep";
+export { default as FirstStep } from './FirstStep';

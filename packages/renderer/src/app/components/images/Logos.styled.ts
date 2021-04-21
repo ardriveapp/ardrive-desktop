@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { Logo, LogoTextRed } from "./images";
+import { Logo, LogoTextRed } from './images';
 
 export const AppTextLogo = styled(LogoTextRed)`
 	margin-top: 16px;

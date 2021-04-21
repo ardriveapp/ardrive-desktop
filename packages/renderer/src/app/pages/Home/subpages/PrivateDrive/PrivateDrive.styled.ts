@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const PageContainer = styled.div`
 	height: 100%;
@@ -30,7 +30,7 @@ export const PageHeader = styled.div`
 `;
 
 export const FolderPath = styled.span`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 14px;
@@ -43,7 +43,7 @@ export const FolderPath = styled.span`
 export const FileMenuContainer = styled.div<{
 	visible: boolean;
 }>`
-	display: ${(props) => (props.visible ? "block" : "none")};
+	display: ${(props) => (props.visible ? 'block' : 'none')};
 
 	svg {
 		margin-right: 31px;

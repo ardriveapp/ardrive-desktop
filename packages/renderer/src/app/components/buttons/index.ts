@@ -1,2 +1,2 @@
-export * from "./Buttons.styled";
-export { default as ButtonWithIcon } from "./ButtonWithIcon";
+export * from './Buttons.styled';
+export { default as ButtonWithIcon } from './ButtonWithIcon';

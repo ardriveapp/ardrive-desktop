@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const ButtonsContainer = styled.div`
 	width: 100%;
 	justify-content: space-between;
 	display: flex;
-`
+`;
 
 export const RoundedButton = styled.button`
 	background: ${(props) => props.theme.colors.red};
@@ -12,7 +12,7 @@ export const RoundedButton = styled.button`
 	width: 100%;
 	height: 64px;
 
-	font-family: "Montserrat";
+	font-family: 'Montserrat';
 	font-style: normal;
 	font-weight: bold;
 	font-size: 20px;
@@ -54,8 +54,8 @@ export const LoginButton = styled(RoundedButton)`
 	height: 50px;
 	padding: 10px;
 	font-size: 16px;
-`
-export const ButtonWithContent = styled(RoundedButton) <{
+`;
+export const ButtonWithContent = styled(RoundedButton)<{
 	active?: boolean;
 }>`
 	display: flex;
@@ -71,6 +71,6 @@ export const ButtonWithContent = styled(RoundedButton) <{
 export const TransparentButtonWithContent = styled(ButtonWithContent)`
 	background-color: transparent;
 	text-transform: capitalize;
-	opacity: ${(props) => (props.active ? "1" : "0.6")};
+	opacity: ${(props) => (props.active ? '1' : '0.6')};
 	margin-bottom: 0;
 `;

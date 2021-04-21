@@ -1,6 +1,6 @@
-import { IpcRenderer } from "electron";
+import { IpcRenderer } from 'electron';
 
-import { CoreHooks } from "./types";
+import { CoreHooks } from './types';
 
 class CoreHooksImplementation implements CoreHooks {
 	ipcRenderer: IpcRenderer;
@@ -10,7 +10,7 @@ class CoreHooksImplementation implements CoreHooks {
 	}
 
 	async login(username: string, password: string) {
-		return await this.ipcRenderer.invoke("login", username, password);
+		return await this.ipcRenderer.invoke('login', username, password);
 	}
 
 	async createNewUser(
@@ -21,7 +21,7 @@ class CoreHooksImplementation implements CoreHooks {
 		walletPath?: string
 	) {
 		return await this.ipcRenderer.invoke(
-			"createNewUser",
+			'createNewUser',
 			username,
 			password,
 			syncFolderPath,
@@ -31,76 +31,44 @@ class CoreHooksImplementation implements CoreHooks {
 	}
 
 	async checkDuplcatedUser(username: string) {
-		return await this.ipcRenderer.invoke(
-			"checkDuplicatedUser",
-			username
-		);
+		return await this.ipcRenderer.invoke('checkDuplicatedUser', username);
 	}
 
-	async updateUserSyncDir(
-		syncFolderPath: string,
-		login: string,
-		password: string
-	) {
-		return await this.ipcRenderer.invoke(
-			"updateUserSyncDir",
-			syncFolderPath,
-			login,
-			password
-		);
+	async updateUserSyncDir(syncFolderPath: string, login: string, password: string) {
+		return await this.ipcRenderer.invoke('updateUserSyncDir', syncFolderPath, login, password);
 	}
 	async createNewWallet() {
-		await this.ipcRenderer.invoke("createNewWallet");
+		await this.ipcRenderer.invoke('createNewWallet');
 	}
 	async startWatchingFolders(username: string) {
-		await this.ipcRenderer.invoke("startWatchingFolders", username);
+		await this.ipcRenderer.invoke('startWatchingFolders', username);
 	}
 	async fetchFiles(username: string): Promise<any[]> {
-		return await this.ipcRenderer.invoke("fetchFiles", username);
+		return await this.ipcRenderer.invoke('fetchFiles', username);
 	}
 	async stopWatchingFolders() {
-		await this.ipcRenderer.invoke("stopWatchingFolders");
+		await this.ipcRenderer.invoke('stopWatchingFolders');
 	}
 	async uploadFiles(login: string, password: string) {
-		await this.ipcRenderer.invoke("uploadFiles", login, password);
+		await this.ipcRenderer.invoke('uploadFiles', login, password);
 	}
 	async backupWallet(login: string, password: string) {
-		await this.ipcRenderer.invoke("backupWallet", login, password);
+		await this.ipcRenderer.invoke('backupWallet', login, password);
 	}
 	async openSyncFolder(login: string) {
-		await this.ipcRenderer.invoke("openSyncFolder", login);
+		await this.ipcRenderer.invoke('openSyncFolder', login);
 	}
-	async createNewDrive(
-		login: string,
-		driveName: string,
-		isPrivate: boolean = true
-	) {
-		await this.ipcRenderer.invoke(
-			"createNewDrive",
-			login,
-			driveName,
-			isPrivate
-		);
+	async createNewDrive(login: string, driveName: string, isPrivate = true) {
+		await this.ipcRenderer.invoke('createNewDrive', login, driveName, isPrivate);
 	}
 	async getAllDrives(login: string, password: string) {
-		return await this.ipcRenderer.invoke("getAllDrives", login, password);
+		return await this.ipcRenderer.invoke('getAllDrives', login, password);
 	}
-	async attachDrive(
-		login: string,
-		password: string,
-		driveId: string,
-		isShared: boolean = false
-	) {
-		await this.ipcRenderer.invoke(
-			"attachDrive",
-			login,
-			password,
-			driveId,
-			isShared
-		);
+	async attachDrive(login: string, password: string, driveId: string, isShared = false) {
+		await this.ipcRenderer.invoke('attachDrive', login, password, driveId, isShared);
 	}
 	async getAllUsers() {
-		return await this.ipcRenderer.invoke("getAllUsers");
+		return await this.ipcRenderer.invoke('getAllUsers');
 	}
 }
 

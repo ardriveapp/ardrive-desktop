@@ -1,4 +1,4 @@
-import { ArDrive } from "app/electron-hooks/types";
+import { ArDrive } from 'app/electron-hooks/types';
 
 export interface UploadNotification {
 	filesCount: number;
@@ -9,7 +9,7 @@ export interface UploadNotification {
 export interface AppState {
 	files: ArDriveFile[];
 	drives: ArDrive[];
-	users: Number;
+	users: number;
 	uploadNotification?: UploadNotification;
 }
 
@@ -18,13 +18,13 @@ export interface ArDriveFile {
 	owner: string;
 	location: string;
 	modifiedDate: string;
-	type: "folder" | "file";
+	type: 'folder' | 'file';
 	name: string;
 	size: number;
 	image?: string;
 	fileImage?: string;
 	driveName?: string;
-	syncStatus?: "downloaded" | "uploaded" | "syncing";
+	syncStatus?: 'downloaded' | 'uploaded' | 'syncing';
 	webLink?: string;
 }
 

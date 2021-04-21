@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const RoundedInput = styled.input`
 	background: ${(props) => props.theme.colors.darkGrey};

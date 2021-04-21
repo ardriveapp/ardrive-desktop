@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const TextLabel = styled.div`
-	font-family: "Open Sans";
+	font-family: 'Open Sans';
 	font-style: normal;
 	font-weight: normal;
 	font-size: 16px;

@@ -1,5 +1,5 @@
-import React from "react";
-import { useModal } from "../utils";
+import React from 'react';
+import { useModal } from '../utils';
 
 import {
 	AppModalContainer,
@@ -8,9 +8,9 @@ import {
 	AppModalWindowFooter,
 	AppModalWindowHeader,
 	AppModalWindowHeaderText,
-	CloseButton,
-} from "./AppModal.styled";
-import { NewDriveModal, AttachDriveModal, LoginModal } from "./Variants";
+	CloseButton
+} from './AppModal.styled';
+import { NewDriveModal, AttachDriveModal, LoginModal } from './Variants';
 
 export const AppModalBase: React.FC<{
 	visible: boolean;
@@ -37,11 +37,11 @@ export default () => {
 	const { modalType, modalVisible, hideModal } = useModal();
 
 	switch (modalType) {
-		case "new_drive":
+		case 'new_drive':
 			return <NewDriveModal visible={modalVisible} onClose={hideModal} />;
-		case "attach_drive":
+		case 'attach_drive':
 			return <AttachDriveModal visible={modalVisible} onClose={hideModal} />;
-		case "login":
+		case 'login':
 			return <LoginModal visible={modalVisible} onClose={hideModal} />;
 	}
 

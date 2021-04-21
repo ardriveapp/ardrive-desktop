@@ -1,21 +1,17 @@
-import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { FontVariants, TranslationAt } from "app/components";
+import { FontVariants, TranslationAt } from 'app/components';
 
-import {
-	ButtonsContainer,
-	Description,
-	ImportWalletButton,
-} from "./SecondStep.styled";
-import { useTranslationAt } from "app/utils/hooks";
-import { ArdriveHeader } from "app/components/typography/Headers.styled";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { AppDispatch } from "app/redux";
-import { appActions } from "app/redux/slices/app";
-import { authActions } from "app/redux/slices/auth";
+import { ButtonsContainer, Description, ImportWalletButton } from './SecondStep.styled';
+import { useTranslationAt } from 'app/utils/hooks';
+import { ArdriveHeader } from 'app/components/typography/Headers.styled';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { AppDispatch } from 'app/redux';
+import { appActions } from 'app/redux/slices/app';
+import { authActions } from 'app/redux/slices/auth';
 
-const translationsPath = "pages.create_user.steps.second";
+const translationsPath = 'pages.create_user.steps.second';
 
 const SecondStep: React.FC<{
 	onContinue(createNew: boolean, walletPath?: string): void;
@@ -32,17 +28,17 @@ const SecondStep: React.FC<{
 
 	const generateWallet = useCallback(async () => {
 		const wallet = await dispatch(authActions.createNewWalletThunk());
-		console.log("wallet: ", wallet);
+		console.log('wallet: ', wallet);
 		if (wallet) {
 			onContinue(true);
 		} else {
-			console.log("Something went wrong while creating a wallet");
+			console.log('Something went wrong while creating a wallet');
 		}
 	}, [dispatch, onContinue]);
 
 	return (
 		<>
-			<ArdriveHeader>{t("choose_your_wallet")}</ArdriveHeader>
+			<ArdriveHeader>{t('choose_your_wallet')}</ArdriveHeader>
 			<Description>
 				<TranslationAt
 					atPath={translationsPath}
@@ -51,12 +47,8 @@ const SecondStep: React.FC<{
 				/>
 			</Description>
 			<ButtonsContainer>
-				<ImportWalletButton onClick={generateWallet}>
-					{t("create_new")}
-				</ImportWalletButton>
-				<ImportWalletButton onClick={openFile}>
-					{t("import_existing")}
-				</ImportWalletButton>
+				<ImportWalletButton onClick={generateWallet}>{t('create_new')}</ImportWalletButton>
+				<ImportWalletButton onClick={openFile}>{t('import_existing')}</ImportWalletButton>
 			</ButtonsContainer>
 		</>
 	);

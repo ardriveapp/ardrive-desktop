@@ -1,13 +1,13 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { RoundedButton } from "app/components";
+import { RoundedButton } from 'app/components';
 
 export const Description = styled.span`
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 24px;
-    width: 450px;
-    font-family: "Open Sans";
+	text-align: center;
+	margin-bottom: 20px;
+	margin-top: 24px;
+	width: 450px;
+	font-family: 'Open Sans';
 `;
 
 export const ImportWalletButton = styled(RoundedButton)`
